@@ -1,0 +1,113 @@
+/* src/LoginPage.css */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+}
+
+.login-container {
+    display: flex;
+    height: 100vh;
+
+}
+
+.left-panel {
+    flex: 1;
+    background-image: url(/src/components/img/greenBackroundLoginPage.jpg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    -webkit-box-shadow: 10px 10px 28px 18px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 10px 10px 28px 18px rgba(0, 0, 0, 0.75);
+    box-shadow: 10px 10px 28px 18px rgba(0, 0, 0, 0.75);
+
+}
+
+.logo {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.right-panel {
+    flex: 1;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-form {
+    width: 80%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.login-title {
+    font-size: 2rem;
+    margin-bottom: -5px;
+    border-bottom: 4px solid #176E4A;
+    display: inline-block;
+    padding-left: 20px;
+    padding-right: 20px;
+    
+}
+
+.desc {
+    font-weight: 700;
+    color: #386A61;
+}
+
+.login-input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    border: none;
+    border-bottom: 3px solid #7C7C7C;
+}
+
+.forgot-password {
+    display: block;
+    margin: 10px 0;
+    color: #777;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.login-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #386A61;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 10px;
+    -webkit-box-shadow: -1px 4px 28px -9px rgba(0,0,0,0.75);
+-moz-box-shadow: -1px 4px 28px -9px rgba(0,0,0,0.75);
+box-shadow: -1px 4px 28px -9px rgba(0,0,0,0.75);
+
+}
+
+.login-button:hover {
+    background-color: #0f3e39;
+}
+
+.signup-link {
+    margin-top: 20px;
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+.signup-link a {
+    color: #5562C6;
+    text-decoration: none;
+}
+
+.signup-link a:hover {
+    text-decoration: underline;
+}
