@@ -2,11 +2,13 @@ import AxiosInstance from "./axiosConfig";
 
 const api = AxiosInstance();
 
-export const loginRequest = (data) => {
-    return api.post("/login", data);
+export const loginRequest = async (data) => {
+    const res = await api.post("/login", data);
+    return JSON.parse(res.data);
 };
 
 
-export const registerRequest = (data) => {
-    return api.post("/register", data);
+export const registerRequest = async (data) => {
+    const res = await api.post("/register", data);
+    return JSON.parse(res.data);
 }
