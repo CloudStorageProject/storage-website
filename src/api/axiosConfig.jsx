@@ -1,5 +1,6 @@
 import axios from "axios";
 
+// TODO: Specify base URL
 const api = axios.create({
     baseURL: "",
     headers: {
