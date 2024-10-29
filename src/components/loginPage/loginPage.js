@@ -42,7 +42,9 @@ const LoginPage = () => {
     return (
         <div className="login-container">
             <div className="left-panel">
+            <div className="logo-main">
                 <h1 className="logo">LOGO</h1>
+            </div>
             </div>
             <div className="right-panel">
                 <form className="login-form">

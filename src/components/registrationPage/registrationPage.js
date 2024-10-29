@@ -61,7 +61,7 @@ const RegistrationPage = () => {
                     </p>
                 </form>
             </div>
-            <div className="left-panel">
+            <div className="left-panel left-panel-reg">
                 <h1 className="logo">LOGO</h1>
             </div>
         </div>
