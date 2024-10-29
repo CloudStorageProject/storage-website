@@ -64,9 +64,9 @@ const RegistrationPage = () => {
             </div>
             <div className="left-panel left-panel-reg">
                 <h1 className="logo-register">LOGO</h1>
-                <div className="img-register-bg">
-                   <img src={bgimg} alt="bg"/>
-           </div>
+                <div className="img-wrap">
+                    <img src={bgimg} className="img-register-bg" alt="bg" />
+                </div>
             </div>
         </div>
     );

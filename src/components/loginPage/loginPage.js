@@ -43,13 +43,13 @@ const LoginPage = () => {
     return (
         <div className="login-container">
             <div className="left-panel">
-            <div className="logo-main">
-                <h1 className="logo-login">LOGO</h1>
-            </div>
+                <div className="logo-main">
+                    <h1 className="logo-login">LOGO</h1>
+                </div>
 
-            < div  className = "img-wraper" >
-                   < img  src = { bgimg }  className = "img-login-bg"  alt = "bg" / >
-           </div>
+                < div className="img-wrap" >
+                    < img src={bgimg} className="img-login-bg" alt="bg" />
+                </div>
             </div>
             <div className="right-panel">
                 <form className="login-form">
