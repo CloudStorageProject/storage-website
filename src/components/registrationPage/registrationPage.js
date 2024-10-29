@@ -57,7 +57,7 @@ const RegistrationPage = () => {
                         Create account
                     </button>
                     <p className="signup-link">
-                        Already a member? <a href="#">Sign in</a>
+                        Already a member? <a href="/login">Sign in</a>
                     </p>
                 </form>
             </div>
