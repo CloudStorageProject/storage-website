@@ -15,17 +15,41 @@ body {
 
 .left-panel {
     flex: 1;
-    background-image: url(/src/components/img/greenBackroundLoginPage.jpg);
     background-size: cover;
     background-position: center;
     color: white;
     position: relative;
-    clip-path: polygon(0 100%, 100% 100%, 70% 0, 0% 0%);
-    box-shadow: 20px 5px 25px rgba(0, 0, 0, 0.5);
+}
+
+.img-wrap {
+    filter: drop-shadow(30px 5px 20px rgba(0, 0, 0, 0.5));
+    position: absolute; 
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0; 
+    z-index: -1;
+  }
+  
+.img-wraped {   
+    clip-path: polygon(0 100%, 100% 100%, 70% 0, 0% 0%); 
+  }
+
+.img-wrap-right {
+    filter: drop-shadow(-30px 5px 20px rgba(0, 0, 0, 0.5));
+    position: absolute; 
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0; 
+    z-index: -1;
+}
+
+.img-wraped-right {
+    clip-path: polygon(100% 0%, 0% 0%, 30% 100%, 100% 100%);
 }
 
 .left-panel-reg {
-    clip-path: polygon(100% 0%, 0% 0%, 30% 100%, 100% 100%) !important;
     display: flex;
     justify-content: right;
 
@@ -38,7 +62,6 @@ body {
 
 .right-panel {
     flex: 1;
-    background-color: white;
     display: flex;
     align-items: center;
     justify-content: center;
