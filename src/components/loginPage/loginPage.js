@@ -44,14 +44,12 @@ const LoginPage = () => {
         <div className="login-container">
             <div className="left-panel">
             <div className="logo-main">
-                <h1 className="logo">LOGO</h1>
+                <h1 className="logo-login">LOGO</h1>
             </div>
 
-            <div className="img-wrap">
-                <div className="img-wraped">
-                    <img src={bgimg} alt="bg"/>
-                </div>
-            </div>
+            < div  className = "img-wraper" >
+                   < img  src = { bgimg }  className = "img-login-bg"  alt = "bg" / >
+           </div>
             </div>
             <div className="right-panel">
                 <form className="login-form">
