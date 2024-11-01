@@ -3,6 +3,7 @@ import "./registrationPage.js"
 import { register, signOut } from "../../service/authService";
 import { useState } from "react";
 import useSignIn from 'react-auth-kit/hooks/useSignIn'
+import bgimg from '../img/greenBackroundLoginPage.jpg'
 
 const RegistrationPage = () => {
     const [formData, setFormData] = useState({ name: "", username: "", email: "", password: "", confirmPassword: "" });
@@ -61,8 +62,11 @@ const RegistrationPage = () => {
                     </p>
                 </form>
             </div>
-            <div className="left-panel">
-                <h1 className="logo">LOGO</h1>
+            <div className="left-panel left-panel-reg">
+                <h1 className="logo-register">LOGO</h1>
+                <div className="img-wrap">
+                    <img src={bgimg} className="img-register-bg" alt="bg" />
+                </div>
             </div>
         </div>
     );

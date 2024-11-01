@@ -4,6 +4,7 @@ import "./loginPage.css"
 import { useState } from "react";
 import useSignIn from 'react-auth-kit/hooks/useSignIn'
 import { login } from "../../service/authService";
+import bgimg from '../img/greenBackroundLoginPage.jpg'
 
 
 const LoginPage = () => {
@@ -42,7 +43,13 @@ const LoginPage = () => {
     return (
         <div className="login-container">
             <div className="left-panel">
-                <h1 className="logo">LOGO</h1>
+                <div className="logo-main">
+                    <h1 className="logo-login">LOGO</h1>
+                </div>
+
+                < div className="img-wrap" >
+                    < img src={bgimg} className="img-login-bg" alt="bg" />
+                </div>
             </div>
             <div className="right-panel">
                 <form className="login-form">

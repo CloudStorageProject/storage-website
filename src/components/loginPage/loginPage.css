@@ -1,57 +1,104 @@
-/* src/LoginPage.css */
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
+
 body {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
+    background-color: white;
+    overflow: hidden;
 }
 
 .login-container {
     display: flex;
     height: 100vh;
-
 }
+
 
 .left-panel {
     flex: 1;
-    background-image: url(/src/components/img/greenBackroundLoginPage.jpg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background-size: cover;
+    background-position: center;
     color: white;
-    -webkit-box-shadow: 10px 10px 28px 18px rgba(0, 0, 0, 0.75);
-    -moz-box-shadow: 10px 10px 28px 18px rgba(0, 0, 0, 0.75);
-    box-shadow: 10px 10px 28px 18px rgba(0, 0, 0, 0.75);
+    position: relative;
+}
+
+.img-wrap {
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    filter: drop-shadow(0px 0px 30px rgba(0, 0, 0, 1)) drop-shadow(0px 0px 30px rgba(0, 0, 0, 1));
+}
+
+.img-register-bg {
+    width: 100%;
+    height: 100%;
+    clip-path: polygon(100% 0%, 0% 0%, 30% 100%, 100% 100%);
+}
+
+.img-login-bg {
+    width: 100%;
+    height: 100%;
+    clip-path: polygon(0 100%, 100% 100%, 70% 0, 0% 0%);
+}
+
+.logo-register {
+    position: absolute;
+    top: 0px;
+    left: calc(100% - 150px);
+    /* TODO: make based on logo size */
+    z-index: 1;
+    margin: 15px;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.logo-login {
+    position: absolute;
+    top: 0px;
+    left: 0%;
+    z-index: 1;
+    margin: 15px;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.left-panel-reg {
+    display: flex;
+    justify-content: right;
 
 }
 
 .logo {
+    margin: 15px;
     font-size: 2rem;
     font-weight: bold;
 }
 
 .right-panel {
     flex: 1;
-    background-color: white;
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+    z-index: 0;
 }
 
 .login-form {
     width: 80%;
     max-width: 400px;
     text-align: center;
+    position: relative;
+    z-index: 2;
 }
 
 .login-title {
     font-size: 2rem;
+    font-family: "Source Sans 3", sans-serif;
     margin-bottom: -5px;
     border-bottom: 4px solid #176E4A;
     display: inline-block;
     padding-left: 20px;
     padding-right: 20px;
-    
 }
 
 .desc {
@@ -61,10 +108,10 @@ body {
 
 .login-input {
     width: 100%;
+    font-family: "Source Sans 3", sans-serif;
+    font-size: 20px;
     padding: 10px;
     margin: 10px 0;
-    border: 1px solid #ccc;
-    font-size: 1rem;
     border: none;
     border-bottom: 3px solid #7C7C7C;
 }
@@ -75,22 +122,27 @@ body {
     color: #777;
     text-decoration: none;
     font-size: 0.9rem;
+    text-align: left;
+    font-style: italic;
+}
+
+.forgot-password:hover {
+    color: #0f3e39;
 }
 
 .login-button {
     width: 100%;
+    font-family: "Source Sans 3", sans-serif;
+    font-size: 22px;
+    font-weight: 600;
     padding: 10px;
     background-color: #386A61;
     color: white;
     border: none;
     border-radius: 5px;
-    font-size: 1rem;
     cursor: pointer;
     margin-top: 10px;
-    -webkit-box-shadow: -1px 4px 28px -9px rgba(0,0,0,0.75);
--moz-box-shadow: -1px 4px 28px -9px rgba(0,0,0,0.75);
-box-shadow: -1px 4px 28px -9px rgba(0,0,0,0.75);
-
+    box-shadow: -1px 4px 28px -9px rgba(0, 0, 0, 0.75);
 }
 
 .login-button:hover {
