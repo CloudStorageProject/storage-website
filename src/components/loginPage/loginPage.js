@@ -5,6 +5,7 @@ import { useState } from "react";
 import useSignIn from 'react-auth-kit/hooks/useSignIn'
 import { login } from "../../service/authService";
 import bgimg from '../img/greenBackroundLoginPage.jpg'
+import { Link } from "react-router-dom";
 
 
 const LoginPage = () => {
@@ -56,9 +57,9 @@ const LoginPage = () => {
                     <h2 className="login-title">Login</h2>
                     <input type="text" placeholder="Username" className="login-input" name="username" value={formData.username} onChange={handleInputChange} />
                     <input type="password" placeholder="Password" className="login-input" name="password" onChange={handleInputChange} />
-                    <a href="#" className="forgot-password">
+                    <Link to="/reset-password" className="forgot-password">
                         Forgot password?
-                    </a>
+                    </Link>
                     <button type="submit" className="login-button" onClick={handleSubmit}>
                         Login
                     </button>
