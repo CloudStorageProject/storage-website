@@ -23,7 +23,6 @@ const AxiosInstance = ({ content_type }) => {
     // TODO: configure response interceptor
     instance.interceptors.response.use(
         (response) => {
-            console.log(response);
             return response;
         },
         (error) => {
