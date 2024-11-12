@@ -1,5 +1,4 @@
 import axios from "axios";
-import { useAuth } from "../hooks/AuthProvider";
 
 const AxiosInstance = ({ content_type }) => {
 
