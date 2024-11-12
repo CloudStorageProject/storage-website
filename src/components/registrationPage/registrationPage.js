@@ -1,13 +1,13 @@
 import React from "react";
 import "./registrationPage.js"
-import { register, signOut } from "../../service/authService";
 import { useState } from "react";
-import useSignIn from 'react-auth-kit/hooks/useSignIn'
 import bgimg from '../img/greenBackroundLoginPage.jpg'
+import { useAuth } from "../../hooks/AuthProvider"; 
 
 const RegistrationPage = () => {
     const [formData, setFormData] = useState({ name: "", username: "", email: "", password: "", confirmPassword: "" });
-    const signIn = useSignIn();
+    const auth = useAuth();
+
     const handleChange = (e) => {
         if (e.target.name === "confirmPassword") {
             if (e.target.value !== formData.password) {
@@ -19,21 +19,8 @@ const RegistrationPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const data = {
-            name: formData.name,
-            email: formData.email,
-            username: formData.username,
-            password: formData.password,
-        }
         try {
-            const response = await register(data);
-            if (signIn({
-                auth: {
-                    token: response.auth.token,
-                    type: response.auth.type,
-                },
-                userState: response.userState
-            })) {
+            if (auth.registerAction(formData)) {
                 // TODO: handle success
             } else {
                 // TODO: handle failure

@@ -1,25 +1,19 @@
 import axios from "axios";
-import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
+import { useAuth } from "../hooks/AuthProvider";
 
-
-const AxiosInstance = () => {
-    const authHeader = useAuthHeader();
-    const token = authHeader();
+const AxiosInstance = ({ content_type }) => {
 
     const instance = axios.create({
-        baseURL: "", // TODO: Specify base URL
+        baseURL: "http://127.0.0.1:5000", // TODO: Specify base URL
         headers: {
-            "Content-Type": "application/json",
+            "Content-Type": content_type,
         },
-        withCredentials: true,
     });
 
 
     instance.interceptors.request.use(
         (config) => {
-            if (token) {
-                config.headers["Authorization"] = `Bearer ${token}`;
-            }
+            config.headers["Authorization"] = `Bearer ${document.cookie.split("=")[1] || ""}`;
             return config;
         },
         (error) => {
@@ -30,12 +24,19 @@ const AxiosInstance = () => {
     // TODO: configure response interceptor
     instance.interceptors.response.use(
         (response) => {
+            console.log(response);
             return response;
         },
         (error) => {
             return Promise.reject(error);
         }
     );
+
+    instance.defaults.headers.common["Access-Control-Allow-Origin"] = "*";
+    instance.defaults.headers.common["Access-Control-Allow-Credentials"] = "true";
     return instance;
 }
-export default AxiosInstance;
+
+export const axiosInstanceJSON = AxiosInstance("application/json");
+
+export const axiosInstanceFORM = AxiosInstance("multipart/form-data");
