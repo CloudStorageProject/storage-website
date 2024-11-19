@@ -1,10 +1,10 @@
 import React from 'react';
-import './passwordResetSuccessPage.css';
+import "./passwordResetSuccessPage.css";
 
 function PasswordResetSuccessPage() {
   return (
     <div className="success-page">
-      <div className="background-shapes"></div>
+      <div className="background-shapes-sc"></div>
       <div className="success-box">
         <div className="success-icon">✔</div>
         <h2>Password Successfully Reset</h2>
