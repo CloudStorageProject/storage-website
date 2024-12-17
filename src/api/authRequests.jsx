@@ -1,21 +1,20 @@
-import { axiosInstanceFORM } from "./axiosConfig";
+import { axiosInstanceJSON } from "./axiosConfig";
 
 
 export const loginRequest = async (data) => {
-    let form = new FormData();
-    form.append("username", data.username);
-    form.append("password", data.password);
-    const res = await axiosInstanceFORM.post("/login", form);
+    let user_data = { username: data.username, password: data.password };
+    const res = await axiosInstanceJSON.post("/login", user_data);
     return res;
 };
 
 
 export const registerRequest = async (data) => {
-    let form = new FormData();
-    form.append("name", data.name);
-    form.append("email", data.email);
-    form.append("username", data.username);
-    form.append("password", data.password);
-    const res = await axiosInstanceFORM.post("/register", form);
+    let user_data = {
+        name: data.name,
+        email: data.email,
+        username: data.username,
+        password: data.password
+    }
+    const res = await axiosInstanceJSON.post("/register", user_data);
     return res;
 }
