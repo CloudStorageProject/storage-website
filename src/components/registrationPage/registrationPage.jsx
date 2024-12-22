@@ -4,6 +4,13 @@ import RegistrationPhrasesConfirm from "./registrationPhrasesConfirm";
 import React from 'react';
 import "./registrationPage.css"
 
+function getUniqueRandomIntArr(count, min, max) {
+    let uniqueSet = new Set();
+    while (uniqueSet.size < count) {
+        uniqueSet.add(Math.floor(Math.random() * (max - min + 1) + min));
+    }
+    return Array.from(uniqueSet);
+}
 
 export default class RegistrationPage extends React.Component {
 
@@ -12,11 +19,11 @@ export default class RegistrationPage extends React.Component {
         this.state = { registrationStage: 0 };
         this.userData = { name: "", username: "", email: "", password: "", confirmPassword: "" };
         this.secretPhrases = Array.apply("", Array(24)).map(function () { });
-        this.checkIndexes = Array.from({ length: 3 }, () => Math.floor(Math.random() * 25));
+        this.checkIndexes = getUniqueRandomIntArr(3, 0, 24);
     }
 
     reRandomizeCheckIndexes() {
-        this.checkIndexes = Array.from({ length: 3 }, () => Math.floor(Math.random() * 25));
+        this.checkIndexes = getUniqueRandomIntArr(3, 0, 24);
     }
 
     setUserData(data) {
