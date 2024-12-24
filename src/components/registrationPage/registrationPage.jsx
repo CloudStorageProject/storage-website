@@ -3,6 +3,7 @@ import RegistrationSecretPhrases from "./registrationSecretPhrases";
 import RegistrationPhrasesConfirm from "./registrationPhrasesConfirm";
 import React from 'react';
 import "./registrationPage.css"
+import { createKeys } from '../../utils/Cryptography.jsx';
 
 function getUniqueRandomIntArr(count, min, max) {
     let uniqueSet = new Set();
@@ -18,7 +19,11 @@ export default class RegistrationPage extends React.Component {
         super(props);
         this.state = { registrationStage: 0 };
         this.userData = { name: "", username: "", email: "", password: "", confirmPassword: "" };
-        this.secretPhrases = Array.apply("", Array(24)).map(function () { });
+        createKeys().then((secrets) => {
+            this.secretPhrases = secrets["mnemonic"].split(" ");
+            this.privateKey = secrets["privateKey"];
+            this.publicKey = secrets["publicKey"];
+        });
         this.checkIndexes = getUniqueRandomIntArr(3, 0, 24);
     }
 
@@ -28,10 +33,6 @@ export default class RegistrationPage extends React.Component {
 
     setUserData(data) {
         this.userData = data;
-    }
-
-    setSecretPhrases(phrases) {
-        this.secretPhrases = phrases;
     }
 
     nextStage() {
@@ -46,8 +47,8 @@ export default class RegistrationPage extends React.Component {
     render() {
         return (
             (this.state.registrationStage == 0 && <RegistrationUserData userData={this.userData} setUserData={this.setUserData.bind(this)} nextStage={this.nextStage.bind(this)} previousStage={this.previousStage.bind(this)} />) ||
-            (this.state.registrationStage == 1 && <RegistrationSecretPhrases secretPhrases={this.secretPhrases} setSecretPhrases={this.setSecretPhrases.bind(this)} nextStage={this.nextStage.bind(this)} previousStage={this.previousStage.bind(this)} />) ||
-            (this.state.registrationStage == 2 && <RegistrationPhrasesConfirm userData={this.userData} secretPhrases={this.secretPhrases} checkIndexes={this.checkIndexes} randomizeIndexes={this.reRandomizeCheckIndexes.bind(this)} nextStage={this.nextStage.bind(this)} previousStage={this.previousStage.bind(this)} />)
+            (this.state.registrationStage == 1 && <RegistrationSecretPhrases secretPhrases={this.secretPhrases} nextStage={this.nextStage.bind(this)} previousStage={this.previousStage.bind(this)} />) ||
+            (this.state.registrationStage == 2 && <RegistrationPhrasesConfirm userData={this.userData} secretPhrases={this.secretPhrases} privateKey={this.privateKey} publicKey={this.publicKey} checkIndexes={this.checkIndexes} randomizeIndexes={this.reRandomizeCheckIndexes.bind(this)} previousStage={this.previousStage.bind(this)} />)
         );
     }
 }

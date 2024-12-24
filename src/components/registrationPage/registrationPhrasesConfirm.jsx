@@ -2,14 +2,10 @@ import bgimg from '../img/greenBackroundLoginPage.jpg'
 import { useState } from "react";
 import { register, signOut } from "../../service/authService.jsx";
 import useSignIn from 'react-auth-kit/hooks/useSignIn';
-import { createKeys } from '../../utils/Cryptography.jsx';
 
-const RegistrationPhrasesConfirm = ({ userData, secretPhrases, checkIndexes, nextStage, previousStage, randomizeIndexes }) => {
+const RegistrationPhrasesConfirm = ({ userData, secretPhrases, privateKey, publicKey, checkIndexes, randomizeIndexes, previousStage }) => {
     let [selectedPhrases, setSelectedPhrases] = useState([]);
     let signIn = useSignIn();
-    let checkPhrase = (e) => {
-        e.preventDefault();
-    };
     let handleSetSelectedPhrases = (e) => {
         setSelectedPhrases({ ...selectedPhrases, [e.target.name]: e.target.value });
     }
@@ -21,10 +17,9 @@ const RegistrationPhrasesConfirm = ({ userData, secretPhrases, checkIndexes, nex
             return;
             // TODO: handle phrase mismatch
         }
-        const { publicKey, privateKey, mnemonic } = await createKeys();
-        document.cookie = `privateKey=${privateKey}; SameSite=Strict; Secure; path=/`;
+        localStorage.setItem("privateKey", privateKey);
+        localStorage.setItem("publicKey", publicKey);
         const data = {
-            name: userData.name,
             email: userData.email,
             username: userData.username,
             password: userData.password,

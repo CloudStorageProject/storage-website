@@ -2,33 +2,20 @@ import { useState } from "react";
 import bgimg from '../img/greenBackroundLoginPage.jpg'
 
 
-const RegistrationSecretPhrases = ({ secretPhrases, setSecretPhrases, nextStage, previousStage }) => {
-    let [phrases, setPhrases] = useState(secretPhrases);
-    var regExp = /[!@#$%^&*(),.?":{}|<>\-_=+ ]/g;
-
-    let setPhrase = (e) => {
-        console.log(e.target.value, e.target.name);
-        if (regExp.test(e.target.value)) {
-            // TODO: handle invalid character
-            e.target.value = e.target.value.replace(regExp, '');
-            return;
-        }
-        e.preventDefault();
-        let newPhrases = [...phrases];
-        newPhrases[e.target.name] = e.target.value;
-        setPhrases(newPhrases);
-        setSecretPhrases(newPhrases);
-    };
+const RegistrationSecretPhrases = ({ secretPhrases, nextStage, previousStage }) => {
+    let processedPhrases = secretPhrases.map((phrase, index) => {
+        return `${index + 1}. ${phrase}`
+    })
 
     let handleCopy = (e) => {
         e.preventDefault();
-        navigator.clipboard.writeText(phrases.join(" "));
+        navigator.clipboard.writeText(processedPhrases.join(" "));
     };
 
     let handleDownload = (e) => {
         e.preventDefault();
         var element = document.createElement('a');
-        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(phrases.join("\n")))
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(processedPhrases.join("\n")))
         element.setAttribute('download', 'secretPhrases.txt')
         element.style.display = 'none';
         document.body.appendChild(element);
@@ -47,9 +34,9 @@ const RegistrationSecretPhrases = ({ secretPhrases, setSecretPhrases, nextStage,
             </div>
             <div className="recovery-phrase-container">
                 <div className="recovery-phrase-inputs">
-                    {phrases && phrases.map((phrase, index) => {
+                    {secretPhrases && secretPhrases.map((phrase, index) => {
                         return (
-                            <input type="text" className="recovery-phrase-input" placeholder={index + 1} key={index} name={index} onChange={setPhrase} value={phrase}></input>
+                            <p key={index} className="recovery-phrase-input"><span className="recovery-phrase-index">{index + 1}</span> {phrase}</p>
                         )
                     })}
                 </div>

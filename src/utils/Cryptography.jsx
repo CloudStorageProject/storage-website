@@ -26,9 +26,6 @@ export async function createKeys() {
 
     const mnemonic = bip39.entropyToMnemonic(hashHex);
 
-    console.log("Public Key:", publicKey);
-    console.log("24-Word Recovery Phrase:", mnemonic);
-
     return {
         publicKey,
         privateKey,
