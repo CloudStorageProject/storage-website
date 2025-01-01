@@ -2,27 +2,36 @@ import React, { useEffect } from "react";
 import "./registrationUserData.js"
 import { useState } from "react";
 import bgimg from '../img/greenBackroundLoginPage.jpg'
-import { useAuth } from "../../hooks/AuthProvider"; 
 
-const RegistrationUserData = ({userData, setUserData, nextStage}) => {
+const RegistrationUserData = ({userData, secretsReady,  setUserData, nextStage}) => {
     let [formData, setFormData] = useState(userData);
+    let [canProceed, setCanProceed] =  useState(false);
     const userNameRegex = /^[a-zA-Z0-9]+$/
+
+    const checkUserData = (data) => {
+        if(!userNameRegex.test(data.username)){
+            return false;
+            // TODO: Handle username error
+        }else if (data.password.length < 8 || data.password.length > 128) {
+            return false;
+            // TODO: Handle password error
+        } else if (data.password !== data.confirmPassword) {
+            return false;
+            // TODO: Handle password mismatch
+        } 
+        return true;
+    }
     
     const handleChange = (e) => {
         e.preventDefault();
-        if (e.target.name === "confirmPassword" && (e.target.value !== userData.password)) {
-            // TODO: handle password mismatch
-        }else if (e.target.name === "username" && !userNameRegex.test(e.target.value)) {
-            // TODO: handle invalid username
-        } else if (e.target.name === "password" && (e.target.value.length < 8 || e.target.value.length > 128)  ) {
-            // TODO: handle password length
-        }
         setFormData(formData => ({ ...formData, [e.target.name]: e.target.value }));
+        checkUserData(formData);
     };
 
     useEffect(() => {
         setUserData(formData);
-    }, [formData]);
+        setCanProceed(secretsReady() && checkUserData(formData));
+    }, [formData, secretsReady , setUserData]);
 
 
     return (
@@ -36,7 +45,8 @@ const RegistrationUserData = ({userData, setUserData, nextStage}) => {
                     <input type="email" placeholder="Email" className="login-input" name="email" value={formData.email} onChange={(e)=>{handleChange(e)}} />
                     <input type="password" placeholder="Password" className="login-input" name="password" onChange={handleChange} />
                     <input type="password" placeholder="Confirm Password" className="login-input" name="confirmPassword" onChange={handleChange} />
-                    <button type="submit" className="login-button" onClick={nextStage}>
+                    {/* TODO: add button state based on user data and readiness of secrets */}
+                    <button type="submit" className="login-button" disabled={!canProceed} onClick={nextStage}> 
                         Create account
                     </button>
                     <p className="signup-link">
