@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import "./registrationUserData.js"
 import { useState } from "react";
 import bgimg from '../img/greenBackroundLoginPage.jpg'
+import { useAuth } from "../../hooks/AuthProvider"; 
 
 const RegistrationUserData = ({userData, setUserData, nextStage}) => {
     let [formData, setFormData] = useState(userData);

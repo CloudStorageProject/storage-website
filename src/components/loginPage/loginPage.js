@@ -2,14 +2,12 @@
 import React from "react";
 import "./loginPage.css"
 import { useState } from "react";
-import useSignIn from 'react-auth-kit/hooks/useSignIn'
-import { login } from "../../service/authService";
+import { useAuth } from "../../hooks/AuthProvider";
 import bgimg from '../img/greenBackroundLoginPage.jpg'
-
 
 const LoginPage = () => {
     const [formData, setFormData] = useState({ username: "", password: "" });
-    const signIn = useSignIn()
+    const auth = useAuth();
 
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -17,19 +15,8 @@ const LoginPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const data = {
-            username: formData.username,
-            password: formData.password,
-        }
         try {
-            const response = await login(data);
-            if (signIn({
-                auth: {
-                    token: response.auth.token,
-                    type: response.auth.type,
-                },
-                userState: response.userState
-            })) {
+            if (auth.loginAction(formData)) {
                 // TODO: handle success
             } else {
                 // TODO: handle failure
