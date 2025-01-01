@@ -1,19 +1,17 @@
 import bgimg from '../img/greenBackroundLoginPage.jpg'
 import { useState } from "react";
-import { register, signOut } from "../../service/authService.jsx";
-import useSignIn from 'react-auth-kit/hooks/useSignIn';
+import { useAuth } from "../../hooks/AuthProvider";
 
 const RegistrationPhrasesConfirm = ({ userData, secretPhrases, privateKey, publicKey, checkIndexes, randomizeIndexes, previousStage }) => {
-    let [selectedPhrases, setSelectedPhrases] = useState([]);
-    let signIn = useSignIn();
+    let [selectedPhrases, setSelectedPhrases] = useState({});
+    let auth = useAuth();
     let handleSetSelectedPhrases = (e) => {
         setSelectedPhrases({ ...selectedPhrases, [e.target.name]: e.target.value });
     }
 
     let handleSubmit = async (e) => {
         e.preventDefault();
-
-        if (selectedPhrases[0] !== secretPhrases[0] || selectedPhrases[1] !== secretPhrases[1] || selectedPhrases[2] !== secretPhrases[2]) {
+        if (selectedPhrases[checkIndexes[0]] !== secretPhrases[checkIndexes[0]] || selectedPhrases[checkIndexes[1]] !== secretPhrases[checkIndexes[1]] || selectedPhrases[checkIndexes[2]] !== secretPhrases[checkIndexes[2]]) {
             return;
             // TODO: handle phrase mismatch
         }
@@ -27,15 +25,7 @@ const RegistrationPhrasesConfirm = ({ userData, secretPhrases, privateKey, publi
         }
 
         try {
-            const response = await register(data);
-            // TODO: update to custom sign in
-            if (signIn({
-                auth: {
-                    token: response.auth.token,
-                    type: response.auth.type,
-                },
-                userState: response.userState
-            })) {
+            if (auth.registerAction(data)) {
                 // TODO: handle success
             } else {
                 // TODO: handle failure
