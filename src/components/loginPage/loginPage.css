@@ -149,6 +149,10 @@ body {
     background-color: #0f3e39;
 }
 
+.login-button:disabled {
+    background-color: #7C7C7C;
+}
+
 .signup-link {
     margin-top: 20px;
     font-size: 0.9rem;
