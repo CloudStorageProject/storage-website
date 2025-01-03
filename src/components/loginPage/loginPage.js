@@ -63,6 +63,9 @@ const LoginPage = () => {
                     <button type="submit" className="login-button" onClick={handleSubmit}>
                         Login
                     </button>
+                    <button type="submit" className="login-button">
+                        FULL ACSESS LOGIN
+                    </button>
                     <p className="signup-link">
                         Don’t have an account? <a href="/register">Sign up</a>
                     </p>
