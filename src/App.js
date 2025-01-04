@@ -10,10 +10,14 @@ import PasswordResetSuccessPage from './components/passwordResetSuccessPage/pass
 import JoinFull from './components/fulljoin/fulljoin';
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import PrivateRoute from './hooks/PrivateRoute';
+import AuthProvider from './hooks/AuthProvider';
+
 function App() {
     return (
         <div className="App">
             <BrowserRouter>
+            <AuthProvider>
                 <Routes>
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegistrationPage />} />
@@ -24,6 +28,7 @@ function App() {
                     <Route path="/create-new-password" element={<CreatePasswordPage />} />
                     <Route path="/create-new-password-success" element={<PasswordResetSuccessPage />} />
                 </Routes>
+            </AuthProvider>
             </BrowserRouter>
         </div>
     );
