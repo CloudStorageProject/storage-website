@@ -1,13 +1,9 @@
 
 import './App.css';
-import LoginPage from './components/loginPage/loginPage';
+import LoginPageManager from './components/loginPage/LoginPageManager';
 import RegistrationPage from './components/registrationPage/registrationPage';
-import RequireAuth from '@auth-kit/react-router/RequireAuth';
-import ResetPassword from './components/resetPassword/resetPassword';
-import VerifyPage from './components/verifyPage/verifyPage';
-import CreatePasswordPage from './components/сreatePasswordPage/сreatePasswordPage';
-import PasswordResetSuccessPage from './components/passwordResetSuccessPage/passwordResetSuccessPage';
-import JoinFull from './components/fulljoin/fulljoin';
+import ResetPasswordManager from './components/resetPassword/ResetPaswordManager';
+
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import PrivateRoute from './hooks/PrivateRoute';
@@ -19,14 +15,12 @@ function App() {
             <BrowserRouter>
             <AuthProvider>
                 <Routes>
-                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/login" element={<LoginPageManager />} />
+                    <Route path="/reset-password" element={<ResetPasswordManager />} />
                     <Route path="/register" element={<RegistrationPage />} />
-                    <Route path="/" element={<RequireAuth fallbackPath="/login"></RequireAuth>} />
-                    <Route path="/reset-password" element={<ResetPassword />} />
-                    <Route path="/verification" element={<VerifyPage />} />
-                    <Route path="/joinfull" element={<JoinFull />} />
-                    <Route path="/create-new-password" element={<CreatePasswordPage />} />
-                    <Route path="/create-new-password-success" element={<PasswordResetSuccessPage />} />
+                    <Route element={<PrivateRoute />}>
+                        <Route path="/"  />
+                    </Route>
                 </Routes>
             </AuthProvider>
             </BrowserRouter>
