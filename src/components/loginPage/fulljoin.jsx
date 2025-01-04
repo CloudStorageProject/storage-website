@@ -2,19 +2,19 @@ import React, { useState } from 'react';
 import bgimg from '../img/greenBackroundLoginPage.jpg';
 import './fulljoin.css'
 
-const RegistrationSecretPhrases = ({ nextStage, previousStage }) => {
-    const [inputPhrases, setInputPhrases] = useState(Array(24).fill(""));
+const RegistrationSecretPhrases = ({ userData, setUserData, goToLimitedLogin }) => {
+    const [inputPhrases, setInputPhrases] = useState(userData.secrets);
 
     const handleInputChange = (index, value) => {
         const updatedPhrases = [...inputPhrases];
         updatedPhrases[index] = value;
         setInputPhrases(updatedPhrases);
+        setUserData({ ...userData, secrets: updatedPhrases });
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("Entered phrases:", inputPhrases);
-        nextStage();
+        // TODO: Handle full access login
     };
 
     return (
@@ -28,7 +28,7 @@ const RegistrationSecretPhrases = ({ nextStage, previousStage }) => {
                     <p className="recovery-phrase-subtitle">Please enter the recovery phrases in the correct order.</p>
                 </div>
                 <div className="recovery-phrase-container">
-                <form onSubmit={handleSubmit}>
+                    <form onSubmit={handleSubmit}>
                         <div className="recovery-phrase-inputs">
                             {inputPhrases.map((phrase, index) => (
                                 <div key={index} className="recovery-phrase-input">
@@ -42,13 +42,13 @@ const RegistrationSecretPhrases = ({ nextStage, previousStage }) => {
                                 </div>
                             ))}
 
-                    </div>
-                </form>
+                        </div>
+                    </form>
                 </div>
                 <div className="recovery-phrase-controls">
-                            <button type="button" onClick={previousStage}>BACK</button>
-                            <button type="submit">CONTINUE</button>
-                        </div>
+                    <button type="button" onClick={goToLimitedLogin}>BACK</button>
+                    <button type="submit" onClick={handleSubmit}>CONTINUE</button>
+                </div>
             </div>
             <div className="img-wrap-bottom-right">
                 <img src={bgimg} className="img-phrases-bottom" alt="bg" />
