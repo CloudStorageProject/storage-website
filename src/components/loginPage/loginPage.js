@@ -4,13 +4,15 @@ import "./loginPage.css"
 import { useState } from "react";
 import { useAuth } from "../../hooks/AuthProvider";
 import bgimg from '../img/greenBackroundLoginPage.jpg'
+import { Link } from "react-router-dom";
 
-const LoginPage = () => {
-    const [formData, setFormData] = useState({ username: "", password: "" });
+const LoginPage = ({userData,setUserData,goToFullLogin}) => {
+    const [formData, setFormData] = useState(userData);
     const auth = useAuth();
 
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
+        setUserData(formData);
     }
 
     const handleSubmit = async (e) => {
@@ -43,11 +45,14 @@ const LoginPage = () => {
                     <h2 className="login-title">Login</h2>
                     <input type="text" placeholder="Username" className="login-input" name="username" value={formData.username} onChange={handleInputChange} />
                     <input type="password" placeholder="Password" className="login-input" name="password" onChange={handleInputChange} />
-                    <a href="#" className="forgot-password">
+                    <Link to="/reset-password" className="forgot-password">
                         Forgot password?
-                    </a>
+                    </Link>
                     <button type="submit" className="login-button" onClick={handleSubmit}>
                         Login
+                    </button>
+                    <button type="submit" className="login-button" onClick={goToFullLogin}>
+                        FULL ACSESS LOGIN
                     </button>
                     <p className="signup-link">
                         Don’t have an account? <a href="/register">Sign up</a>
