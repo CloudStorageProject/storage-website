@@ -1,0 +1,161 @@
+  .search {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    gap: 8px;
+  }
+  
+  .search input  {
+    border: 1px solid #ccc; 
+    border-radius: 22px;
+    padding: 10px; 
+    width: 70%; 
+    box-sizing: border-box;
+    font-size: 20px; 
+    outline: none; 
+    transition: border-color 0.3s ease;
+    box-shadow: 0px 1px 10px 0px #00000040;
+}
+
+.search button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #ccc; 
+    border-radius: 22px;
+    box-shadow: 0px 1px 10px 0px #00000040; 
+    background-color: white;
+    cursor: pointer; 
+}
+
+.view-toggle-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0; 
+}
+
+.view-toggle {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 120px;
+  height: 40px;
+  background-color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.view-toggle .slider {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: calc(50% - 8px);
+  height: calc(100% - 8px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  border-radius: 16px;
+  transition: left 0.3s ease;
+}
+
+.view-toggle button {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  background: none;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.view-toggle button.active {
+  color: #4caf50;
+}
+
+.view-toggle button svg {
+  width: 20px;
+  height: 20px;
+}
+
+  
+  .content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .section {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+  }
+  
+  .section h2 {
+    margin-bottom: 15px;
+  }
+  
+  .items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  
+  .folder,
+  .file {
+    width: 30%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    padding: 10px;
+    box-shadow: 0px 1px 10px 0px #00000040;
+    border-radius: 22px;
+    text-align: left;
+  }
+  
+  .folder .info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  .file img {
+    width: 100%;
+    height: 100%;
+    border-radius: 22px;
+    max-height: 200px;
+    object-fit: cover;
+    margin-top: 10px;
+  }
+  
+  .file-header {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+  
+  .menu-button {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  
+  .list .items {
+    flex-direction: column;
+  }
+  
+  .list .folder,
+  .list .file {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  
+  .list .file img {
+    margin: 0;
+    width: 50px;
+    height: 50px;
+  }
+  

@@ -1,6 +1,6 @@
 import React from "react";
 import LoginPage from "./loginPage";
-import FullJoin from "./fullJoin";
+import FullJoin from "./fulljoin";
 
 export default class ResetPasswordManager extends React.Component {
     constructor(props) {
