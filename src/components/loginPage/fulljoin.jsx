@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import bgimg from '../img/greenBackroundLoginPage.jpg';
+import { generateKeysFromSecrets } from '../../utils/Cryptography';
+import { useAuth } from '../../hooks/AuthProvider';
 import './fulljoin.css'
 
-const RegistrationSecretPhrases = ({ userData, setUserData, goToLimitedLogin }) => {
-    const [inputPhrases, setInputPhrases] = useState(userData.secrets);
 
+const RegistrationSecretPhrases = ({ userData, setUserData, goToLimitedLogin, secrets, setSecrets }) => {
+    const [inputPhrases, setInputPhrases] = useState(userData.secrets);
+    const auth = useAuth();
+    // TODO: if private and public keys available show prompt to login
     const handleInputChange = (index, value) => {
         const updatedPhrases = [...inputPhrases];
         updatedPhrases[index] = value;
@@ -14,7 +18,19 @@ const RegistrationSecretPhrases = ({ userData, setUserData, goToLimitedLogin }) 
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // TODO: Handle full access login
+        if (secrets.privateKey === null || secrets.publicKey === null) {
+            generateKeysFromSecrets(inputPhrases, setSecrets);
+        }
+        try {
+            if (auth.fullLoginAction(userData, secrets)) {
+                // TODO: handle success
+            } else {
+                // TODO: handle failure
+            }
+        } catch (error) {
+            console.log(error);
+            // TODO: handle error
+        }
     };
 
     return (

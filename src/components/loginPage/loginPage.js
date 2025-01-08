@@ -6,7 +6,7 @@ import { useAuth } from "../../hooks/AuthProvider";
 import bgimg from '../img/greenBackroundLoginPage.jpg'
 import { Link } from "react-router-dom";
 
-const LoginPage = ({userData,setUserData,goToFullLogin}) => {
+const LoginPage = ({ userData, setUserData, goToFullLogin }) => {
     const [formData, setFormData] = useState(userData);
     const auth = useAuth();
 
@@ -18,7 +18,7 @@ const LoginPage = ({userData,setUserData,goToFullLogin}) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            if (auth.loginAction(formData)) {
+            if (auth.partialLoginAction(formData)) {
                 // TODO: handle success
             } else {
                 // TODO: handle failure

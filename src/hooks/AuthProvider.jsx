@@ -1,16 +1,33 @@
 
 import { useContext, createContext, useState } from "react";
-
-import { loginRequest, registerRequest } from "../api/authRequests";
+import { signMessage } from "../utils/Cryptography";
+import { loginRequest, registerRequest, requestChallenge, submitChallenge } from "../api/authRequests";
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(document.cookie.split("=")[1] || "");
 
-    const loginAction = async (data) => {
+    const partialLoginAction = async (data) => {
         try {
             const response = await loginRequest(data);
+            if (response.status === 200) {
+                setUser(response.data.username);
+                setToken(response.data.access_token);
+                document.cookie = `token=${response.data.access_token}; Secure;`;
+                return true;
+            }
+        } catch (err) {
+            console.error(err);
+        }
+        return false;
+    };
+
+    const fullLoginAction = async (userData, secrets) => {
+        try {
+            let signedMessage = signMessage(await requestChallenge(secrets.publicKey), localStorage.getItem("privateKey"));
+            const data = { username: userData.username, password: userData.password, signedMessage: signedMessage };
+            const response = await submitChallenge(localStorage.getItem("publicKey"), data);
             if (response.status === 200) {
                 setUser(response.data.username);
                 setToken(response.data.access_token);
@@ -46,7 +63,7 @@ const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ token, user, loginAction, registerAction, logOut }}>
+        <AuthContext.Provider value={{ token, user, partialLoginAction, fullLoginAction, registerAction, logOut }}>
             {children}
         </AuthContext.Provider>
     );
