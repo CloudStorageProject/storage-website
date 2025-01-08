@@ -10,16 +10,16 @@ const RegistrationUserData = ({ userData, setSecrets, setUserData, nextStage }) 
     const userNameRegex = /^[a-zA-Z0-9]+$/
 
     const checkUserData = (data) => {
-        // if (!userNameRegex.test(data.username)) {
-        //     return false;
-        //     // TODO: Handle username error
-        // } else if (data.password.length < 8 || data.password.length > 128) {
-        //     return false;
-        //     // TODO: Handle password error
-        // } else if (data.password !== data.confirmPassword) {
-        //     return false;
-        //     // TODO: Handle password mismatch
-        // }
+        if (!userNameRegex.test(data.username)) {
+            return false;
+            // TODO: Handle username error
+        } else if (data.password.length < 8 || data.password.length > 128) {
+            return false;
+            // TODO: Handle password error
+        } else if (data.password !== data.confirmPassword) {
+            return false;
+            // TODO: Handle password mismatch
+        }
         return true;
     }
 
