@@ -17,4 +17,14 @@ export const registerRequest = async (data) => {
     }
     const res = await axiosInstanceJSON.post("/register", user_data);
     return res;
-}
+};
+
+export const requestChallenge = async (publicKey) => {
+    const res = await axiosInstanceJSON.get("/auth/login/challenge/" + publicKey);
+    return res;
+};
+
+export const submitChallenge = async (publicKey, data) => {
+    const res = await axiosInstanceJSON.post("/auth/login/challenge/" + publicKey, data);
+    return res;
+};
