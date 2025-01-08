@@ -1,43 +1,41 @@
 import * as bip39 from 'bip39';
 import { Buffer } from 'buffer';
+import forge from 'node-forge'
+// import primeWorker from './prime.worker.js';
 window.Buffer = Buffer;
 
-export async function createKeys() {
-    const keyPair = await crypto.subtle.generateKey(
-        {
-            name: "RSA-OAEP",
-            modulusLength: 4096,
-            publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
-            hash: { name: "SHA-256" },
-        },
-        true,
-        ["encrypt", "decrypt"]
-    );
+function generateKeys(prng) {
+    // https://github.com/digitalbazaar/forge/issues/959
+    // let keyPair = forge.pki.rsa.generateKeyPair({ bits: 2048, workers: 10, prng: prng }, async function callback(error, keyPair) {
+    //     const privateKeyPem = forge.pki.privateKeyToPem(keyPair.privateKey);
+    //     const publicKeyPem = forge.pki.publicKeyToPem(keyPair.publicKey);
+    //     console.log("Key Original:", privateKeyPem, publicKeyPem);
+    // });
 
-    const publicKey = await exportKeyToPEM(keyPair.publicKey, "spki");
-    const privateKey = await exportKeyToPEM(keyPair.privateKey, "pkcs8");
-
-    const encoder = new TextEncoder();
-    const privateKeyBuffer = encoder.encode(privateKey);
-    const hashBuffer = await crypto.subtle.digest("SHA-256", privateKeyBuffer);
-
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray.map((byte) => byte.toString(16).padStart(2, "0")).join("");
-
-    const mnemonic = bip39.entropyToMnemonic(hashHex);
-
-    return {
-        publicKey,
-        privateKey,
-        mnemonic,
-    };
+    let keyPair = forge.pki.rsa.generateKeyPair({ bits: 4096, workers: 10, prng: prng });
+    return { privateKey: forge.pki.privateKeyToPem(keyPair.privateKey), publicKey: forge.pki.publicKeyToPem(keyPair.publicKey) };
 }
 
-async function exportKeyToPEM(key, format) {
-    const exported = await crypto.subtle.exportKey(format, key);
-    const exportedAsString = String.fromCharCode(...new Uint8Array(exported));
-    const exportedAsBase64 = btoa(exportedAsString);
+export function createKeys(setSecrets) {
+    const randomSeed = forge.util.bytesToHex(forge.random.getBytesSync(32));
+    const prng = forge.random.createInstance();
+    prng.seedFileSync = () => forge.util.hexToBytes(randomSeed);
+    const { privateKey, publicKey } = generateKeys(prng);
+    setSecrets({ privateKey, publicKey, mnemonic: bip39.entropyToMnemonic(randomSeed) });
+}
 
-    const keyType = format === "spki" ? "PUBLIC" : "PRIVATE";
-    return `-----BEGIN ${keyType} KEY-----\n${exportedAsBase64.match(/.{1,64}/g).join("\n")}\n-----END ${keyType} KEY-----`;
+export function generateKeysFromSecrets(mnemonic, setSecrets) {
+    const joined_mnemonic = mnemonic.join(' ');
+    const prng = forge.random.createInstance();
+    prng.seedFileSync = () => forge.util.hexToBytes(bip39.mnemonicToEntropy(joined_mnemonic));
+    const { privateKey, publicKey } = generateKeys(prng);
+    setSecrets({ privateKey, publicKey, mnemonic: joined_mnemonic });
+}
+
+export function signMessage(message, privateKey) {
+    const privateKeyPem = forge.pki.privateKeyFromPem(privateKey);
+    let md = forge.md.sha1.create();
+    md.update(message, 'utf8');
+    let signature = privateKeyPem.sign(md);
+    return signature;
 }
