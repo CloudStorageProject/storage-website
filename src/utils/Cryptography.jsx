@@ -34,7 +34,7 @@ export function generateKeysFromSecrets(mnemonic, setSecrets) {
 
 export function signMessage(message, privateKey) {
     const privateKeyPem = forge.pki.privateKeyFromPem(privateKey);
-    let md = forge.md.sha1.create();
+    let md = forge.md.sha256.create();
     md.update(message, 'utf8');
     let signature = privateKeyPem.sign(md);
     return signature;
