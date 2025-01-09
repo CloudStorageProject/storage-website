@@ -1,36 +1,62 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import bgimg from '../img/greenBackroundLoginPage.jpg';
-import { generateKeysFromSecrets } from '../../utils/Cryptography';
+import { exportPrivateKeyToBase64, exportPublicKeyToBase64, generateKeysFromSecrets } from '../../utils/Cryptography';
 import { useAuth } from '../../hooks/AuthProvider';
 import './fulljoin.css'
 
 
-const RegistrationSecretPhrases = ({ userData, setUserData, goToLimitedLogin, secrets, setSecrets }) => {
-    const [inputPhrases, setInputPhrases] = useState(userData.secrets);
+const RegistrationSecretPhrases = ({ userData, setUserData, goToLimitedLogin, keyPair, setKeyPair, }) => {
     const auth = useAuth();
+
     // TODO: if private and public keys available show prompt to login
     const handleInputChange = (index, value) => {
-        const updatedPhrases = [...inputPhrases];
+        const updatedPhrases = [...userData.mnemonic];
         updatedPhrases[index] = value;
-        setInputPhrases(updatedPhrases);
-        setUserData({ ...userData, secrets: updatedPhrases });
+        setUserData({ ...userData, mnemonic: updatedPhrases });
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if (secrets.privateKey === null || secrets.publicKey === null) {
-            generateKeysFromSecrets(inputPhrases, setSecrets);
-        }
+
+    const performAuth = () => {
         try {
-            if (auth.fullLoginAction(userData, secrets)) {
+            if (auth.fullLoginAction(userData, keyPair)) {
                 // TODO: handle success
             } else {
                 // TODO: handle failure
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
             // TODO: handle error
         }
+    }
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (keyPair.privateKey === null || keyPair.publicKey === null) {
+            let valid_mnemonic = true;
+            for (let i = 0; i < userData.mnemonic.length; i++) {
+                if (!userData.mnemonic[i] || userData.mnemonic[i] === ' ') {
+                    valid_mnemonic = false;
+                    break;
+                }
+            }
+            if (!valid_mnemonic) {
+                // TODO: Display empty mnemonic
+                alert('Please enter the recovery phrases in the correct order.');
+            } else {
+                try {
+                    let keys = generateKeysFromSecrets(userData.mnemonic);
+                    setKeyPair(keys.keyPair);
+                    keyPair = keys.keyPair;
+                    performAuth();
+                } catch (err) {
+                    // TODO: Handle invalid mnemonic
+                    console.error(err);
+                }
+            }
+        } else {
+            performAuth();
+        }
+
     };
 
     return (
@@ -46,7 +72,7 @@ const RegistrationSecretPhrases = ({ userData, setUserData, goToLimitedLogin, se
                 <div className="recovery-phrase-container">
                     <form onSubmit={handleSubmit}>
                         <div className="recovery-phrase-inputs">
-                            {inputPhrases.map((phrase, index) => (
+                            {userData.mnemonic.map((phrase, index) => (
                                 <div key={index} className="recovery-phrase-input">
                                     <input
                                         type="text"

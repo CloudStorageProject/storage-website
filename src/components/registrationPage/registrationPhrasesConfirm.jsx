@@ -2,7 +2,7 @@ import bgimg from '../img/greenBackroundLoginPage.jpg'
 import { useState } from "react";
 import { useAuth } from "../../hooks/AuthProvider";
 
-const RegistrationPhrasesConfirm = ({ userData, secretPhrases, privateKey, publicKey, checkIndexes, randomizeIndexes, previousStage }) => {
+const RegistrationPhrasesConfirm = ({ userData, secretPhrases, keyPair, checkIndexes, randomizeIndexes, previousStage }) => {
     let [selectedPhrases, setSelectedPhrases] = useState({});
     let auth = useAuth();
     let handleSetSelectedPhrases = (e) => {
@@ -15,13 +15,11 @@ const RegistrationPhrasesConfirm = ({ userData, secretPhrases, privateKey, publi
             return;
             // TODO: handle phrase mismatch
         }
-        localStorage.setItem("privateKey", privateKey);
-        localStorage.setItem("publicKey", publicKey);
         const data = {
             email: userData.email,
             username: userData.username,
             password: userData.password,
-            publicKey: publicKey,
+            publicKey: keyPair.publicKey,
         }
 
         try {

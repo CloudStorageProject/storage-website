@@ -28,9 +28,8 @@ export default class RegistrationPage extends React.Component {
     }
 
     setSecrets(secrets) {
-        this.secrets.secretPhrases = secrets["mnemonic"].split(" ");
-        this.secrets.privateKey = secrets["privateKey"];
-        this.secrets.publicKey = secrets["publicKey"];
+        this.props.setKeyPair(secrets.keyPair);
+        this.secrets.mnemonic = secrets.mnemonic.split(" ");
     }
 
     reRandomizeCheckIndexes() {
@@ -57,8 +56,8 @@ export default class RegistrationPage extends React.Component {
     render() {
         return (
             (this.state.registrationStage === 0 && <RegistrationUserData userData={this.userData} setSecrets={this.setSecrets.bind(this)} setUserData={this.setUserData.bind(this)} nextStage={this.nextStage.bind(this)} />) ||
-            (this.state.registrationStage === 1 && <RegistrationSecretPhrases secretPhrases={this.secretPhrases} nextStage={this.nextStage.bind(this)} previousStage={this.previousStage.bind(this)} />) ||
-            (this.state.registrationStage === 2 && <RegistrationPhrasesConfirm userData={this.userData} secretPhrases={this.secrets.mnemonic} privateKey={this.privateKey} publicKey={this.publicKey} checkIndexes={this.checkIndexes} randomizeIndexes={this.reRandomizeCheckIndexes.bind(this)} previousStage={this.previousStage.bind(this)} />)
+            (this.state.registrationStage === 1 && <RegistrationSecretPhrases secretPhrases={this.secrets.mnemonic} nextStage={this.nextStage.bind(this)} previousStage={this.previousStage.bind(this)} />) ||
+            (this.state.registrationStage === 2 && <RegistrationPhrasesConfirm userData={this.userData} secretPhrases={this.secrets.mnemonic} keyPair={this.props.keyPair} checkIndexes={this.checkIndexes} randomizeIndexes={this.reRandomizeCheckIndexes.bind(this)} previousStage={this.previousStage.bind(this)} />)
         );
     }
 }

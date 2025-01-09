@@ -35,7 +35,7 @@ const RegistrationUserData = ({ userData, setSecrets, setUserData, nextStage }) 
     }, [formData, setUserData]);
 
     const handleNextStage = () => {
-        createKeys(setSecrets);
+        setSecrets(createKeys());
         nextStage();
     }
 
