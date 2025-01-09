@@ -1,6 +1,6 @@
 
 import { useContext, createContext, useState } from "react";
-import { signMessage } from "../utils/Cryptography";
+import { exportPrivateKeyToBase64, exportPublicKeyToBase64, signMessage } from "../utils/Cryptography";
 import { loginRequest, registerRequest, requestChallenge, submitChallenge } from "../api/authRequests";
 const AuthContext = createContext();
 
@@ -23,11 +23,11 @@ const AuthProvider = ({ children }) => {
         return false;
     };
 
-    const fullLoginAction = async (userData, secrets) => {
+    const fullLoginAction = async (userData, keyPair) => {
         try {
-            let signedMessage = signMessage(await requestChallenge(secrets.publicKey), localStorage.getItem("privateKey"));
+            let signedMessage = signMessage(await requestChallenge(keyPair.publicKey), keyPair.privateKey);
             const data = { username: userData.username, password: userData.password, signedMessage: signedMessage };
-            const response = await submitChallenge(localStorage.getItem("publicKey"), data);
+            const response = await submitChallenge(keyPair.publicKey, data);
             if (response.status === 200) {
                 setUser(response.data.username);
                 setToken(response.data.access_token);
@@ -36,6 +36,9 @@ const AuthProvider = ({ children }) => {
             }
         } catch (err) {
             console.error(err);
+        } finally {
+            localStorage.setItem("privateKey", exportPrivateKeyToBase64(keyPair.privateKey));
+            localStorage.setItem("publicKey", exportPublicKeyToBase64(keyPair.publicKey));
         }
         return false;
     };
