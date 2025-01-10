@@ -20,7 +20,6 @@ export const registerRequest = async (data) => {
 };
 
 export const requestChallenge = async (publicKey) => {
-    return { message: "This is some data" };
     const res = await axiosInstanceJSON.get("/auth/login/challenge/" + exportPublicKeyToBase64(publicKey));
     return res;
 };
