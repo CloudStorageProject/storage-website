@@ -16,8 +16,9 @@ code {
   --add-button-background: #2D62587A;
   --add-button-color: #FFFFFF;
   --default-box-shadow: 0px 1px 10px 0px #00000040;
-
-
+  --progress-color: #2D6258;
+  --menu-list-bg-button: #2D625878;
+  --menu-list-color: #000000;
 }
 
 .dark-mode {

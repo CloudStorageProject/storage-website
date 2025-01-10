@@ -5,15 +5,18 @@ import { ReactComponent as SettingsIcon } from "../../img/Settings.svg";
 import { ReactComponent as MyDiskIcon } from "../../img/MyDisk.svg";
 import { ReactComponent as OpenedToMyIcon } from "../../img/OpenedToMe.svg";
 import { ReactComponent as TrashIcon } from "../../img/Trash.svg";
+import { ReactComponent as ArrowIcon } from "../../img/Arrow.svg";  
 
 const Sidebar = ({ onSelectCategory }) => {
     const [activeCategory, setActiveCategory] = useState(() => {
         return localStorage.getItem("activeCategory") || "MyDisk";
     });
 
+    const [progress, setProgress] = useState(90); 
     const [isAddingFile, setIsAddingFile] = useState(false);
     const [isCreatingFolder, setIsCreatingFolder] = useState(false);
     const [folderName, setFolderName] = useState("");
+    const [isCollapsed, setIsCollapsed] = useState(false);
 
     useEffect(() => {
         localStorage.setItem("activeCategory", activeCategory);
@@ -46,8 +49,12 @@ const Sidebar = ({ onSelectCategory }) => {
         setIsCreatingFolder(false);
     };
 
+    const toggleCollapse = () => {
+        setIsCollapsed(!isCollapsed);
+    };
+
     return (
-        <div className="sidebar">
+        <div className={`sidebar ${isCollapsed ? "collapsed" : ""}`}>
             <div className="profile">
                 <div className="avatar"></div>
                 <p className="nickname">nickname</p>
@@ -63,7 +70,7 @@ const Sidebar = ({ onSelectCategory }) => {
                     <span>
                         <MyDiskIcon />
                     </span>{" "}
-                    My disk
+                    <span className="name">My disk</span>
                 </li>
                 <li
                     className={`menu-item ${activeCategory === "OpenedToMe" ? "active" : ""}`}
@@ -72,7 +79,7 @@ const Sidebar = ({ onSelectCategory }) => {
                     <span>
                         <OpenedToMyIcon />
                     </span>{" "}
-                    Opened to me
+                    <span className="name">Opened to me</span>
                 </li>
                 <li
                     className={`menu-item ${activeCategory === "Trash" ? "active" : ""}`}
@@ -81,7 +88,7 @@ const Sidebar = ({ onSelectCategory }) => {
                     <span>
                         <TrashIcon />
                     </span>{" "}
-                    Trash
+                    <span className="name">Trash</span>
                 </li>
                 <AddFileOptions
                     isAddingFile={isAddingFile}
@@ -95,10 +102,20 @@ const Sidebar = ({ onSelectCategory }) => {
             </ul>
             <div className="storage">
                 <p>Storage used</p>
-                <div className="progress-bar">
-                    <div className="progress"></div>
-                </div>
+                {!isCollapsed ? (
+                    <div className="progress-bar">
+                        <div className="progress" style={{ width: `${progress}%` }}></div>
+                    </div>
+                ) : (
+                    <div className="progress-circle" style={{ '--progress': progress }}>
+                        <div className="circle-overlay"></div>
+                        <span className="progress-text">{progress}%</span>
+                    </div>
+                )}
             </div>
+            <button className="collapse-btn" onClick={toggleCollapse}>
+                <ArrowIcon />
+            </button>
         </div>
     );
 };

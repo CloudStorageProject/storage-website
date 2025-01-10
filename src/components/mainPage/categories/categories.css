@@ -130,12 +130,14 @@
   }
   
   .file-header {
+    position: relative;
     display: flex;
     justify-content: space-between;
     width: 100%;
   }
   
   .menu-button {
+    position: relative;
     background: none;
     border: none;
     font-size: 20px;
@@ -161,5 +163,26 @@
     height: 50px;
     margin: 0;
   }
-  
-  
+
+
+.menu-list {
+  background: white;
+  padding: 10px;
+  box-shadow: var(--default-box-shadow);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;}
+
+.menu-list button {
+  font-size: 16px;
+  background-color: var(--menu-list-bg-button);
+  color: var(--menu-list-color);
+  padding: 8px 12px;
+  border: none;
+  width: 100%;
+  text-align: center;
+  box-sizing: border-box;
+}

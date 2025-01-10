@@ -14,6 +14,21 @@
     box-sizing: border-box; 
   }
   
+  .sidebar.collapsed {
+    width: 100px;
+  }
+  
+  .sidebar.collapsed .nickname,
+  .sidebar.collapsed .name, .sidebar.collapsed .settings-btn,
+  .sidebar.collapsed .addfile, .sidebar.collapsed .storage p
+   {
+    display: none;
+  }
+  
+  .sidebar.collapsed .menu-item {
+    justify-content: center; 
+  }
+
   .profile {
     display: flex;
     justify-content: center;
@@ -68,8 +83,39 @@
     font-weight: bold;
   }
   
+
   .menu-item span {
-    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    margin-right: auto;
+  }
+
+  .collapse-btn {
+    position: absolute;
+    top: 50%;
+    right: -15px; 
+    transform: translateY(-50%);
+    background-color: #fff;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    border-radius: 22px;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+    transition: background-color 0.3s;
+    transition: transform 0.3s ease;
+
+  }
+  
+  .collapse-btn:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .sidebar.collapsed .collapse-btn {
+    right: -15px;
+    transform: rotate(180deg);
+    transition: transform 0.3s ease;
   }
   
   .addfile {
@@ -150,7 +196,7 @@
   .progress-bar {
     width: 100%;
     height: 8px;
-    background-color: #f0f0f0;
+    background-color: #fff;
     border-radius: 5px;
     overflow: hidden;
     position: relative;
@@ -159,6 +205,41 @@
   .progress {
     width: 50%;
     height: 100%;
-    background-color: #5e9188;
+    background-color: var(--progress-color);
     border-radius: 5px;
   }
+
+  .progress-circle {
+    display: none; 
+}
+
+.sidebar.collapsed .progress-bar {
+    display: none; 
+}
+
+.sidebar.collapsed .progress-circle {
+    display: flex;
+    position: relative;
+    width: 60px; 
+    height: 60px;
+    border-radius: 50%;
+    background: conic-gradient(var(--progress-color) calc(var(--progress, 0) * 1%), #fff 0%);
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+}
+
+.sidebar.collapsed .circle-overlay {
+    position: absolute;
+    width: 50px; 
+    height: 50px;
+    border-radius: 50%;
+    background: #fff; 
+}
+
+.sidebar.collapsed .progress-text {
+    position: relative;
+    font-size: 18px;
+    font-weight: bold;
+    color: #555;
+}
