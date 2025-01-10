@@ -18,7 +18,7 @@ const RegistrationSecretPhrases = ({ userData, setUserData, goToLimitedLogin, ke
 
     const performAuth = () => {
         try {
-            if (auth.fullLoginAction(userData, keyPair)) {
+            if (auth.fullLoginAction(keyPair)) {
                 // TODO: handle success
             } else {
                 // TODO: handle failure

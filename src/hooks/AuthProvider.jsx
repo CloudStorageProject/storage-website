@@ -23,13 +23,15 @@ const AuthProvider = ({ children }) => {
         return false;
     };
 
-    const fullLoginAction = async (userData, keyPair) => {
+    const fullLoginAction = async (keyPair) => {
         try {
-            let signedMessage = signMessage(await requestChallenge(keyPair.publicKey), keyPair.privateKey);
-            const data = { username: userData.username, password: userData.password, signedMessage: signedMessage };
+            const message = await requestChallenge(keyPair.publicKey);
+            let signedMessage = Buffer.from(signMessage(message, keyPair.privateKey), "utf-8").toString("base64");
+            const data = { challenge: message, sign: signedMessage };
             const response = await submitChallenge(keyPair.publicKey, data);
             if (response.status === 200) {
                 setUser(response.data.username);
+                // TODO: get user from api endpoint /me
                 setToken(response.data.access_token);
                 document.cookie = `token=${response.data.access_token}; Secure;`;
                 return true;
