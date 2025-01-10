@@ -1,6 +1,7 @@
 import bgimg from '../img/greenBackroundLoginPage.jpg'
 import { useState } from "react";
 import { useAuth } from "../../hooks/AuthProvider";
+import { exportPublicKeyToBase64 } from '../../utils/Cryptography';
 
 const RegistrationPhrasesConfirm = ({ userData, secretPhrases, keyPair, checkIndexes, randomizeIndexes, previousStage }) => {
     let [selectedPhrases, setSelectedPhrases] = useState({});
@@ -19,7 +20,7 @@ const RegistrationPhrasesConfirm = ({ userData, secretPhrases, keyPair, checkInd
             email: userData.email,
             username: userData.username,
             password: userData.password,
-            publicKey: keyPair.publicKey,
+            publicKey: exportPublicKeyToBase64(keyPair.publicKey),
         }
 
         try {
