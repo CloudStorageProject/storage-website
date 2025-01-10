@@ -87,7 +87,6 @@
   }
   
   .section {
-    background: white;
     padding: 20px;
     border-radius: 8px;
   }
@@ -97,15 +96,16 @@
   }
   
   .items {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
+    display: grid;             
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 15px;                  
   }
+  
   
   .folder,
   .file {
-    width: 30%;
     display: flex;
+    background-color: var(--background-color);
     justify-content: center;
     flex-direction: column;
     padding: 10px;
@@ -143,19 +143,23 @@
   }
   
   .list .items {
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
   }
   
   .list .folder,
   .list .file {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
     width: 100%;
-    flex-direction: row;
-    justify-content: space-between;
   }
   
   .list .file img {
-    margin: 0;
     width: 50px;
     height: 50px;
+    margin: 0;
   }
+  
   

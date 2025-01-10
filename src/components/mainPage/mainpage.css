@@ -4,6 +4,10 @@
     overflow: hidden;
     padding-left: 290px; 
     box-sizing: border-box;
+    background-image: var(--background-image);
+    background-size: cover;
+    background-repeat: no-repeat; 
+    background-position: center
 }
 
 .sidebar {

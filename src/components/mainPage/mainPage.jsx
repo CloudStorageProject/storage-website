@@ -1,5 +1,5 @@
 import React from "react";
-import Sidebar from "./Sidebar";
+import Sidebar from "./components/Sidebar";
 import "./mainpage.css";
 
 import MyDisk from "./categories/MyDisk";
