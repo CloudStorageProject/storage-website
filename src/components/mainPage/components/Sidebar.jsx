@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "./sidebar.css";
 import AddFileOptions from "./AddFileOptions";
 import { ReactComponent as SettingsIcon } from "../../img/Settings.svg";
@@ -7,6 +7,7 @@ import { ReactComponent as OpenedToMyIcon } from "../../img/OpenedToMe.svg";
 import { ReactComponent as TrashIcon } from "../../img/Trash.svg";
 import { ReactComponent as ArrowIcon } from "../../img/Arrow.svg";
 import { ReactComponent as BackIcon } from "../../img/Backarrow.svg";
+import { ThemeContext } from "../../../hooks/ThemeContext";
 
 const Sidebar = ({ onSelectCategory }) => {
     const [activeCategory, setActiveCategory] = useState(() => {
@@ -19,6 +20,7 @@ const Sidebar = ({ onSelectCategory }) => {
     const [folderName, setFolderName] = useState("");
     const [isSettingsMode, setIsSettingsMode] = useState(false);
     const [isCollapsed, setIsCollapsed] = useState(false);
+    const { theme, toggleTheme } = useContext(ThemeContext);
 
     useEffect(() => {
         localStorage.setItem("activeCategory", activeCategory);
@@ -96,9 +98,16 @@ const Sidebar = ({ onSelectCategory }) => {
                     </ul>
                     <div className="storage">
                         <p>Storage used</p>
-                        <div className="progress-bar">
-                            <div className="progress" style={{ width: `${progress}%` }}></div>
-                        </div>
+                        {!isCollapsed ? (
+                    <div className="progress-bar">
+                        <div className="progress" style={{ width: `${progress}%` }}></div>
+                    </div>
+                ) : (
+                    <div className="progress-circle" style={{ '--progress': progress }}>
+                        <div className="circle-overlay"></div>
+                        <span className="progress-text">{progress}%</span>
+                    </div>
+                )}
                     </div>
                 </>
             ) : (
@@ -108,6 +117,7 @@ const Sidebar = ({ onSelectCategory }) => {
                         <li className="menu-item">Support</li>
                         <li className="menu-item">Language</li>
                         <li className="menu-item">Log out</li>
+                        <li className="menu-item" onClick={toggleTheme}>Change Theme</li>
                     </ul>
                 </div>
             )}
