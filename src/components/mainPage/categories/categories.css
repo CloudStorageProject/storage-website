@@ -186,3 +186,28 @@
   text-align: center;
   box-sizing: border-box;
 }
+
+/* MyDisk.css */ 
+
+.drag-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  border: 2px dashed #aaa;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  color: #555;
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.drag-bg {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  box-shadow: var(--default-box-shadow);
+  padding: 25px;
+}

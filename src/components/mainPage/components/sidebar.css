@@ -243,3 +243,34 @@
     font-weight: bold;
     color: #555;
 }
+
+.sidebar.settings-mode {
+  height: 40%;
+  min-height: 340px;
+}
+
+
+.settings .back-btn {
+  align-self: flex-start;
+  margin-bottom: 20px;
+}
+
+.settings .settings-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.settings-option {
+  width: 100%;
+  padding: 10px;
+  text-align: center;
+  background-color: #f0f0f0;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.settings-option:hover {
+  background-color: #e0e0e0;
+}
