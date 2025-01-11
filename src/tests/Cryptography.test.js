@@ -2,19 +2,18 @@
 import { Buffer } from 'buffer';
 import forge from 'node-forge'
 window.Buffer = Buffer;
-
 import { createKeys, decryptData, encryptData, generateKeysFromSecrets, signMessage, verifyMessage } from '../utils/Cryptography'
 
 
-const original = createKeys();
+const original = await createKeys().then((data) => data);
 console.log("Original privateKey:", original.keyPair.privateKey);
 console.log("Original publicKey:", original.keyPair.publicKey);
 console.log("Original mnemonic:", original.mnemonic);
 
-test('Test exporting and importing private key from mnemonic', () => {
+test('Test exporting and importing private key from mnemonic', async () => {
     const mnemonic = original.mnemonic;
 
-    const recreated = generateKeysFromSecrets(mnemonic.split(" "));
+    const recreated = await generateKeysFromSecrets(mnemonic.split(" ")).then((data) => data);
     console.log("Recreated privateKey:", recreated.keyPair.privateKey);
     console.log("Recreated publicKey:", recreated.keyPair.publicKey);
     console.log("Recreated mnemonic:", recreated.mnemonic);

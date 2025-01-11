@@ -35,8 +35,10 @@ const RegistrationUserData = ({ userData, setSecrets, setUserData, nextStage }) 
     }, [formData, setUserData]);
 
     const handleNextStage = () => {
-        setSecrets(createKeys());
-        nextStage();
+        createKeys().then((data) => {
+            setSecrets(data);
+            nextStage();
+        });
     }
 
     return (

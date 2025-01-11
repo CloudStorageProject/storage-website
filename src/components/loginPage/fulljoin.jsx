@@ -44,10 +44,11 @@ const RegistrationSecretPhrases = ({ userData, setUserData, goToLimitedLogin, ke
                 alert('Please enter the recovery phrases in the correct order.');
             } else {
                 try {
-                    let keys = generateKeysFromSecrets(userData.mnemonic);
-                    setKeyPair(keys.keyPair);
-                    keyPair = keys.keyPair;
-                    performAuth();
+                    generateKeysFromSecrets(userData.mnemonic).then(keys => {
+                        setKeyPair(keys.keyPair);
+                        keyPair = keys.keyPair;
+                        performAuth();
+                    });
                 } catch (err) {
                     // TODO: Handle invalid mnemonic
                     console.error(err);
@@ -56,7 +57,6 @@ const RegistrationSecretPhrases = ({ userData, setUserData, goToLimitedLogin, ke
         } else {
             performAuth();
         }
-
     };
 
     return (

@@ -1,24 +1,41 @@
 import * as bip39 from 'bip39';
 import { Buffer } from 'buffer';
 import forge from 'node-forge'
-window.Buffer = Buffer;
+import { GenerationState, GenerationType } from "./CryptoWorker/WorkerEnums";
 
-function generateKeys(prng) {
+window.Buffer = Buffer;
+const worker = new Worker(new URL('./CryptoWorker/KeyGenerator.worker.jsx', import.meta.url), { name: "KeyGenerator" });
+
+
+async function generateKeys(action, data, callback) {
     // https://github.com/digitalbazaar/forge/issues/959
     // let keyPair = forge.pki.rsa.generateKeyPair({ bits: 2048, workers: 10, prng: prng }, async function callback(error, keyPair) {
     //     const privateKeyPem = forge.pki.privateKeyToPem(keyPair.privateKey);
     //     const publicKeyPem = forge.pki.publicKeyToPem(keyPair.publicKey);
     //     console.log("Key Original:", privateKeyPem, publicKeyPem);
     // });
-    let keyPair = forge.pki.rsa.generateKeyPair({ bits: 4096, workers: 10, prng: prng });
-    return { privateKey: keyPair.privateKey, publicKey: keyPair.publicKey };
+
+    return new Promise((resolve, reject) => {
+        worker.postMessage({ action: action, data: data });
+        worker.onmessage = (event) => {
+            if (event.data.state === GenerationState.COMPLETE) {
+                resolve({ keys: generateKeysFromPem(event.data.keys.privateKey, event.data.keys.publicKey) });
+            } else {
+                console.log(event.data.state);
+            }
+        }
+    });
+
+    // let keyPair = forge.pki.rsa.generateKeyPair({ bits: 4096, workers: 10, prng: prng });
+    // return { privateKey: keyPair.privateKey, publicKey: keyPair.publicKey };
 }
 
-export function createKeys() {
+export async function createKeys() {
     const randomSeed = forge.util.bytesToHex(forge.random.getBytesSync(32));
-    const prng = forge.random.createInstance();
-    prng.seedFileSync = () => forge.util.hexToBytes(randomSeed);
-    return { keyPair: generateKeys(prng), mnemonic: bip39.entropyToMnemonic(randomSeed) };
+    let mnemonic = bip39.entropyToMnemonic(randomSeed);
+    return await generateKeys(GenerationType.FROM_HEX, { seedHex: mnemonic.split(" ") }).then((state) => {
+        return { keyPair: state.keys, mnemonic: mnemonic };
+    });
 }
 
 export function generateKeysFromPem(privateKeyPem, publicKeyPem) {
@@ -41,13 +58,12 @@ export function exportPrivateKeyToBase64(privateKey) {
     return Buffer.from(forge.pki.privateKeyToPem(privateKey), "utf-8").toString("base64");
 }
 
-export function generateKeysFromSecrets(mnemonic) {
-    const joined_mnemonic = mnemonic.join(' ');
-    const prng = forge.random.createInstance();
-    prng.seedFileSync = () => forge.util.hexToBytes(bip39.mnemonicToEntropy(joined_mnemonic));
-    let keyPair = generateKeys(prng);
-    return { keyPair, mnemonic: joined_mnemonic };
+export async function generateKeysFromSecrets(mnemonic) {
+    return await generateKeys(GenerationType.FROM_HEX, { seedHex: mnemonic }).then((state) => {
+        return { keyPair: state.keys, mnemonic: mnemonic };
+    });
 }
+
 export function signMessage(message, privateKey) {
     let md = forge.md.sha256.create();
 
