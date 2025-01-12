@@ -106,8 +106,13 @@
     padding: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     z-index: 10;
-    transition: background-color 0.3s;
     max-width: 60px;
+    transition: background-color 0.3s;
+    transition: transform 0.3s ease;
+}
+
+.sidebar.collapsed .collapse-btn-anim{
+    transition: background-color 0.3s;
     transition: transform 0.3s ease;
 }
 
@@ -115,7 +120,7 @@
     background-color: var(--button-hover);
 }
 
-.sidebar.collapsed .collapse-btn {
+.sidebar.collapsed .collapse-btn-anim  {
     transform: rotate(180deg);
     transition: transform 0.3s ease;
 }
