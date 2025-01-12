@@ -1,99 +1,102 @@
-  .sidebar {
-    position: fixed;
-    top: 20px;
-    left: 20px; 
-    bottom: 20px; 
-    width: 250px;
+.sidebar {
+    position: sticky;
+    left: 0;
+    top: 0;
+    transform: translate(20px, 20px);
+    height: calc(100vh - 40px);
+    width: calc(300px + 40px);
     background-color: var(--background-color);
-    border-radius: 15px; 
-    box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.1); 
+    border-radius: 15px;
+    box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     padding: 20px;
-    box-sizing: border-box; 
-  }
-  
-  .sidebar.collapsed {
-    width: 100px;
-  }
-  
-  .sidebar.collapsed .nickname,
-  .sidebar.collapsed .name, .sidebar.collapsed .settings-btn,
-  .sidebar.collapsed .addfile, .sidebar.collapsed .storage p
-   {
-    display: none;
-  }
-  
-  .sidebar.collapsed .menu-item {
-    justify-content: center; 
-  }
+    box-sizing: border-box;
+}
 
-  .profile {
+.sidebar.collapsed {
+    width: 100px;
+}
+
+.sidebar.collapsed .nickname,
+.sidebar.collapsed .name,
+.sidebar.collapsed .settings-btn,
+.sidebar.collapsed .addfile,
+.sidebar.collapsed .storage p {
+    display: none;
+}
+
+.sidebar.collapsed .menu-item {
+    justify-content: center;
+}
+
+.profile {
     display: flex;
     justify-content: center;
     align-items: center;
-  }
-  
-  .avatar {
+}
+
+.avatar {
     width: 60px;
     height: 60px;
     border-radius: 30%;
     background-color: #f0f0f0;
     margin: auto;
-  }
-  
-  
-  .nickname {
+}
+
+
+.nickname {
+    color: var(--text-color);
     font-size: 20px;
     margin: 10px;
-  }
-  
-  .settings-btn {
+}
+
+.settings-btn {
     background: none;
     border: none;
     font-size: 18px;
     cursor: pointer;
-  }
-  
-  .menu {
+}
+
+.menu {
     list-style: none;
     padding: 0;
     margin: 20px 0;
-  }
-  
-  .menu-item {
+}
+
+.menu-item {
     display: flex;
     align-items: center;
     padding: 10px;
     font-size: 20px;
-    margin:15px;
+    margin: 15px;
     color: var(--text-color);
     cursor: pointer;
-    border-radius: 10px; 
+    border-radius: 10px;
     transition: background 0.2s;
-  }
-  
-  .menu-item:hover {
+}
+
+.menu-item:hover {
     background-color: var(--button-hover);
-  }
-  
-  .menu-item.active {
+}
+
+.menu-item.active {
     background-color: var(--active-button);
     font-weight: bold;
-  }
-  
+}
 
-  .menu-item span {
+
+.menu-item span {
     display: flex;
     align-items: center;
     margin-right: auto;
-  }
+}
 
-  .collapse-btn {
-    position: absolute;
-    top: 50%;
-    right: -15px; 
+.collapse-btn {
+    position: relative;
+    bottom: 50%;
+    right: -100%;
     transform: translateY(-50%);
     background-color: var(--background-color);
     border: none;
@@ -104,21 +107,25 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     z-index: 10;
     transition: background-color 0.3s;
+    max-width: 60px;
     transition: transform 0.3s ease;
+}
 
-  }
-  
-  .collapse-btn:hover {
+.collapse-btn:hover {
     background-color: var(--button-hover);
-  }
-  
-  .sidebar.collapsed .collapse-btn {
-    right: -15px;
+}
+
+.sidebar.collapsed .collapse-btn {
     transform: rotate(180deg);
     transition: transform 0.3s ease;
-  }
-  
-  .addfile {
+}
+
+.folder-title,
+.file-title {
+    color: var(--text-color);
+}
+
+.addfile {
     border-radius: 22px;
     color: var(--text-color);
     box-shadow: var(--default-box-shadow);
@@ -128,25 +135,25 @@
     padding: 10px;
     font-size: 20px;
     cursor: pointer;
-  }
+}
 
-  .addfile:hover {
+.addfile:hover {
     background-color: var(--add-button-background);
     color: var(--add-button-color)
-  }
+}
 
-  .addfile-options {
+.addfile-options {
     gap: 8px;
     display: flex;
     justify-content: center;
     align-items: center;
-  }
+}
 
-  .addfile-options .addfile {
+.addfile-options .addfile {
     font-size: 15px;
-  }
+}
 
-  .create-folder-form {
+.create-folder-form {
     margin-top: 20px;
     padding: 10px;
     border-radius: 22px;
@@ -184,44 +191,44 @@
     background: #6e9294;
 }
 
-  .storage {
+.storage {
     margin-top: auto;
-  }
-  
-  .storage p {
+}
+
+.storage p {
     font-size: 14px;
     color: var(--text-color);
     margin-bottom: 5px;
-  }
-  
-  .progress-bar {
+}
+
+.progress-bar {
     width: 100%;
     height: 8px;
     background-color: var(--text-color);
     border-radius: 5px;
     overflow: hidden;
     position: relative;
-  }
-  
-  .progress {
+}
+
+.progress {
     width: 50%;
     height: 100%;
     background-color: var(--progress-color);
     border-radius: 5px;
-  }
+}
 
-  .progress-circle {
-    display: none; 
+.progress-circle {
+    display: none;
 }
 
 .sidebar.collapsed .progress-bar {
-    display: none; 
+    display: none;
 }
 
 .sidebar.collapsed .progress-circle {
     display: flex;
     position: relative;
-    width: 60px; 
+    width: 60px;
     height: 60px;
     border-radius: 50%;
     background: conic-gradient(var(--progress-color) calc(var(--progress, 0) * 1%), var(--background-color) 0%);
@@ -232,10 +239,10 @@
 
 .sidebar.collapsed .circle-overlay {
     position: absolute;
-    width: 50px; 
+    width: 50px;
     height: 50px;
     border-radius: 50%;
-    background: var(--background-color); 
+    background: var(--background-color);
 }
 
 .sidebar.collapsed .progress-text {
@@ -246,32 +253,32 @@
 }
 
 .sidebar.settings-mode {
-  height: 40%;
-  min-height: 410px;
+    height: 40%;
+    min-height: 410px;
 }
 
 
 .settings .back-btn {
-  align-self: flex-start;
-  margin-bottom: 20px;
+    align-self: flex-start;
+    margin-bottom: 20px;
 }
 
 .settings .settings-options {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .settings-option {
-  width: 100%;
-  padding: 10px;
-  text-align: center;
-  background-color: var(--background-color);
-  border: none;
-  cursor: pointer;
-  transition: background 0.3s;
+    width: 100%;
+    padding: 10px;
+    text-align: center;
+    background-color: var(--background-color);
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s;
 }
 
 .settings-option:hover {
-  background-color: var(--button-hover)
+    background-color: var(--button-hover)
 }

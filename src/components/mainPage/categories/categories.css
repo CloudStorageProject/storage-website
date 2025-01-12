@@ -1,159 +1,167 @@
   .search {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-content: stretch;
-    justify-content: center;
-    padding: 20px;
-    gap: 8px;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-content: stretch;
+      justify-content: center;
+      padding: 20px;
+      gap: 8px;
   }
-  
-  .search input  {
-    border: 1px solid #ccc; 
-    background-color: var(--background-color);
-    border-radius: 22px;
-    padding: 10px; 
-    width: 70%; 
-    box-sizing: border-box;
-    font-size: 1.75rem;
-    color: var(--text-color);
-    outline: none;
-    transition: border-color 0.3s ease;
-    box-shadow: var(--default-box-shadow);
-}
 
-.search button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 1px solid #ccc; 
-    border-radius: 22px;
-    box-shadow: var(--default-box-shadow); 
-    background-color: var(--background-color);
-    cursor: pointer; 
-}
+  .search input {
+      border: 1px solid #ccc;
+      background-color: var(--background-color);
+      border-radius: 22px;
+      padding: 10px;
+      width: 70%;
+      box-sizing: border-box;
+      font-size: 1.75rem;
+      color: var(--text-color);
+      outline: none;
+      transition: border-color 0.3s ease;
+      box-shadow: var(--default-box-shadow);
+  }
 
-.view-toggle-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 20px 0; 
-}
+  .search button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 1px solid #ccc;
+      border-radius: 22px;
+      box-shadow: var(--default-box-shadow);
+      background-color: var(--background-color);
+      cursor: pointer;
+  }
 
-.view-toggle {
-  display: flex;
-  align-items: center;
-  position: relative;
-  width: 120px;
-  height: 40px;
-  background-color: var(--background-color);
-  border-radius: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-}
+  .view-toggle-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 20px 0;
+  }
 
-.view-toggle .slider {
-  position: absolute;
-  top: 4px;
-  left: 4px;
-  width: calc(50% - 8px);
-  height: calc(100% - 8px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-  border-radius: 16px;
-  transition: left 0.3s ease;
-}
+  .view-toggle {
+      display: flex;
+      align-items: center;
+      position: relative;
+      width: 120px;
+      height: 40px;
+      background-color: var(--background-color);
+      border-radius: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+  }
 
-.view-toggle button {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: none;
-  background: none;
-  cursor: pointer;
-  z-index: 1;
-}
+  .view-toggle .slider {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: calc(50% - 8px);
+      height: calc(100% - 8px);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      border-radius: 16px;
+      transition: left 0.3s ease;
+  }
 
-.view-toggle button.active {
-  color: #4caf50;
-}
+  .view-toggle button {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: none;
+      background: none;
+      cursor: pointer;
+      z-index: 1;
+  }
 
-.view-toggle button svg {
-  width: 20px;
-  height: 20px;
-}
+  .view-toggle button.active {
+      color: #4caf50;
+  }
 
-  
+  .view-toggle button svg {
+      width: 20px;
+      height: 20px;
+  }
+
+
   .content {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
   }
-  
+
   .section {
-    padding: 20px;
-    border-radius: 8px;
+      padding: 20px;
+      border-radius: 8px;
   }
-  
+
   .section h2 {
-    margin-bottom: 15px;
-}
+      margin-bottom: 15px;
+  }
 
-.items {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
-}
+  .items {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+  }
 
-.list .items {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 15px;
-}
+  .list .items {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 15px;
+  }
 
-.menu-list {
-  background: var(--background-color);
-  padding: 10px;
-  box-shadow: var(--default-box-shadow);
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;}
+  .menu-list {
+      background: var(--background-color);
+      padding: 10px;
+      box-shadow: var(--default-box-shadow);
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+  }
 
-.menu-list button {
-  font-size: 16px;
-  background-color: var(--menu-list-bg-button);
-  color: var(--menu-list-color);
-  padding: 8px 12px;
-  border: none;
-  width: 100%;
-  text-align: center;
-  box-sizing: border-box;
-}
+  .menu-list button {
+      font-size: 16px;
+      background-color: var(--menu-list-bg-button);
+      color: var(--menu-list-color);
+      padding: 8px 12px;
+      border: none;
+      width: 100%;
+      text-align: center;
+      box-sizing: border-box;
+  }
 
-/* MyDisk.css */ 
+  /* MyDisk.css */
 
-.drag-placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 200px;
-  border: 2px dashed #aaa;
-  border-radius: 8px;
-  background-color: var(--background-color);
-  color: #555;
-  font-size: 1.2rem;
-  text-align: center;
-}
+  .drag-placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 200px;
+      border: 2px dashed #aaa;
+      border-radius: 8px;
+      background-color: var(--background-color);
+      color: #555;
+      font-size: 1.2rem;
+      text-align: center;
+  }
 
-.drag-bg {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  width: 100%;
-  box-shadow: var(--default-box-shadow);
-  padding: 25px;
-}
+  .drag-bg {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      width: 100%;
+      box-shadow: var(--default-box-shadow);
+      padding: 25px;
+  }
+
+  .content-conteiner {
+      overflow-x: hidden;
+      overflow-y: auto;
+      width: 100%;
+      padding: 50px;
+  }
