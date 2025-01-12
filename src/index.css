@@ -22,6 +22,7 @@ code {
   --text-color: #333;
   --button-hover: #f0f0f0;
   --active-button: #d0e7e6;
+  --invert-ammount: 0;
 }
 
 .dark {
@@ -37,5 +38,5 @@ code {
   --progress-color: #fff;
   --menu-list-bg-button: #2D625878;
   --menu-list-color: #000000;
-  ;
+  --invert-ammount: 1;
 }
