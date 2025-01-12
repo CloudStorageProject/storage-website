@@ -37,7 +37,7 @@ export default class MainPage extends React.Component {
         return (
             <div className="main-page">
                 <Sidebar onSelectCategory={(category) => this.changeCategory(category)} />
-                <div className="content">{this.renderContent()}</div>
+                {this.renderContent()}
             </div>
         );
     }
