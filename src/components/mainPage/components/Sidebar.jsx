@@ -47,7 +47,7 @@ const Sidebar = ({ onSelectCategory }) => {
                 <div className="avatar"></div>
                 <p className="nickname">nickname</p>
                 <button className="settings-btn" onClick={toggleSettingsMode}>
-                    {isSettingsMode ? <BackIcon /> : <SettingsIcon />}
+                    {isSettingsMode ? <BackIcon /> : <SettingsIcon style={{ filter: "invert(0)" }} />}
                 </button>
             </div>
 
