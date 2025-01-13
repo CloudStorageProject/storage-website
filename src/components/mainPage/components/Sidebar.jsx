@@ -124,7 +124,7 @@ const Sidebar = ({ onSelectCategory }) => {
 
             {!isSettingsMode && (
                 <button className="collapse-btn" onClick={toggleCollapse}>
-                    <ArrowIcon />
+                    <ArrowIcon className="collapse-btn-anim" />
                 </button>
             )}
         </div>

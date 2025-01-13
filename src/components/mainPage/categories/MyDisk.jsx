@@ -1,35 +1,21 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import SearchBar from "./SearchBar";
 import "./categories.css";
 import { ReactComponent as GalleryIcon } from "../../img/Gallery.svg";
 import { ReactComponent as ListIcon } from "../../img/List.svg";
-import { ReactComponent as FolderIcon } from "../../img/Folder.svg";
-import { ReactComponent as MoreIcon } from "../../img/More.svg";
 import { ReactComponent as DragIcon } from "../../img/drag.svg";
-
-
+import ViewMode from "../ViewModeEnum.js";
+import FileGrid from "../elements/FileGrid.jsx";
+import FileList from "../elements/FileList.jsx";
+import FileControl from "../elements/FileControl.jsx";
+import Folder from "../elements/Folder.jsx";
 
 const MyDisk = () => {
-  const [viewMode, setViewMode] = useState("gallery"); // 'list' or 'gallery'
+  const [viewMode, setViewMode] = useState(ViewMode.GALLERY); // 'list' or 'gallery'
   const [searchQuery, setSearchQuery] = useState("");
   const [dragActive, setDragActive] = useState(false);
   const [activeMenu, setActiveMenu] = useState(null);
   const menuPosition = useRef({ top: 0, left: 0 });
-  
-  
-
-  const handleMenuToggle = (id, event) => {
-    if (activeMenu === id) {
-      setActiveMenu(null); 
-    } else {
-      const rect = event.target.getBoundingClientRect();
-      menuPosition.current = {
-        top: rect.bottom + window.scrollY,
-        left: rect.left + window.scrollX,
-      };
-      setActiveMenu(id); 
-    }
-  };
 
   const folders = [
     { id: "folder-1", name: "Folder 1" },
@@ -43,6 +29,11 @@ const MyDisk = () => {
       name: "File 1",
       image:
         "https://img.freepik.com/free-photo/digital-art-moon-tree-wallpaper_23-2150918811.jpg",
+    },
+    {
+      id: "file-2",
+      name: "File 2",
+      image: "https://i.ebayimg.com/images/g/n8IAAOSwltRkNCSF/s-l1200.png",
     },
   ];
 
@@ -72,9 +63,38 @@ const MyDisk = () => {
     setDragActive(false);
   };
 
+  const handleMenuToggle = (id, event) => {
+    if (activeMenu === id) {
+      setActiveMenu(null);
+    } else {
+      const rect = event.target.getBoundingClientRect();
+      menuPosition.current = {
+        top: rect.bottom + window.scrollY,
+        left: rect.left + window.scrollX,
+      };
+      setActiveMenu(id);
+    }
+  };
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 768) {
+        setViewMode(ViewMode.LIST);
+      } else {
+        setViewMode(ViewMode.GALLERY);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    handleResize();
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   return (
     <div
-      className="app"
+      className="content-conteiner"
       onDragEnter={handleDrag}
       onDragOver={handleDrag}
       onDragLeave={handleDrag}
@@ -89,18 +109,18 @@ const MyDisk = () => {
           <div
             className="slider"
             style={{
-              left: viewMode === "list" ? "4px" : "calc(50% + 4px)",
+              left: viewMode === ViewMode.LIST ? "4px" : "calc(50% + 4px)",
             }}
           />
           <button
-            onClick={() => setViewMode("list")}
-            className={viewMode === "list" ? "active" : ""}
+            onClick={() => setViewMode(ViewMode.LIST)}
+            className={viewMode === ViewMode.LIST ? "active" : ""}
           >
             <ListIcon />
           </button>
           <button
-            onClick={() => setViewMode("gallery")}
-            className={viewMode === "gallery" ? "active" : ""}
+            onClick={() => setViewMode(ViewMode.GALLERY)}
+            className={viewMode === ViewMode.GALLERY ? "active" : ""}
           >
             <GalleryIcon />
           </button>
@@ -111,41 +131,50 @@ const MyDisk = () => {
         {dragActive ? (
           <div className="drag-overlay">
             <div className="drag-bg">
-              <DragIcon/>
+              <DragIcon />
+              <p>Drop your files here</p>
             </div>
           </div>
         ) : (
           <>
             <div className="section">
-              <h2>Folders</h2>
+              <h2 className="folder-title">Folders</h2>
               <div className="items">
                 {filteredFolders.map((folder) => (
-                  <div key={folder.id} className="folder">
-                    <span className="info">
-                      <FolderIcon />
-                      {folder.name}
-                    </span>
-                  </div>
+                  <Folder key={folder.id} folder={folder} viewMode={viewMode} />
                 ))}
               </div>
             </div>
             <div className="section">
-              <h2>Files</h2>
+              <h2 className="file-title">Files</h2>
               <div className="items">
-                {filteredFiles.map((file) => (
-                  <div key={file.id} className="file">
-                    <div className="file-header">
-                      <span>{file.name}</span>
-                      <button
-                                        className="menu-button"
-                                        onClick={(e) => handleMenuToggle(file.id, e)}
-                                      >
-                                        <MoreIcon />
-                                      </button>
-                    </div>
-                    <img src={file.image} alt={file.name} />
-                  </div>
-                ))}
+                {filteredFiles.map((file) => {
+                  if (viewMode === ViewMode.LIST) {
+                    return (
+                      <FileList
+                        key={file.id}
+                        file={file}
+                        handleMenuToggle={(e) => handleMenuToggle(file.id, e)}
+                        menuPosition={menuPosition}
+                      />
+                    );
+                  } else {
+                    return (
+                      <FileGrid
+                        key={file.id}
+                        file={file}
+                        handleMenuToggle={(e) => handleMenuToggle(file.id, e)}
+                        menuPosition={menuPosition}
+                      />
+                    );
+                  }
+                })}
+                {activeMenu && (
+                  <FileControl
+                    menuPosition={menuPosition}
+                    activeMenu={activeMenu}
+                  />
+                )}
               </div>
             </div>
           </>

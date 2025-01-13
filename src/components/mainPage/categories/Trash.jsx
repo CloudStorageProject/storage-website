@@ -2,7 +2,7 @@ import React from "react";
 
 const Trash = () => {
     return (
-        <div>
+        <div className="content-conteiner">
             <h1>Trash</h1>
         </div>
     );
