@@ -1,14 +1,14 @@
 
 import { useContext, createContext, useState } from "react";
-
-import { loginRequest, registerRequest } from "../api/authRequests";
+import { exportPrivateKeyToBase64, exportPublicKeyToBase64, signMessage } from "../utils/Cryptography";
+import { loginRequest, registerRequest, requestChallenge, submitChallenge } from "../api/authRequests";
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(document.cookie.split("=")[1] || "");
 
-    const loginAction = async (data) => {
+    const partialLoginAction = async (data) => {
         try {
             const response = await loginRequest(data);
             if (response.status === 200) {
@@ -19,6 +19,28 @@ const AuthProvider = ({ children }) => {
             }
         } catch (err) {
             console.error(err);
+        }
+        return false;
+    };
+
+    const fullLoginAction = async (keyPair) => {
+        try {
+            const message = await requestChallenge(keyPair.publicKey);
+            let signedMessage = Buffer.from(signMessage(message, keyPair.privateKey), "utf-8").toString("base64");
+            const data = { challenge: message, sign: signedMessage };
+            const response = await submitChallenge(keyPair.publicKey, data);
+            if (response.status === 200) {
+                setUser(response.data.username);
+                // TODO: get user from api endpoint /me
+                setToken(response.data.access_token);
+                document.cookie = `token=${response.data.access_token}; Secure;`;
+                return true;
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            localStorage.setItem("privateKey", exportPrivateKeyToBase64(keyPair.privateKey));
+            localStorage.setItem("publicKey", exportPublicKeyToBase64(keyPair.publicKey));
         }
         return false;
     };
@@ -46,7 +68,7 @@ const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ token, user, loginAction, registerAction, logOut }}>
+        <AuthContext.Provider value={{ token, user, partialLoginAction, fullLoginAction, registerAction, logOut }}>
             {children}
         </AuthContext.Provider>
     );
