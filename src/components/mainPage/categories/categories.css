@@ -137,31 +137,42 @@
   /* MyDisk.css */
 
   .drag-placeholder {
-      display: flex;
-      align-items: center;
-      justify-content: center;
       height: 200px;
-      border: 2px dashed #aaa;
+      border: var(--dropzone-border);
       border-radius: 8px;
-      background-color: var(--background-color);
+      background-color: var(--dropzone-bg);
+      box-shadow: var(--dropzone-drop-shadow);
       color: #555;
       font-size: 1.2rem;
       text-align: center;
-  }
-
-  .drag-bg {
+      width: 50%;
+      height: 50%;
+      position: relative;
+      left: 25%;
+      top: 15%;
       display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-content: center;
       justify-content: center;
       align-items: center;
-      height: 100%;
-      width: 100%;
-      box-shadow: var(--default-box-shadow);
-      padding: 25px;
   }
 
-  .content-conteiner {
+
+
+  .drag-bg {
+      height: inherit;
+      width: inherit;
+  }
+
+  .drag-bg * {
+      width: 100%;
+      height: 100%;
+  }
+
+  .content-container {
       overflow-x: hidden;
       overflow-y: auto;
       width: 100%;
-      padding: 50px;
+      margin: 50px;
   }

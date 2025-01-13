@@ -1,42 +1,48 @@
 body {
-  margin: 0;
-  font-family: 'Source Sans 3', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    margin: 0;
+    font-family: 'Source Sans 3', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+        monospace;
 }
 
 :root {
-  --background-image: url(./components//img/white_bg.png);
-  --background-color: #FFFFFF;
-  --add-button-background: #2D62587A;
-  --add-button-color: #FFFFFF;
-  --default-box-shadow: 0px 1px 10px 0px #00000040;
-  --progress-color: #2D6258;
-  --menu-list-bg-button: #2D625878;
-  --menu-list-color: #000000;
-  --text-color: #333;
-  --button-hover: #f0f0f0;
-  --active-button: #d0e7e6;
-  --invert-ammount: 0;
+    --background-image: url(./components//img/white_bg.png);
+    --background-color: #FFFFFF;
+    --dropzone-bg: rgba(255, 255, 255, 0.3);
+    --dropzone-border: 2px solid #aaa;
+    --dropzone-drop-shadow: inset 0px 0px 20px 20px rgb(0 0 0 / 10%);
+    --add-button-background: #2D62587A;
+    --add-button-color: #FFFFFF;
+    --default-box-shadow: 0px 1px 10px 0px #00000040;
+    --progress-color: #2D6258;
+    --menu-list-bg-button: #2D625878;
+    --menu-list-color: #000000;
+    --text-color: #333;
+    --button-hover: #f0f0f0;
+    --active-button: #d0e7e6;
+    --invert-ammount: 0;
 }
 
 .dark {
-  --background-image: url(./components//img/black_bg.png);
-  --background-color: #262626;
-  --text-color: #FFF;
-  --button-hover: #303030;
-  --active-button: #474747;
-  --add-button-background: #fff;
-  --add-button-color: #2D62587A;;
-  --default-box-shadow: 0px 1px 10px 0px;
-  --default-box-shadow: 0px 0px 0px 0px;
-  --progress-color: #fff;
-  --menu-list-bg-button: #2D625878;
-  --menu-list-color: #000000;
-  --invert-ammount: 1;
+    --background-image: url(./components//img/black_bg.png);
+    --background-color: #262626;
+    --dropzone-bg: var(--background-color);
+    --dropzone-border: none;
+    --dropzone-drop-shadow: none;
+    --text-color: #FFF;
+    --button-hover: #303030;
+    --active-button: #474747;
+    --add-button-background: #fff;
+    --add-button-color: #2D62587A;
+    --default-box-shadow: 0px 1px 10px 0px;
+    --default-box-shadow: 0px 0px 0px 0px;
+    --progress-color: #fff;
+    --menu-list-bg-button: #2D625878;
+    --menu-list-color: #000000;
+    --invert-ammount: 1;
 }
