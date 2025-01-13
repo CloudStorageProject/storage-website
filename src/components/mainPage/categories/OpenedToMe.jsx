@@ -91,7 +91,7 @@ const OpenedToMe = () => {
     );
 
     return (
-        <div className="content-conteiner" onScroll={handleScroll}>
+        <div className="content-container" onScroll={handleScroll}>
             <header>
                 <SearchBar onSearch={handleSearch} />
             </header>
