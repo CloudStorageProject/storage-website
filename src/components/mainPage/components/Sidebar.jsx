@@ -9,11 +9,7 @@ import { ReactComponent as ArrowIcon } from "../../img/Arrow.svg";
 import { ReactComponent as BackIcon } from "../../img/Backarrow.svg";
 import { ThemeContext } from "../../../hooks/ThemeContext";
 
-const Sidebar = ({ onSelectCategory }) => {
-    const [activeCategory, setActiveCategory] = useState(() => {
-        return localStorage.getItem("activeCategory") || "MyDisk";
-    });
-
+const Sidebar = ({ onSelectCategory, activeCategory }) => {
     const [progress, setProgress] = useState(90);
     const [isAddingFile, setIsAddingFile] = useState(false);
     const [isCreatingFolder, setIsCreatingFolder] = useState(false);
@@ -22,12 +18,8 @@ const Sidebar = ({ onSelectCategory }) => {
     const [isCollapsed, setIsCollapsed] = useState(false);
     const { theme, toggleTheme } = useContext(ThemeContext);
 
-    useEffect(() => {
-        localStorage.setItem("activeCategory", activeCategory);
-    }, [activeCategory]);
 
     const handleCategoryClick = (category) => {
-        setActiveCategory(category);
         setIsAddingFile(false);
         setIsCreatingFolder(false);
         onSelectCategory(category);
@@ -99,15 +91,15 @@ const Sidebar = ({ onSelectCategory }) => {
                     <div className="storage">
                         <p>Storage used</p>
                         {!isCollapsed ? (
-                    <div className="progress-bar">
-                        <div className="progress" style={{ width: `${progress}%` }}></div>
-                    </div>
-                ) : (
-                    <div className="progress-circle" style={{ '--progress': progress }}>
-                        <div className="circle-overlay"></div>
-                        <span className="progress-text">{progress}%</span>
-                    </div>
-                )}
+                            <div className="progress-bar">
+                                <div className="progress" style={{ width: `${progress}%` }}></div>
+                            </div>
+                        ) : (
+                            <div className="progress-circle" style={{ '--progress': progress }}>
+                                <div className="circle-overlay"></div>
+                                <span className="progress-text">{progress}%</span>
+                            </div>
+                        )}
                     </div>
                 </>
             ) : (

@@ -10,14 +10,14 @@ export default class MainPage extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = { 
-            selectedCategory: localStorage.getItem("selectedCategory") || "MyDisk" 
+        this.state = {
+            selectedCategory: localStorage.getItem("selectedCategory") || "MyDisk"
         };
     }
 
     changeCategory(category) {
         this.setState({ selectedCategory: category });
-        localStorage.setItem("selectedCategory", category); 
+        localStorage.setItem("selectedCategory", category);
     }
 
     renderContent() {
@@ -36,7 +36,7 @@ export default class MainPage extends React.Component {
     render() {
         return (
             <div className="main-page">
-                <Sidebar onSelectCategory={(category) => this.changeCategory(category)} />
+                <Sidebar onSelectCategory={(category) => this.changeCategory(category)} activeCategory={this.state.selectedCategory} />
                 {this.renderContent()}
             </div>
         );
