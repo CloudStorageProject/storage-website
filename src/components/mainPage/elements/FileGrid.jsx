@@ -1,11 +1,11 @@
 import "./elements.css";
 import { ReactComponent as MoreIcon } from "../../img/More.svg";
 
-const FileGrid = ({ file, handleMenuToggle }) => {
+const FileGrid = ({ file }) => {
     return (<div key={file.id} id={file.id} className="file-grid">
         <div className="file-header">
             <span>{file.name}</span>
-            <button className="menu-button" id={`menu-button-` + file.id} onClick={(e) => handleMenuToggle(file.id, e)}>
+            <button className="menu-button" id={`menu-button-` + file.id} >
                 <MoreIcon style={{ pointerEvents: "none" }} />
             </button>
         </div>

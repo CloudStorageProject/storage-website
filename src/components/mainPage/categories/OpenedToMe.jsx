@@ -9,6 +9,8 @@ import FileList from "../elements/FileList.jsx";
 import FileControl from "../elements/FileControl.jsx";
 import Folder from "../elements/Folder.jsx";
 
+
+let lastOpen = "";
 const OpenedToMe = () => {
     const [viewMode, setViewMode] = useState(ViewMode.GALLERY); // 'list' or 'gallery'
     const [searchQuery, setSearchQuery] = useState("");
@@ -57,17 +59,21 @@ const OpenedToMe = () => {
     }, []);
     const handleScroll = () => {
         setActiveMenu(null);
+        lastOpen = '';
     }
 
     const handleMenuToggle = (event) => {
         const id = event.target.id;
         if (!id.includes('menu-button')) {
             setActiveMenu(null);
+            lastOpen = '';
             return;
         }
         const target = files.find(file => file.id === id.replace('menu-button-', ''));
-        if (!target) {
+
+        if (!target || target.id == lastOpen) {
             setActiveMenu(null);
+            lastOpen = '';
         } else {
             const rect = event.target.getBoundingClientRect();
             menuPosition.current = {
@@ -75,6 +81,7 @@ const OpenedToMe = () => {
                 left: rect.left + window.scrollX,
             };
             setActiveMenu(target.id);
+            lastOpen = target.id;
         }
     };
 
@@ -119,9 +126,9 @@ const OpenedToMe = () => {
                     <div className="items">
                         {filteredFiles.map((file) => {
                             if (viewMode === ViewMode.LIST) {
-                                return <FileList key={file.id} file={file} handleMenuToggle={() => { }} menuPosition={menuPosition} />;
+                                return <FileList key={file.id} file={file} menuPosition={menuPosition} />;
                             } else {
-                                return <FileGrid key={file.id} file={file} handleMenuToggle={() => { }} menuPosition={menuPosition} />;
+                                return <FileGrid key={file.id} file={file} menuPosition={menuPosition} />;
                             }
                         })}
                         {activeMenu && <FileControl menuPosition={menuPosition} activeMenu={activeMenu} />}
