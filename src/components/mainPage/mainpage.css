@@ -1,0 +1,21 @@
+.main-page {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    box-sizing: border-box;
+    background-image: var(--background-image);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+svg {
+    filter: invert(var(--invert-ammount));
+}
+
+.content {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+    box-sizing: border-box;
+}

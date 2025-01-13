@@ -1,6 +1,6 @@
-import RegistrationUserData from "./registrationUserData";
-import RegistrationSecretPhrases from "./registrationSecretPhrases";
-import RegistrationPhrasesConfirm from "./registrationPhrasesConfirm";
+import RegistrationUserData from "./registrationUserData.js";
+import RegistrationSecretPhrases from "./registrationSecretPhrases.jsx";
+import RegistrationPhrasesConfirm from "./registrationPhrasesConfirm.jsx";
 import React from 'react';
 import "./registrationPage.css"
 
