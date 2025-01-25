@@ -20,12 +20,13 @@ const RegistrationPhrasesConfirm = ({ userData, secretPhrases, keyPair, checkInd
             email: userData.email,
             username: userData.username,
             password: userData.password,
-            publicKey: exportPublicKeyToBase64(keyPair.publicKey),
-        }
+            keyPair: keyPair
+        };
 
         try {
             if (auth.registerAction(data)) {
                 // TODO: handle success
+                document.location.href = "/main";
             } else {
                 // TODO: handle failure
             }

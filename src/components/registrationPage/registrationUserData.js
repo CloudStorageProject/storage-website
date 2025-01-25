@@ -8,14 +8,27 @@ const RegistrationUserData = ({ userData, setSecrets, setUserData, nextStage }) 
     let [formData, setFormData] = useState(userData);
     let [canProceed, setCanProceed] = useState(false);
     const userNameRegex = /^[a-zA-Z0-9]+$/
+    const emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/
 
     const checkUserData = (data) => {
-        if (!userNameRegex.test(data.username)) {
+        if (!emailRegex.test(data.email)) {
+            return false;
+            // TODO: Handle email error
+        } else if (!userNameRegex.test(data.username)) {
             return false;
             // TODO: Handle username error
         } else if (data.password.length < 8 || data.password.length > 128) {
             return false;
             // TODO: Handle password error
+        } else if (!/[A-Z]/.test(data.password)) {
+            return false;
+            // TODO: Handle password Uppercase error
+        } else if (!/[a-z]/.test(data.password)) {
+            return false;
+            // TODO: Handle password Lowercase error
+        } else if (!/[0-9]/.test(data.password)) {
+            return false;
+            // TODO: Handle password Number error
         } else if (data.password !== data.confirmPassword) {
             return false;
             // TODO: Handle password mismatch
@@ -34,8 +47,13 @@ const RegistrationUserData = ({ userData, setSecrets, setUserData, nextStage }) 
         setCanProceed(checkUserData(formData));
     }, [formData, setUserData]);
 
-    const handleNextStage = () => {
+    const handleNextStage = (e) => {
+        e.preventDefault();
+        console.log("handle next stage");
+
         createKeys().then((data) => {
+            console.log("created keys");
+
             setSecrets(data);
             nextStage();
         });
@@ -53,7 +71,7 @@ const RegistrationUserData = ({ userData, setSecrets, setUserData, nextStage }) 
                     <input type="password" placeholder="Password" className="login-input" name="password" onChange={handleChange} />
                     <input type="password" placeholder="Confirm Password" className="login-input" name="confirmPassword" onChange={handleChange} />
                     {/* TODO: add button state based on user data and readiness of secrets */}
-                    <button type="submit" className="login-button" disabled={!canProceed} onClick={handleNextStage}>
+                    <button type="submit" className="login-button" disabled={!canProceed} onClick={(e) => { handleNextStage(e) }}>
                         Create account
                     </button>
                     <p className="signup-link">

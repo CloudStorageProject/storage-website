@@ -5,7 +5,7 @@ import { useAuth } from '../../hooks/AuthProvider';
 import './fulljoin.css'
 
 
-const RegistrationSecretPhrases = ({ userData, setUserData, goToLimitedLogin, keyPair, setKeyPair, }) => {
+const RegistrationSecretPhrases = ({ userData, canProceed, setUserData, goToLimitedLogin, keyPair, setKeyPair, }) => {
     const auth = useAuth();
 
     // TODO: if private and public keys available show prompt to login
@@ -20,6 +20,7 @@ const RegistrationSecretPhrases = ({ userData, setUserData, goToLimitedLogin, ke
         try {
             if (auth.fullLoginAction(keyPair)) {
                 // TODO: handle success
+                document.location.href = "/main";
             } else {
                 // TODO: handle failure
             }
@@ -89,7 +90,7 @@ const RegistrationSecretPhrases = ({ userData, setUserData, goToLimitedLogin, ke
                 </div>
                 <div className="recovery-phrase-controls">
                     <button type="button" onClick={goToLimitedLogin}>BACK</button>
-                    <button type="submit" onClick={handleSubmit}>CONTINUE</button>
+                    <button type="submit" disabled={!canProceed} onClick={handleSubmit}>CONTINUE</button>
                 </div>
             </div>
             <div className="img-wrap-bottom-right">

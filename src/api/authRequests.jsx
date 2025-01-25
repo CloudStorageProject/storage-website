@@ -3,19 +3,13 @@ import { exportPublicKeyToBase64 } from "../utils/Cryptography";
 
 export const loginRequest = async (data) => {
     let user_data = { username: data.username, password: data.password };
-    const res = await axiosInstanceJSON.post("/login", user_data);
+    const res = await axiosInstanceJSON.post("/auth/login", user_data);
     return res;
 };
 
 
 export const registerRequest = async (data) => {
-    let user_data = {
-        username: data.username,
-        email: data.email,
-        password: data.password,
-        publicKey: data.publicKey
-    }
-    const res = await axiosInstanceJSON.post("/register", user_data);
+    const res = await axiosInstanceJSON.post("/auth/register", data);
     return res;
 };
 

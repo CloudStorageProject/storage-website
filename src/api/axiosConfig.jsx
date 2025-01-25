@@ -3,7 +3,7 @@ import axios from "axios";
 const AxiosInstance = ({ content_type }) => {
 
     const instance = axios.create({
-        baseURL: "http://127.0.0.1:8000", // TODO: Specify base URL
+        baseURL: "http://207.154.248.36:8888",
         headers: {
             "Content-Type": content_type,
         },
