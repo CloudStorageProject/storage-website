@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import bgimg from '../img/greenBackroundLoginPage.jpg';
-import { exportPrivateKeyToBase64, exportPublicKeyToBase64, generateKeysFromSecrets } from '../../utils/Cryptography';
+import { generateKeysFromSecrets } from '../../utils/Cryptography';
 import { useAuth } from '../../hooks/AuthProvider';
 import './fulljoin.css'
 

@@ -39,7 +39,7 @@ const RegistrationUserData = ({ userData, setSecrets, setUserData, nextStage }) 
     const handleChange = (e) => {
         e.preventDefault();
         setFormData(formData => ({ ...formData, [e.target.name]: e.target.value }));
-        checkUserData(formData);
+
     };
 
     useEffect(() => {
