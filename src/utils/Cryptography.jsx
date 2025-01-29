@@ -3,7 +3,11 @@ import { Buffer } from 'buffer';
 import forge from 'node-forge'
 import { GenerationState, GenerationType } from "./CryptoWorker/WorkerEnums";
 
-window.Buffer = Buffer;
+try {
+    window.Buffer = Buffer;
+} catch (error) {
+    // console.error("Probably in worker: ", error);
+}
 const worker = new Worker(new URL('./CryptoWorker/KeyGenerator.worker.jsx', import.meta.url), { name: "KeyGenerator" });
 
 
@@ -50,6 +54,14 @@ export function generateKeysFromPemBuffer(privateKeyPem, publicKeyPem) {
     return { privateKey, publicKey };
 }
 
+export function exportPublicKeyFromPem(publicKeyPem) {
+    return forge.pki.publicKeyFromPem(Buffer.from(publicKeyPem, "base64").toString("utf-8"));
+}
+
+export function exportPrivateKeyFromPem(privateKeyPem) {
+    return forge.pki.privateKeyFromPem(Buffer.from(privateKeyPem, "base64").toString("utf-8"));
+}
+
 export function exportPublicKeyToBase64(publicKey) {
     return Buffer.from(forge.pki.publicKeyToPem(publicKey), "utf-8").toString("base64");
 }
@@ -66,22 +78,33 @@ export async function generateKeysFromSecrets(mnemonic) {
 
 export function signMessage(message, privateKey) {
     let md = forge.md.sha256.create();
-
     md.update(message, 'utf8');
     return privateKey.sign(md);
 }
 
 export function verifyMessage(message, signature, publicKey) {
     let md = forge.md.sha256.create();
-
     md.update(message, 'utf8');
     return publicKey.verify(md.digest().bytes(), signature);
 }
 
 export function encryptData(data, publicKey) {
-    return publicKey.encrypt(data);
+    const AES_KEY = forge.random.getBytesSync(32);
+    const AES_IV = forge.random.getBytesSync(16);
+    var cipher = forge.cipher.createCipher('AES-CBC', AES_KEY);
+    cipher.start({ iv: AES_IV });
+    cipher.update(forge.util.createBuffer(data));
+    cipher.finish();
+    // console.log(encrypted.toHex());
+    return { data: Buffer.from(cipher.output.toHex(), "hex").toString("base64"), iv: Buffer.from(publicKey.encrypt(AES_IV), "utf-8").toString("base64"), key: Buffer.from(publicKey.encrypt(AES_KEY), "utf-8").toString("base64") };
 }
 
-export function decryptData(data, privateKey) {
-    return privateKey.decrypt(data);
+export function decryptData(data, privateKey, { iv, key }) {
+    const AES_KEY = privateKey.decrypt(Buffer.from(key, "base64"));
+    const AES_IV = privateKey.decrypt(Buffer.from(iv, "base64"));
+    var cipher = forge.cipher.createDecipher('AES-CBC', AES_KEY);
+    cipher.start({ iv: AES_IV });
+    cipher.update(forge.util.createBuffer(Buffer.from(data, "base64")));
+    cipher.finish();
+    return cipher.output.toUtf8();
 }
