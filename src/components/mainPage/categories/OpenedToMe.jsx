@@ -11,33 +11,12 @@ import Folder from "../elements/Folder.jsx";
 
 
 let lastOpen = "";
-const OpenedToMe = () => {
+const OpenedToMe = ({ folders = [], files = [], error = null }) => {
     const [viewMode, setViewMode] = useState(ViewMode.GALLERY); // 'list' or 'gallery'
     const [searchQuery, setSearchQuery] = useState("");
     const [activeMenu, setActiveMenu] = useState(null);
     const menuPosition = useRef({ top: 0, left: 0 });
 
-    const folders = [
-        { id: "folder-1", name: "Folder 1" },
-        { id: "folder-2", name: "Folder 2" },
-        { id: "folder-3", name: "Folder 3" },
-    ];
-
-    const files = [
-        {
-            id: "file-1",
-            name: "File 1",
-            image:
-                "https://img.freepik.com/free-photo/digital-art-moon-tree-wallpaper_23-2150918811.jpg",
-        },
-        {
-            id: "file-2",
-            name: "File 2",
-            image:
-                "https://i.ebayimg.com/images/g/n8IAAOSwltRkNCSF/s-l1200.png",
-        },
-
-    ];
 
     useEffect(() => {
         const handleResize = () => {
