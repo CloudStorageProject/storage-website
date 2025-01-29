@@ -1,70 +1,63 @@
 import { createFolderRequest, createRootFolderRequest, deleteFolderRequest, getFolderRequest, getFoldersRequest, renameFolderRequest } from '../api/FolderRequests';
 
-const renameFolder = async (id, data) => {
-    try {
-        if (renameFolderRequest(id, data)) {
-            // TODO: show success message
-        } else {
-            // TODO: show error message
-        }
-
-    } catch (error) {
-        console.error("Error renaming folder:", error);
-    }
+export const renameFolder = async (id, data) => {
+    renameFolderRequest(id, data).then((response) => {
+        return { response: response.data, error: null };
+    }).catch((error) => {
+        return { response: null, error: error };
+    });
 }
 
-const deleteFolder = async (id) => {
-    try {
-        if (deleteFolderRequest(id)) {
-            // TODO: show success message
-        } else {
-            // TODO: show error message
-        }
-    } catch (error) {
-        console.error("Error deleting folder:", error);
-    }
+export const deleteFolder = async (id) => {
+    deleteFolderRequest(id).then((response) => {
+        return { response: response.data, error: null };
+    }).catch((error) => {
+        return { response: null, error: error };
+    });
 }
 
-const createFolder = async (data) => {
-    try {
-        if (createFolderRequest(data)) {
-            // TODO: show success message
-        } else {
-            // TODO: show error message
-        }
-    } catch (error) {
-        console.error("Error creating folder:", error);
-    }
+export const createFolder = async (data) => {
+    createFolderRequest(data).then((response) => {
+        return { response: response.data, error: null };
+    }).catch((error) => {
+        return { response: null, error: error };
+    });
 }
 
-const createRootFolder = async () => {
-    try {
-        if (createRootFolderRequest()) {
-            // TODO: show success message
-        } else {
-            // TODO: show error message
-        }
-    } catch (error) {
-        console.error("Error creating root folder:", error);
-    }
+/**
+ * Creates folder in root folder
+ * 
+ * @param {string} name
+ * @returns `[data, error]` or `[null, error]`
+ * 
+ */
+export const createRootFolder = async (name) => {
+    createRootFolderRequest(name).then((response) => {
+        return { response: response.data, error: null };
+    }).catch((error) => {
+        return { response: null, error: error };
+    });
 }
 
-const getFolder = async (id) => {
-    try {
-        const folder = await getFolderRequest(id);
-        return folder;
-    } catch (error) {
-        console.error("Error getting folder:", error);
-    }
+export const getFolder = async (id) => {
+    getFolderRequest(id).then((response) => {
+        return { response: response.data, error: null };
+    }).catch((error) => {
+        return { response: null, error: error };
+    });
 }
 
-const getFolders = async () => {
-    try {
-        const folders = await getFoldersRequest();
-        return folders;
-    } catch (error) {
-        console.error("Error getting folders:", error);
-    }
+/**
+ * Returns files and folders from root folder
+ * 
+ * @returns ` { response: response.data, error: null }` or `[null, error]`
+ */
+export const getFolders = async () => {
+    getFoldersRequest().then((response) => {
+        return { response: response.data, error: null };
+    }).catch((error) => {
+        return { response: null, error: error };
+    });
 }
 
-export default { renameFolder, deleteFolder, createFolder, createRootFolder, getFolder, getFolders, };
+// export default { renameFolder, deleteFolder, createFolder, createRootFolder, getFolder, getFolders, };
