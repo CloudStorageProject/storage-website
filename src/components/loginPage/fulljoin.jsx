@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import bgimg from '../img/greenBackroundLoginPage.jpg';
 import { generateKeysFromSecrets } from '../../utils/Cryptography';
 import { useAuth } from '../../hooks/AuthProvider';
 import './fulljoin.css'
+import { useNavigate } from 'react-router-dom';
 
 
-const RegistrationSecretPhrases = ({ userData, canProceed, setUserData, goToLimitedLogin, keyPair, setKeyPair, }) => {
+const RegistrationSecretPhrases = ({ userData, canProceed, setUserData, goToLimitedLogin, }) => {
     const auth = useAuth();
+    const navigate = useNavigate();
 
     // TODO: if private and public keys available show prompt to login
     const handleInputChange = (index, value) => {
@@ -16,23 +18,28 @@ const RegistrationSecretPhrases = ({ userData, canProceed, setUserData, goToLimi
     };
 
 
+    useEffect(() => {
+        if (auth.keyPair.privateKey !== null || auth.keyPair.publicKey !== null) {
+            performAuth();
+        }
+    }, [auth.keyPair]);
+
     const performAuth = () => {
-        try {
-            if (auth.fullLoginAction(keyPair)) {
-                // TODO: handle success
-                document.location.href = "/main";
+        auth.fullLoginAction(auth.keyPair).then((res) => {
+            if (res) {
+                navigate("/storage");
             } else {
                 // TODO: handle failure
             }
-        } catch (error) {
-            console.error(error);
+        }).catch((error) => {
+            console.log(error);
             // TODO: handle error
-        }
+        });
     }
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (keyPair.privateKey === null || keyPair.publicKey === null) {
+        if (auth.keyPair.privateKey === null || auth.keyPair.publicKey === null) {
             let valid_mnemonic = true;
             for (let i = 0; i < userData.mnemonic.length; i++) {
                 if (!userData.mnemonic[i] || userData.mnemonic[i] === ' ') {
@@ -46,9 +53,7 @@ const RegistrationSecretPhrases = ({ userData, canProceed, setUserData, goToLimi
             } else {
                 try {
                     generateKeysFromSecrets(userData.mnemonic).then(keys => {
-                        setKeyPair(keys.keyPair);
-                        keyPair = keys.keyPair;
-                        performAuth();
+                        auth.setKeyPair(keys.keyPair);
                     });
                 } catch (err) {
                     // TODO: Handle invalid mnemonic

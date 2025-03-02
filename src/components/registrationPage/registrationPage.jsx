@@ -30,7 +30,6 @@ export default class RegistrationPage extends React.Component {
     setSecrets(secrets) {
         this.secrets.privateKey = secrets.keyPair.privateKey;
         this.secrets.publicKey = secrets.keyPair.publicKey;
-        this.props.setKeyPair(secrets.keyPair);
         this.secrets.mnemonic = secrets.mnemonic.split(" ");
     }
 

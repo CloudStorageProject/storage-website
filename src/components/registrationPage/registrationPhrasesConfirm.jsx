@@ -1,6 +1,7 @@
 import bgimg from '../img/greenBackroundLoginPage.jpg'
 import { useState } from "react";
 import { useAuth } from "../../hooks/AuthProvider";
+import { useNavigate } from 'react-router-dom';
 
 const RegistrationPhrasesConfirm = ({ userData, secretPhrases, keyPair, checkIndexes, randomizeIndexes, previousStage }) => {
     let [selectedPhrases, setSelectedPhrases] = useState({});
@@ -8,6 +9,7 @@ const RegistrationPhrasesConfirm = ({ userData, secretPhrases, keyPair, checkInd
     let handleSetSelectedPhrases = (e) => {
         setSelectedPhrases({ ...selectedPhrases, [e.target.name]: e.target.value });
     }
+    const navigate = useNavigate();
 
     let handleSubmit = async (e) => {
         e.preventDefault();
@@ -22,17 +24,24 @@ const RegistrationPhrasesConfirm = ({ userData, secretPhrases, keyPair, checkInd
             keyPair: keyPair
         };
 
-        try {
-            if (auth.registerAction(data)) {
-                // TODO: handle success
-                document.location.href = "/main";
+        auth.registerAction(data).then((res) => {
+            if (res) {
+                auth.fullLoginAction(keyPair).then((res) => {
+                    if (res) {
+                        navigate("/storage");
+                    } else {
+                        // TODO: handle failure
+                    }
+                }).catch((error) => {
+                    console.log(error);
+                });
             } else {
                 // TODO: handle failure
             }
-        } catch (error) {
+        }).catch((error) => {
             console.log(error);
             // TODO: handle error
-        }
+        });
     }
     return (<div className="recovery-phrase-main-container">
         <div className="img-wrap-top-right">

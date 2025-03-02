@@ -58,7 +58,7 @@ export default class ResetPasswordManager extends React.Component {
         return (
             (this.state.stage === 0 && <LoginPage canProceed={this.canProceed} userData={this.userData} setUserData={this.setUserData.bind(this)} goToFullLogin={this.goToFullJoin.bind(this)} />)
             ||
-            (this.state.stage === 1 && <FullJoin canProceed={this.canProceed} userData={this.userData} setUserData={this.setUserData.bind(this)} goToLimitedLogin={this.goToLogin.bind(this)} keyPair={this.props.keyPair} setKeyPair={this.props.setKeyPair} />)
+            (this.state.stage === 1 && <FullJoin canProceed={this.canProceed} userData={this.userData} setUserData={this.setUserData.bind(this)} goToLimitedLogin={this.goToLogin.bind(this)} />)
         );
     }
 }

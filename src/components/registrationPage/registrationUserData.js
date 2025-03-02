@@ -3,13 +3,14 @@ import "./registrationUserData.js"
 import { useState } from "react";
 import bgimg from '../img/greenBackroundLoginPage.jpg'
 import { createKeys } from '../../utils/Cryptography.jsx';
+import { useAuth } from "../../hooks/AuthProvider.jsx";
 
 const RegistrationUserData = ({ userData, setSecrets, setUserData, nextStage }) => {
     let [formData, setFormData] = useState(userData);
     let [canProceed, setCanProceed] = useState(false);
     const userNameRegex = /^[a-zA-Z0-9]+$/
     const emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/
-
+    const auth = useAuth();
     const checkUserData = (data) => {
         if (!emailRegex.test(data.email)) {
             return false;
@@ -49,12 +50,9 @@ const RegistrationUserData = ({ userData, setSecrets, setUserData, nextStage }) 
 
     const handleNextStage = (e) => {
         e.preventDefault();
-        console.log("handle next stage");
-
         createKeys().then((data) => {
-            console.log("created keys");
-
             setSecrets(data);
+            auth.setKeyPair(data.keyPair);
             nextStage();
         });
     }

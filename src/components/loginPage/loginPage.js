@@ -1,14 +1,17 @@
 // src/components/LoginPage.js
-import React from "react";
+import React, { useEffect } from "react";
 import "./loginPage.css"
 import { useState } from "react";
 import { useAuth } from "../../hooks/AuthProvider";
 import bgimg from '../img/greenBackroundLoginPage.jpg'
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const LoginPage = ({ userData, canProceed, setUserData, goToFullLogin }) => {
     const [formData, setFormData] = useState(userData);
     const auth = useAuth();
+    const navigate = useNavigate();
+
+
 
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -17,17 +20,16 @@ const LoginPage = ({ userData, canProceed, setUserData, goToFullLogin }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        try {
-            if (auth.partialLoginAction(formData)) {
-                // TODO: handle success
-                document.location.href = "/main";
+        auth.partialLoginAction(formData).then((res) => {
+            if (res) {
+                navigate("/storage");
             } else {
                 // TODO: handle failure
             }
-        } catch (error) {
+        }).catch((error) => {
             console.log(error);
             // TODO: handle error
-        }
+        });
     };
 
     return (
