@@ -7,7 +7,7 @@ import { axiosInstanceJSON } from "./axiosConfig";
  * @returns File id
  */
 export const uploadFileRequest = async (file_data) => {
-    const res = await axiosInstanceJSON.post("/files/upload", file_data);
+    const res = await axiosInstanceJSON.post("/files/", file_data);
     return res;
 }
 
@@ -22,7 +22,7 @@ export const getFileRequest = async (id) => {
 }
 
 export const getFileParamsRequest = async (id) => {
-    const res = await axiosInstanceJSON.get("/files/params" + id);
+    const res = await axiosInstanceJSON.get("/files/" + id + "/params");
     return res;
 }
 
@@ -38,7 +38,7 @@ export const renameFileRequest = async (id, data) => {
 }
 
 export const deleteFileRequest = async (id) => {
-    const res = await axiosInstanceJSON.delete("/files/delete/" + id);
+    const res = await axiosInstanceJSON.delete("/files/" + id);
     return res;
 }
 //#endregion Files
