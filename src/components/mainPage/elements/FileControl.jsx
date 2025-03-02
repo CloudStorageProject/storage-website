@@ -1,23 +1,26 @@
-import { deleteFile, renameFile } from "../../../service/FileService";
+import { useAuth } from "../../../hooks/AuthProvider.jsx";
+import { deleteFile, downloadFile, } from "../../../service/FileService.jsx";
 
-const FileControl = ({ menuPosition, downloadFile, file }) => {
-    const handleDelete = (file) => {
-        // TODO: Handle delete
-        deleteFile(file.id);
+const FileControl = ({ menuPosition, setSelectedFile, file }) => {
+    const auth = useAuth();
+
+    const handleDelete = async (file) => {
+        await deleteFile(file.file_id);
+        setSelectedFile(null);
+        auth.setPageState({ ...auth.pageState, toUpdate: !auth.pageState.toUpdate });
     }
+
     const handleRename = (file) => {
         // TODO: Implement rename input window
-        renameFile(file.id, "newName");
+        // renameFile(file.file_id, "newName");
     }
 
     return (
         < div id="menu-list" className="menu-list" style={{ top: menuPosition.current.top, left: menuPosition.current.left, position: "absolute", zIndex: 1000, }}>
-            <button>Open</button>
-            <button onClick={handleDelete(file)}>Delete</button>
-            <button onClick={handleRename(file)}>Rename</button>
+            <button onClick={() => { handleDelete(file); setSelectedFile(null); }}>Delete</button>
+            <button onClick={() => { handleRename(file); setSelectedFile(null); }}>Rename</button>
             <button>Share</button>
-            <button>Duplicate</button>
-            <button onClick={downloadFile(file)}>Download</button>
+            <button onClick={() => { downloadFile(file, auth.keyPair.privateKey); setSelectedFile(null); }}>Download</button>
         </div >
     );
 }

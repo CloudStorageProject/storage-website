@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useContext } from "react";
 import "./sidebar.css";
 import AddFileOptions from "./AddFileOptions";
 import { ReactComponent as SettingsIcon } from "../../img/Settings.svg";
@@ -8,8 +8,12 @@ import { ReactComponent as TrashIcon } from "../../img/Trash.svg";
 import { ReactComponent as ArrowIcon } from "../../img/Arrow.svg";
 import { ReactComponent as BackIcon } from "../../img/Backarrow.svg";
 import { ThemeContext } from "../../../hooks/ThemeContext";
+import { useAuth } from "../../../hooks/AuthProvider";
+import { createFolder } from "../../../service/FolderService";
+import { uploadFile } from "../../../service/FileService";
 
 const Sidebar = ({ onSelectCategory, activeCategory }) => {
+    const auth = useAuth();
     const [progress, setProgress] = useState(90);
     const [isAddingFile, setIsAddingFile] = useState(false);
     const [isCreatingFolder, setIsCreatingFolder] = useState(false);
@@ -33,11 +37,31 @@ const Sidebar = ({ onSelectCategory, activeCategory }) => {
         setIsCollapsed(!isCollapsed);
     };
 
+    const handleLogOut = () => {
+        auth.logOut();
+    }
+
+    const isUploadingFile = () => {
+        setIsAddingFile(true);
+        setIsCreatingFolder(false);
+    }
+    const handleUploadFile = () => {
+        var input = document.createElement('input');
+        input.type = 'file';
+        input.onchange = async function () {
+            for (const file of input.files) {
+                await uploadFile(file, auth);
+            }
+            auth.setPageState({ ...auth.pageState, toUpdate: !auth.pageState.toUpdate });
+        }
+        input.click();
+    };
+
     return (
         <div className={`sidebar ${isCollapsed ? "collapsed" : ""} ${isSettingsMode ? "settings-mode" : ""}`}>
             <div className="profile">
                 <div className="avatar"></div>
-                <p className="nickname">nickname</p>
+                <p className="nickname">{auth.user.username}</p>
                 <button className="settings-btn" onClick={toggleSettingsMode}>
                     {isSettingsMode ? <BackIcon /> : <SettingsIcon style={{ filter: "invert(0)" }} />}
                 </button>
@@ -75,16 +99,23 @@ const Sidebar = ({ onSelectCategory, activeCategory }) => {
                         </li>
                         <AddFileOptions
                             isAddingFile={isAddingFile}
-                            onAddFileClick={() => setIsAddingFile(true)}
+                            onAddFileClick={() => handleUploadFile()}
+                            isUploadingFile={isUploadingFile}
                             onCreateFolderClick={() => setIsCreatingFolder(true)}
                             isCreatingFolder={isCreatingFolder}
                             folderName={folderName}
                             onFolderNameChange={(e) => setFolderName(e.target.value)}
                             onFolderSubmit={(e) => {
                                 e.preventDefault();
-                                console.log("Folder created:", folderName);
-                                setFolderName("");
-                                setIsCreatingFolder(false);
+                                createFolder({ id: auth.pageState.currentFolder, name: folderName }).then((response) => {
+                                    const { data, error } = response;
+                                    if (error) {
+                                        return console.log(error);
+                                    }
+                                    setIsCreatingFolder(false);
+                                    setFolderName("");
+                                    auth.pageState.toUpdate = !auth.pageState.toUpdate;
+                                });
                             }}
                         />
                     </ul>
@@ -108,7 +139,7 @@ const Sidebar = ({ onSelectCategory, activeCategory }) => {
                         <li className="menu-item">Profile settings</li>
                         <li className="menu-item">Support</li>
                         <li className="menu-item">Language</li>
-                        <li className="menu-item">Log out</li>
+                        <li className="menu-item" onClick={handleLogOut}>Log out</li>
                         <li className="menu-item" onClick={toggleTheme}>Change Theme</li>
                     </ul>
                 </div>
