@@ -32,7 +32,7 @@ if ('function' === typeof importScripts) {
         switch (event.data.action) {
             case GenerationType.FROM_HEX: {
                 const prng = forge.random.createInstance();
-                prng.seedFileSync = () => forge.util.hexToBytes(event.data.data.seedHex.join(" "));
+                prng.seedFileSync = () => forge.util.hexToBytes(event.data.data.seedHex);
                 generateKeys(prng);
                 break;
             }

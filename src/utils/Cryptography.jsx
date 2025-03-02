@@ -37,7 +37,7 @@ async function generateKeys(action, data, callback) {
 export async function createKeys() {
     const randomSeed = forge.util.bytesToHex(forge.random.getBytesSync(32));
     let mnemonic = bip39.entropyToMnemonic(randomSeed);
-    return await generateKeys(GenerationType.FROM_HEX, { seedHex: mnemonic.split(" ") }).then((state) => {
+    return await generateKeys(GenerationType.FROM_HEX, { seedHex: mnemonic }).then((state) => {
         return { keyPair: state.keys, mnemonic: mnemonic };
     });
 }
@@ -71,6 +71,11 @@ export function exportPrivateKeyToBase64(privateKey) {
 }
 
 export async function generateKeysFromSecrets(mnemonic) {
+    if (!Array.isArray(mnemonic) && typeof mnemonic !== "string") {
+        return null;
+    } else if (typeof mnemonic !== "string") {
+        mnemonic = mnemonic.join(" ");
+    }
     return await generateKeys(GenerationType.FROM_HEX, { seedHex: mnemonic }).then((state) => {
         return { keyPair: state.keys, mnemonic: mnemonic };
     });
