@@ -46,3 +46,9 @@ code {
     --menu-list-color: #000000;
     --invert-ammount: 1;
 }
+
+* {
+    user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+}
