@@ -19,7 +19,7 @@ const AddFileOptions = ({ isAddingFile, onAddFileClick, isUploadingFile, onCreat
                     <label>
                         <input type="text" value={folderName} onChange={onFolderNameChange} placeholder="Folder Name" />
                     </label>
-                    <button type="submit" className="create-folder-btn"> Create Folder</button>
+                    <button onClick={onFolderSubmit} className="create-folder-btn">Create Folder</button>
                 </form>
             )}
         </>

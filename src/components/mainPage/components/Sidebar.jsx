@@ -57,6 +57,23 @@ const Sidebar = ({ onSelectCategory, activeCategory }) => {
         input.click();
     };
 
+    const handleFolderSubmit = async (event) => {
+        event.preventDefault();
+
+        if (auth.user.fullAccess === false) {
+            return;
+        }
+        createFolder({ id: auth.pageState.currentFolder, name: folderName }).then((response) => {
+            const { data, error } = response;
+            if (error) {
+                return console.log(error);
+            }
+
+            setIsCreatingFolder(false);
+            setFolderName("");
+            auth.setPageState({ ...auth.pageState, toUpdate: !auth.pageState.toUpdate });
+        });
+    }
     return (
         <div className={`sidebar ${isCollapsed ? "collapsed" : ""} ${isSettingsMode ? "settings-mode" : ""}`}>
             <div className="profile">
@@ -70,54 +87,25 @@ const Sidebar = ({ onSelectCategory, activeCategory }) => {
             {!isSettingsMode ? (
                 <>
                     <ul className="menu">
-                        <li
-                            className={`menu-item ${activeCategory === "MyDisk" ? "active" : ""}`}
-                            onClick={() => handleCategoryClick("MyDisk")}
-                        >
+                        <li className={`menu-item ${activeCategory === "MyDisk" ? "active" : ""}`} onClick={() => handleCategoryClick("MyDisk")}>
                             <span>
                                 <MyDiskIcon />
                             </span>
                             <span className="name">My disk</span>
                         </li>
-                        <li
-                            className={`menu-item ${activeCategory === "OpenedToMe" ? "active" : ""}`}
-                            onClick={() => handleCategoryClick("OpenedToMe")}
-                        >
+                        <li className={`menu-item ${activeCategory === "OpenedToMe" ? "active" : ""}`} onClick={() => handleCategoryClick("OpenedToMe")}>
                             <span>
                                 <OpenedToMyIcon />
                             </span>
                             <span className="name">Opened to me</span>
                         </li>
-                        <li
-                            className={`menu-item ${activeCategory === "Trash" ? "active" : ""}`}
-                            onClick={() => handleCategoryClick("Trash")}
-                        >
+                        <li className={`menu-item ${activeCategory === "Trash" ? "active" : ""}`} onClick={() => handleCategoryClick("Trash")}>
                             <span>
                                 <TrashIcon />
                             </span>
                             <span className="name">Trash</span>
                         </li>
-                        <AddFileOptions
-                            isAddingFile={isAddingFile}
-                            onAddFileClick={() => handleUploadFile()}
-                            isUploadingFile={isUploadingFile}
-                            onCreateFolderClick={() => setIsCreatingFolder(true)}
-                            isCreatingFolder={isCreatingFolder}
-                            folderName={folderName}
-                            onFolderNameChange={(e) => setFolderName(e.target.value)}
-                            onFolderSubmit={(e) => {
-                                e.preventDefault();
-                                createFolder({ id: auth.pageState.currentFolder, name: folderName }).then((response) => {
-                                    const { data, error } = response;
-                                    if (error) {
-                                        return console.log(error);
-                                    }
-                                    setIsCreatingFolder(false);
-                                    setFolderName("");
-                                    auth.pageState.toUpdate = !auth.pageState.toUpdate;
-                                });
-                            }}
-                        />
+                        <AddFileOptions isAddingFile={isAddingFile} onAddFileClick={() => handleUploadFile()} isUploadingFile={isUploadingFile} onCreateFolderClick={() => setIsCreatingFolder(true)} isCreatingFolder={isCreatingFolder} folderName={folderName} onFolderNameChange={(e) => setFolderName(e.target.value)} onFolderSubmit={(e) => handleFolderSubmit(e)} />
                     </ul>
                     <div className="storage">
                         <p>Storage used</p>
