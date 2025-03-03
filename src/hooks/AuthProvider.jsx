@@ -3,6 +3,7 @@ import { useContext, createContext, useState, useEffect } from "react";
 import { exportPrivateKeyFromPem, exportPrivateKeyToBase64, exportPublicKeyFromPem, exportPublicKeyToBase64, signMessage } from "../utils/Cryptography";
 import { loginRequest, registerRequest, requestChallenge, submitChallenge } from "../api/authRequests";
 import { useNavigate } from "react-router-dom";
+import ViewMode from "../components/mainPage/ViewModeEnum";
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
@@ -26,7 +27,7 @@ const AuthProvider = ({ children }) => {
         if (state !== null && state !== "null" && state !== "undefined" && state !== undefined) {
             return JSON.parse(state);
         } else {
-            return { currentPage: null, currentFolder: null, toUpdate: null, folderTree: [] };
+            return { currentPage: null, currentFolder: null, viewMode: null, toUpdate: null, folderTree: [] };
         }
     }
 

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, act, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import SearchBar from "./SearchBar";
 import { ReactComponent as GalleryIcon } from "../../img/Gallery.svg";
 import { ReactComponent as ListIcon } from "../../img/List.svg";
@@ -16,7 +16,7 @@ import { useAuth } from "../../../hooks/AuthProvider.jsx";
 
 const MyDisk = ({ }) => {
     const auth = useAuth();
-    const [viewMode, setViewMode] = useState(ViewMode.GALLERY); // 'list' or 'gallery'
+    const [viewMode, setViewMode] = useState(auth.pageState.viewMode); // 'list' or 'gallery'
     const [searchQuery, setSearchQuery] = useState("");
     const [dragActive, setDragActive] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
@@ -24,7 +24,6 @@ const MyDisk = ({ }) => {
     const [files, setFiles] = useState([]);
     const [folders, setFolders] = useState([]);
     const menuPosition = useRef({ top: 0, left: 0 });
-
 
     const handleSearch = (query) => {
         setSearchQuery(query);
@@ -126,9 +125,9 @@ const MyDisk = ({ }) => {
     useEffect(() => {
         const handleResize = () => {
             if (window.innerWidth <= 768) {
-                setViewMode(ViewMode.LIST);
+                auth.setPageState({ ...auth.pageState, viewMode: ViewMode.LIST });
             } else {
-                setViewMode(ViewMode.GALLERY);
+                auth.setPageState({ ...auth.pageState, viewMode: ViewMode.GALLERY });
             }
         };
         window.addEventListener("resize", handleResize);
@@ -184,10 +183,10 @@ const MyDisk = ({ }) => {
             <div className="view-toggle-container">
                 <div className="view-toggle">
                     <div className="slider" style={{ left: viewMode === ViewMode.LIST ? "4px" : "calc(50% + 4px)", }} />
-                    <button onClick={() => setViewMode(ViewMode.LIST)} className={viewMode === ViewMode.LIST ? "active" : ""} >
+                    <button onClick={() => { auth.setPageState({ ...auth.pageState, viewMode: ViewMode.LIST }); setViewMode(ViewMode.LIST); }} className={viewMode === ViewMode.LIST ? "active" : ""} >
                         <ListIcon />
                     </button>
-                    <button onClick={() => setViewMode(ViewMode.GALLERY)} className={viewMode === ViewMode.GALLERY ? "active" : ""} >
+                    <button onClick={() => { auth.setPageState({ ...auth.pageState, viewMode: ViewMode.GALLERY }); setViewMode(ViewMode.GALLERY); }} className={viewMode === ViewMode.GALLERY ? "active" : ""} >
                         <GalleryIcon />
                     </button>
                 </div>
