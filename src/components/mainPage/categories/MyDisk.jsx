@@ -116,7 +116,7 @@ const MyDisk = ({ }) => {
             setFolders(temp);
             temp = [];
             for (var i = 0; i < data.files.length; i++) {
-                temp.push(new FileStructure(selectedFolder, data.files[i].id, data.files[i].name));
+                temp.push(new FileStructure(selectedFolder, data.files[i].id, data.files[i].name, data.files[i].type, data.files[i].format));
             }
             setFiles(temp);
         });
@@ -124,10 +124,12 @@ const MyDisk = ({ }) => {
 
     useEffect(() => {
         const handleResize = () => {
-            if (window.innerWidth <= 768) {
-                auth.setPageState({ ...auth.pageState, viewMode: ViewMode.LIST });
+
+            if (window.innerWidth <= 1024) {
+                console.log(window.innerWidth);
+                setViewMode(ViewMode.LIST);
             } else {
-                auth.setPageState({ ...auth.pageState, viewMode: ViewMode.GALLERY });
+                setViewMode(ViewMode.GALLERY);
             }
         };
         window.addEventListener("resize", handleResize);
@@ -215,7 +217,9 @@ const MyDisk = ({ }) => {
                                 {filteredFiles.map((file) => {
                                     if (viewMode === ViewMode.LIST) {
                                         return (<FileList key={`file-list-` + file.file_id} file={file} menuPosition={menuPosition} />);
-                                    } else { return (<FileGrid key={`file-grid-` + file.file_id} file={file} menuPosition={menuPosition} />); }
+                                    } else {
+                                        return (<FileGrid key={`file-grid-` + file.file_id} file={file} menuPosition={menuPosition} />);
+                                    }
                                 })}
                                 {selectedFile && (<FileControl setSelectedFile={setSelectedFile} file={selectedFile} menuPosition={menuPosition} activeMenu={selectedFile} />)}
                             </div>

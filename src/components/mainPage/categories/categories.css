@@ -102,21 +102,10 @@
   .items {
       display: grid;
       gap: 15px;
+      grid-template-columns: repeat(4, 1fr);
   }
 
-  @media screen and (width >=1080px) {
-      .items {
-          grid-template-columns: repeat(5, 1fr);
-      }
-  }
-
-  @media screen and (width>=850px) and (width <=1080px) {
-      .items {
-          grid-template-columns: repeat(4, 1fr);
-      }
-  }
-
-  @media screen and (width>=480px) and (width <=850px) {
+  @media screen and (width < 1080px) {
       .items {
           grid-template-columns: repeat(3, 1fr);
       }
