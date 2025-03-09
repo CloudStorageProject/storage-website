@@ -80,7 +80,7 @@ const Sidebar = ({ onSelectCategory, activeCategory }) => {
                 <div className="avatar"></div>
                 <p className="nickname">{auth.user.username}</p>
                 <button className="settings-btn" onClick={toggleSettingsMode}>
-                    {isSettingsMode ? <BackIcon /> : <SettingsIcon style={{ filter: "invert(0)" }} />}
+                    {isSettingsMode ? <BackIcon /> : <SettingsIcon style={{ filter: "invert(1)" }} />}
                 </button>
             </div>
 
