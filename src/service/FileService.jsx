@@ -45,8 +45,6 @@ const renameFile = async (id, data) => {
 }
 
 const uploadFileFull = async (data) => {
-    console.log(data);
-
     return await uploadFileRequest(data).then((response) => {
         return { data: response.data, error: null };
     }).catch((error) => {
