@@ -5,8 +5,8 @@ const Folder = ({ folder, viewMode, auth, setSelectedFolder }) => {
 
 
     const handleFolderSelect = () => {
-        setSelectedFolder(folder.id);
-        auth.setPageState({ ...auth.pageState, currentFolder: folder.id, toUpdate: !auth.pageState.toUpdate });
+        setSelectedFolder(folder);
+        auth.setPageState({ ...auth.pageState, currentFolder: folder, toUpdate: !auth.pageState.toUpdate });
     }
 
     return (

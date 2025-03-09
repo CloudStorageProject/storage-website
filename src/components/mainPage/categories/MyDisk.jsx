@@ -3,6 +3,7 @@ import SearchBar from "./SearchBar";
 import { ReactComponent as GalleryIcon } from "../../img/Gallery.svg";
 import { ReactComponent as ListIcon } from "../../img/List.svg";
 import { ReactComponent as DragIcon } from "../../img/drag.svg";
+import { ReactComponent as BackIcon } from "../../img/Back Arrow.svg";
 import ViewMode from "../ViewModeEnum.js";
 import FileGrid from "../elements/FileGrid.jsx";
 import FileList from "../elements/FileList.jsx";
@@ -23,6 +24,7 @@ const MyDisk = ({ }) => {
     const [selectedFolder, setSelectedFolder] = useState(auth.pageState.currentFolder);
     const [files, setFiles] = useState([]);
     const [folders, setFolders] = useState([]);
+    const [filePath, setFilePath] = useState("");
     const menuPosition = useRef({ top: 0, left: 0 });
 
     const handleSearch = (query) => {
@@ -104,7 +106,7 @@ const MyDisk = ({ }) => {
     }, [files, selectedFile]);
 
     const updateFilesList = async (selectedFolder) => {
-        await getFolder(selectedFolder).then((response) => {
+        await getFolder(selectedFolder.id).then((response) => {
             const { data, error } = response;
             if (error) {
                 return console.error(error);
@@ -116,7 +118,7 @@ const MyDisk = ({ }) => {
             setFolders(temp);
             temp = [];
             for (var i = 0; i < data.files.length; i++) {
-                temp.push(new FileStructure(selectedFolder, data.files[i].id, data.files[i].name, data.files[i].type, data.files[i].format));
+                temp.push(new FileStructure(selectedFolder.id, data.files[i].id, data.files[i].name, data.files[i].type, data.files[i].format));
             }
             setFiles(temp);
         });
@@ -126,7 +128,6 @@ const MyDisk = ({ }) => {
         const handleResize = () => {
 
             if (window.innerWidth <= 1024) {
-                console.log(window.innerWidth);
                 setViewMode(ViewMode.LIST);
             } else {
                 setViewMode(ViewMode.GALLERY);
@@ -145,9 +146,10 @@ const MyDisk = ({ }) => {
         if (selectedFolder) {
             updateFilesList(selectedFolder);
             const callstack = Array.from(auth.pageState.folderTree || []);
-            if (callstack.find((folder) => folder === selectedFolder) === undefined) {
+            if (callstack.find((folder) => folder.id === selectedFolder.id) === undefined) {
                 callstack.push(selectedFolder);
             }
+            setFilePath(callstack.map((folder) => folder.name).join("/"));
             auth.setPageState({ ...auth.pageState, folderTree: callstack });
         } else {
             getRootFolder().then(async (response) => {
@@ -155,9 +157,11 @@ const MyDisk = ({ }) => {
                 if (error) {
                     return console.error(error);
                 }
-                setSelectedFolder(data.id);
-                updateFilesList(data.id);
-                auth.setPageState({ currentPage: "mydisk", currentFolder: data.id, folderTree: [data.id] });
+                const root = new FolderStructure(data.name, data.id, data.folders, data.files);
+                setSelectedFolder(root);
+                updateFilesList(root);
+                setFilePath(root.name);
+                auth.setPageState({ currentPage: "mydisk", currentFolder: data.id, folderTree: [data] });
             }).catch((error) => {
                 console.error(error);
             });
@@ -177,8 +181,6 @@ const MyDisk = ({ }) => {
 
     return (
         <div id="content-container" className="content-container" onDragEnter={handleDragEnter} onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}>
-            <button onClick={() => { handlePreviousFolder() }}>Go back</button>
-            {/* TODO: REIMPLEMENT GO BACK BUTTON */}
             <header>
                 <SearchBar onSearch={handleSearch} />
             </header>
@@ -212,7 +214,10 @@ const MyDisk = ({ }) => {
                             </div>
                         </div>
                         <div className="section">
-                            <h2 className="file-title">Files</h2>
+                            <div className="folder-navigation">
+                                <button className="back-folder-button" onClick={() => { handlePreviousFolder() }}><BackIcon /></button>
+                                <h2 className="file-title">{filePath}</h2>
+                            </div>
                             <div className="items">
                                 {filteredFiles.map((file) => {
                                     if (viewMode === ViewMode.LIST) {

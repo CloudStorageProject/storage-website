@@ -45,6 +45,8 @@ const renameFile = async (id, data) => {
 }
 
 const uploadFileFull = async (data) => {
+    console.log(data);
+
     return await uploadFileRequest(data).then((response) => {
         return { data: response.data, error: null };
     }).catch((error) => {
@@ -138,7 +140,7 @@ const performDownload = async (file, privateKey, fileProperties) => {
 
 const uploadFile = async (file, auth) => {
     return new Promise((resolve, reject) => {
-        DataTransferWorker.postMessage({ action: TransferAction.UPLOAD, file: file, folder_id: auth.pageState.currentFolder, key: exportPublicKeyToBase64(auth.keyPair.publicKey) });
+        DataTransferWorker.postMessage({ action: TransferAction.UPLOAD, file: file, folder_id: auth.pageState.currentFolder.id, key: exportPublicKeyToBase64(auth.keyPair.publicKey) });
         DataTransferWorker.onmessage = async (event) => {
             if (event.data.state === TransferState.COMPLETE || event.data.state === TransferState.PARTIAL) {
                 const { data, error } = await uploadFileFull(event.data.message);
