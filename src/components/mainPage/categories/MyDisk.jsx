@@ -23,7 +23,7 @@ const MyDisk = ({ }) => {
     const [searchQuery, setSearchQuery] = useState("");
     const [dragActive, setDragActive] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
-    const [selectedFolder, setSelectedFolder] = useState(page.pageState.currentFolder);
+    const [selectedFolder, setSelectedFolder] = useState(page.pageState.currentFolder || null);
     const [files, setFiles] = useState([]);
     const [folders, setFolders] = useState([]);
     const [filePath, setFilePath] = useState("");
@@ -91,7 +91,7 @@ const MyDisk = ({ }) => {
         event.stopPropagation();
         event.preventDefault();
         const target = event.target;
-        if (target.id.includes('menu-button')) {
+        if (target.id.includes('menu-button') && auth.user.fullAccess) {
             const file_id = parseInt(target.id.replace('menu-button-', ''));
             if (selectedFile === file_id) {
                 setSelectedFile(null);
@@ -137,7 +137,6 @@ const MyDisk = ({ }) => {
         };
         window.addEventListener("resize", handleResize);
         window.addEventListener("click", handleMenuToggle);
-        handleResize();
         return () => {
             window.removeEventListener("click", handleMenuToggle);
             window.removeEventListener("resize", handleResize);
@@ -174,13 +173,17 @@ const MyDisk = ({ }) => {
 
     const handlePreviousFolder = () => {
         const callstack = Array.from(page.pageState.folderTree || []);
-        console.log(callstack);
 
         if (callstack.length > 1) {
             callstack.pop();
             setSelectedFolder(callstack[callstack.length - 1]);
             page.setPageState({ ...page.pageState, currentPage: "mydisk", currentFolder: callstack[callstack.length - 1], folderTree: callstack });
         }
+    }
+
+    const updateViewMode = (mode) => {
+        page.setPageState({ ...page.pageState, viewMode: mode, toUpdate: !page.pageState.toUpdate });
+        setViewMode(mode);
     }
 
     return (
@@ -191,10 +194,10 @@ const MyDisk = ({ }) => {
             <div className="view-toggle-container">
                 <div className="view-toggle">
                     <div className="slider" style={{ left: viewMode === ViewMode.LIST ? "4px" : "calc(50% + 4px)", }} />
-                    <button onClick={() => { page.setPageState({ ...page.pageState, viewMode: ViewMode.LIST }); setViewMode(ViewMode.LIST); }} className={viewMode === ViewMode.LIST ? "active" : ""} >
+                    <button onClick={() => { updateViewMode(ViewMode.LIST); }} className={viewMode === ViewMode.LIST ? "active" : ""} >
                         <ListIcon />
                     </button>
-                    <button onClick={() => { page.setPageState({ ...page.pageState, viewMode: ViewMode.GALLERY }); setViewMode(ViewMode.GALLERY); }} className={viewMode === ViewMode.GALLERY ? "active" : ""} >
+                    <button onClick={() => { updateViewMode(ViewMode.GALLERY); }} className={viewMode === ViewMode.GALLERY ? "active" : ""} >
                         <GalleryIcon />
                     </button>
                 </div>
