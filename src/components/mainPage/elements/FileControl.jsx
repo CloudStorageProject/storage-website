@@ -1,13 +1,14 @@
+import { usePageState } from "../../../hooks/PageContext.jsx";
 import { useAuth } from "../../../hooks/AuthProvider.jsx";
 import { deleteFile, downloadFile, } from "../../../service/FileService.jsx";
 
 const FileControl = ({ menuPosition, setSelectedFile, file }) => {
+    const page = usePageState();
     const auth = useAuth();
-
     const handleDelete = async (file) => {
         await deleteFile(file.file_id);
         setSelectedFile(null);
-        auth.setPageState({ ...auth.pageState, toUpdate: !auth.pageState.toUpdate });
+        page.setPageState({ ...page.pageState, toUpdate: !page.pageState.toUpdate });
     }
 
     const handleRename = (file) => {

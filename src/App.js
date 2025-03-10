@@ -2,7 +2,7 @@ import './App.css';
 import LoginPageManager from './components/loginPage/LoginPageManager';
 import RegistrationPage from './components/registrationPage/registrationPage';
 import ResetPasswordManager from './components/resetPassword/ResetPasswordManager';
-import { ThemeProvider } from './hooks/ThemeContext';
+import PageStateProvider from './hooks/PageContext.jsx';
 import MainPage from './components/mainPage/mainPage';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import PrivateRoute from './hooks/PrivateRoute';
@@ -16,7 +16,7 @@ export default class App extends React.Component {
             <div className="App">
                 <BrowserRouter>
                     <AuthProvider >
-                        <ThemeProvider>
+                        <PageStateProvider>
                             <Routes>
                                 <Route path="/login" element={<LoginPageManager />} />
                                 <Route path="/reset-password" element={<ResetPasswordManager />} />
@@ -26,7 +26,7 @@ export default class App extends React.Component {
                                     <Route path="/storage" element={<MainPage />} />
                                 </Route>
                             </Routes>
-                        </ThemeProvider>
+                        </PageStateProvider>
                     </AuthProvider>
                 </BrowserRouter>
             </div>

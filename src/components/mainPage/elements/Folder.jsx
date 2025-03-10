@@ -1,12 +1,12 @@
 import { ReactComponent as FolderIcon } from "../../img/Folder.svg";
 import "./elements.css";
 
-const Folder = ({ folder, viewMode, auth, setSelectedFolder }) => {
+const Folder = ({ folder, viewMode, page, setSelectedFolder }) => {
 
 
     const handleFolderSelect = () => {
         setSelectedFolder(folder);
-        auth.setPageState({ ...auth.pageState, currentFolder: folder, toUpdate: !auth.pageState.toUpdate });
+        page.setPageState({ ...page.pageState, currentFolder: folder, toUpdate: !page.pageState.toUpdate });
     }
 
     return (

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import "./sidebar.css";
 import AddFileOptions from "./AddFileOptions";
 import { ReactComponent as SettingsIcon } from "../../img/Settings.svg";
@@ -7,7 +7,7 @@ import { ReactComponent as OpenedToMyIcon } from "../../img/OpenedToMe.svg";
 import { ReactComponent as TrashIcon } from "../../img/Trash.svg";
 import { ReactComponent as ArrowIcon } from "../../img/Arrow.svg";
 import { ReactComponent as BackIcon } from "../../img/Backarrow.svg";
-import { ThemeContext } from "../../../hooks/ThemeContext";
+import { usePageState } from "../../../hooks/PageContext.jsx";
 import { useAuth } from "../../../hooks/AuthProvider";
 import { createFolder } from "../../../service/FolderService";
 import { uploadFile } from "../../../service/FileService";
@@ -20,7 +20,7 @@ const Sidebar = ({ onSelectCategory, activeCategory }) => {
     const [folderName, setFolderName] = useState("");
     const [isSettingsMode, setIsSettingsMode] = useState(false);
     const [isCollapsed, setIsCollapsed] = useState(false);
-    const { theme, toggleTheme } = useContext(ThemeContext);
+    const page = usePageState();
 
 
     const handleCategoryClick = (category) => {
@@ -50,9 +50,9 @@ const Sidebar = ({ onSelectCategory, activeCategory }) => {
         input.type = 'file';
         input.onchange = async function () {
             for (const file of input.files) {
-                await uploadFile(file, auth);
+                await uploadFile(file, page, auth);
             }
-            auth.setPageState({ ...auth.pageState, toUpdate: !auth.pageState.toUpdate });
+            page.setPageState({ ...page.pageState, toUpdate: !page.pageState.toUpdate });
         }
         input.click();
     };
@@ -63,7 +63,7 @@ const Sidebar = ({ onSelectCategory, activeCategory }) => {
         if (auth.user.fullAccess === false) {
             return;
         }
-        createFolder({ id: auth.pageState.currentFolder, name: folderName }).then((response) => {
+        createFolder({ id: page.pageState.currentFolder.id, name: folderName }).then((response) => {
             const { data, error } = response;
             if (error) {
                 return console.log(error);
@@ -71,7 +71,7 @@ const Sidebar = ({ onSelectCategory, activeCategory }) => {
 
             setIsCreatingFolder(false);
             setFolderName("");
-            auth.setPageState({ ...auth.pageState, toUpdate: !auth.pageState.toUpdate });
+            page.setPageState({ ...page.pageState, toUpdate: !page.pageState.toUpdate });
         });
     }
     return (
@@ -128,7 +128,7 @@ const Sidebar = ({ onSelectCategory, activeCategory }) => {
                         <li className="menu-item">Support</li>
                         <li className="menu-item">Language</li>
                         <li className="menu-item" onClick={handleLogOut}>Log out</li>
-                        <li className="menu-item" onClick={toggleTheme}>Change Theme</li>
+                        <li className="menu-item" onClick={page.toggleTheme}>Change Theme</li>
                     </ul>
                 </div>
             )}

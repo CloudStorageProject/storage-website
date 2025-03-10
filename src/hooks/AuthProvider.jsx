@@ -3,37 +3,36 @@ import { useContext, createContext, useState, useEffect } from "react";
 import { exportPrivateKeyFromPem, exportPrivateKeyToBase64, exportPublicKeyFromPem, exportPublicKeyToBase64, signMessage } from "../utils/Cryptography";
 import { loginRequest, registerRequest, requestChallenge, submitChallenge } from "../api/authRequests";
 import { useNavigate } from "react-router-dom";
-import ViewMode from "../components/mainPage/ViewModeEnum";
+
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
-    const [user, setUser] = useState(getStoredUser());
+    const [user, setUser] = useState({ username: null, email: null, fullAccess: false, publicKey: null });
     const [token, setToken] = useState(document.cookie.split("=")[1] || "");
-    const [pageState, setPageState] = useState(getStoredPageState());
-    const [keyPair, setKeyPair] = useState(getKeyPair());
+    const [keyPair, setKeyPair] = useState({ privateKey: null, publicKey: null });
 
 
     useEffect(() => {
-        setStoredPageState(pageState);
-    }, [pageState]);
-
-    function setStoredPageState(pageState) {
-        localStorage.setItem("pageState", JSON.stringify(pageState));
-    }
-
-    function getStoredPageState() {
-        let state = localStorage.getItem("pageState");
-        if (state !== null && state !== "null" && state !== "undefined" && state !== undefined) {
-            return JSON.parse(state);
-        } else {
-            return { currentPage: null, currentFolder: null, viewMode: null, toUpdate: null, folderTree: [] };
+        const handlePageLoad = () => {
+            getStoredUser();
+            getKeyPair();
+            localStorage.removeItem("user");
+            localStorage.removeItem("privateKey");
+            localStorage.removeItem("publicKey");
         }
-    }
+        const handlePageUnload = () => {
+            setStoredUser();
+            storeKeyPair();
+        }
 
-    if (keyPair.privateKey !== null && keyPair.publicKey !== null && user === null) {
-        navigate("/storage");
-    }
+        window.addEventListener("load", handlePageLoad);
+        window.addEventListener("beforeunload", handlePageUnload);
+        return (() => {
+            window.removeEventListener("load", handlePageLoad);
+            window.removeEventListener("beforeunload", handlePageUnload);
+        });
+    }, [user, keyPair]);
 
     function getKeyPair() {
         let privateKey = null;
@@ -42,16 +41,26 @@ const AuthProvider = ({ children }) => {
             privateKey = exportPrivateKeyFromPem(localStorage.getItem("privateKey"));
             publicKey = exportPublicKeyFromPem(localStorage.getItem("publicKey"));
         }
-        return { privateKey, publicKey };
+        setKeyPair({ privateKey: privateKey, publicKey: publicKey });
+    }
+
+    function storeKeyPair() {
+        if (keyPair.privateKey) { localStorage.setItem("privateKey", exportPrivateKeyToBase64(keyPair.privateKey)); }
+        if (keyPair.publicKey) { localStorage.setItem("publicKey", exportPublicKeyToBase64(keyPair.publicKey)); }
     }
 
     function getStoredUser() {
         const storedUser = localStorage.getItem("user");
-        if (storedUser === null || storedUser === "null" || storedUser === "undefined" || storedUser === undefined) return { username: null, email: null, fullAccess: false, publicKey: null };
-        return storedUser ? JSON.parse(storedUser) : null;
+
+        if ((keyPair.privateKey !== null && keyPair.publicKey !== null) || (storedUser !== null || storedUser !== "null" || storedUser !== "undefined" || storedUser !== undefined)) {
+            setUser(storedUser ? JSON.parse(storedUser) : null);
+            navigate("/storage");
+        } else {
+            navigate("/login");
+        }
     }
 
-    function setStoredUser(user) {
+    function setStoredUser() {
         localStorage.setItem("user", JSON.stringify(user));
     }
 
@@ -62,7 +71,6 @@ const AuthProvider = ({ children }) => {
                 response.data.user.fullAccess = false;
                 setUser(response.data.user);
                 setToken(response.data.token);
-                setStoredUser(response.data.user);
                 document.cookie = `token=${response.data.token}; Secure;`;
                 return true;
             }
@@ -83,15 +91,11 @@ const AuthProvider = ({ children }) => {
                 response.data.user.fullAccess = true;
                 setUser(response.data.user);
                 setToken(response.data.token);
-                setStoredUser(response.data.user);
                 document.cookie = `token=${response.data.token}; Secure;`;
                 return true;
             }
         } catch (err) {
             console.error(err);
-        } finally {
-            localStorage.setItem("privateKey", exportPrivateKeyToBase64(keyPair.privateKey));
-            localStorage.setItem("publicKey", exportPublicKeyToBase64(keyPair.publicKey));
         }
         return false;
     };
@@ -102,7 +106,6 @@ const AuthProvider = ({ children }) => {
         document.cookie = "token=; Secure;";
         localStorage.removeItem("privateKey");
         localStorage.removeItem("publicKey");
-        setStoredUser(null);
         setKeyPair({ privateKey: null, publicKey: null });
         return true;
     };
@@ -115,7 +118,6 @@ const AuthProvider = ({ children }) => {
             if (response.status === 200) {
                 setUser(response.data.user);
                 setToken(response.data.access_token);
-                setStoredUser(response.data.user);
                 document.cookie = `token=${response.data.access_token}; Secure;`;
                 return true;
             } else if (response.status === 422) {
@@ -124,16 +126,13 @@ const AuthProvider = ({ children }) => {
             }
         } catch (err) {
             console.error(err);
-        } finally {
-            localStorage.setItem("privateKey", exportPrivateKeyToBase64(data.keyPair.privateKey));
-            localStorage.setItem("publicKey", exportPublicKeyToBase64(data.keyPair.publicKey));
         }
         return false;
     };
 
     return (
         <AuthContext.Provider value={{
-            token, user, partialLoginAction, fullLoginAction, registerAction, logOut, pageState, setPageState, keyPair, setKeyPair
+            token, user, partialLoginAction, fullLoginAction, registerAction, logOut, keyPair, setKeyPair
         }}>
             {children}
         </AuthContext.Provider>

@@ -13,15 +13,17 @@ import { getFolder, getRootFolder } from "../../../service/FolderService.jsx";
 import { FileStructure, FolderStructure } from "../../../utils/Structures.tsx";
 import { uploadFile } from "../../../service/FileService.jsx";
 import { useAuth } from "../../../hooks/AuthProvider.jsx";
+import { usePageState } from "../../../hooks/PageContext.jsx";
 
 
 const MyDisk = ({ }) => {
     const auth = useAuth();
-    const [viewMode, setViewMode] = useState(auth.pageState.viewMode); // 'list' or 'gallery'
+    const page = usePageState();
+    const [viewMode, setViewMode] = useState(page.pageState.viewMode); // 'list' or 'gallery'
     const [searchQuery, setSearchQuery] = useState("");
     const [dragActive, setDragActive] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
-    const [selectedFolder, setSelectedFolder] = useState(auth.pageState.currentFolder);
+    const [selectedFolder, setSelectedFolder] = useState(page.pageState.currentFolder);
     const [files, setFiles] = useState([]);
     const [folders, setFolders] = useState([]);
     const [filePath, setFilePath] = useState("");
@@ -78,9 +80,9 @@ const MyDisk = ({ }) => {
         setDragActive(false);
         if (event.dataTransfer.files && event.dataTransfer.files.length > 0) {
             for (const file of event.dataTransfer.files) {
-                await uploadFile(file, auth);
+                await uploadFile(file, page, auth);
             }
-            auth.setPageState({ ...auth.pageState, toUpdate: !auth.pageState.toUpdate });
+            page.setPageState({ ...page.pageState, toUpdate: !page.pageState.toUpdate });
         }
     };
 
@@ -145,12 +147,12 @@ const MyDisk = ({ }) => {
     useEffect(() => {
         if (selectedFolder) {
             updateFilesList(selectedFolder);
-            const callstack = Array.from(auth.pageState.folderTree || []);
+            const callstack = Array.from(page.pageState.folderTree || []);
             if (callstack.find((folder) => folder.id === selectedFolder.id) === undefined) {
                 callstack.push(selectedFolder);
             }
             setFilePath(callstack.map((folder) => folder.name).join("/"));
-            auth.setPageState({ ...auth.pageState, folderTree: callstack });
+            page.setPageState({ ...page.pageState, folderTree: callstack });
         } else {
             getRootFolder().then(async (response) => {
                 let { data, error } = response;
@@ -161,21 +163,23 @@ const MyDisk = ({ }) => {
                 setSelectedFolder(root);
                 updateFilesList(root);
                 setFilePath(root.name);
-                auth.setPageState({ currentPage: "mydisk", currentFolder: data.id, folderTree: [data] });
+                page.setPageState({ ...page.pageState, currentPage: "mydisk", currentFolder: data.id, folderTree: [data] });
             }).catch((error) => {
                 console.error(error);
             });
         }
 
-    }, [selectedFolder, auth.pageState.toUpdate]);
+    }, [selectedFolder, page.pageState.toUpdate]);
 
 
     const handlePreviousFolder = () => {
-        const callstack = Array.from(auth.pageState.folderTree || []);
+        const callstack = Array.from(page.pageState.folderTree || []);
+        console.log(callstack);
+
         if (callstack.length > 1) {
             callstack.pop();
             setSelectedFolder(callstack[callstack.length - 1]);
-            auth.setPageState({ currentPage: "mydisk", currentFolder: callstack[callstack.length - 1], folderTree: callstack });
+            page.setPageState({ ...page.pageState, currentPage: "mydisk", currentFolder: callstack[callstack.length - 1], folderTree: callstack });
         }
     }
 
@@ -187,10 +191,10 @@ const MyDisk = ({ }) => {
             <div className="view-toggle-container">
                 <div className="view-toggle">
                     <div className="slider" style={{ left: viewMode === ViewMode.LIST ? "4px" : "calc(50% + 4px)", }} />
-                    <button onClick={() => { auth.setPageState({ ...auth.pageState, viewMode: ViewMode.LIST }); setViewMode(ViewMode.LIST); }} className={viewMode === ViewMode.LIST ? "active" : ""} >
+                    <button onClick={() => { page.setPageState({ ...page.pageState, viewMode: ViewMode.LIST }); setViewMode(ViewMode.LIST); }} className={viewMode === ViewMode.LIST ? "active" : ""} >
                         <ListIcon />
                     </button>
-                    <button onClick={() => { auth.setPageState({ ...auth.pageState, viewMode: ViewMode.GALLERY }); setViewMode(ViewMode.GALLERY); }} className={viewMode === ViewMode.GALLERY ? "active" : ""} >
+                    <button onClick={() => { page.setPageState({ ...page.pageState, viewMode: ViewMode.GALLERY }); setViewMode(ViewMode.GALLERY); }} className={viewMode === ViewMode.GALLERY ? "active" : ""} >
                         <GalleryIcon />
                     </button>
                 </div>
@@ -209,7 +213,7 @@ const MyDisk = ({ }) => {
                             <h2 className="folder-title">Folders</h2>
                             <div className="items">
                                 {filteredFolders.map((folder) => (
-                                    <Folder key={`folder-` + folder.id} folder={folder} setSelectedFolder={setSelectedFolder} viewMode={viewMode} auth={auth} />
+                                    <Folder key={`folder-` + folder.id} folder={folder} setSelectedFolder={setSelectedFolder} viewMode={viewMode} page={page} />
                                 ))}
                             </div>
                         </div>
