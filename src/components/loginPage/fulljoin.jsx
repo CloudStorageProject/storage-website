@@ -24,6 +24,23 @@ const RegistrationSecretPhrases = ({ userData, canProceed, setUserData, goToLimi
         }
     }, [auth.keyPair]);
 
+    useEffect(() => {
+        const handlePaste = (e) => {
+            let split = e.clipboardData.getData("text").split(/\d+\. /);
+            if (split.length === 1) { return; }
+            else if (split.length === 25) {
+                e.preventDefault();
+                split.shift();
+                split = split.map(el => el.replace(/\n/g, ''));
+                setUserData({ ...userData, mnemonic: split });
+            }
+        }
+        document.addEventListener("paste", handlePaste);
+        return () => {
+            document.removeEventListener("paste", handlePaste);
+        };
+    }, []);
+
     const performAuth = () => {
         auth.fullLoginAction(auth.keyPair).then((res) => {
             if (res) {
@@ -79,6 +96,7 @@ const RegistrationSecretPhrases = ({ userData, canProceed, setUserData, goToLimi
                     <form onSubmit={handleSubmit}>
                         <div className="recovery-phrase-inputs">
                             {userData.mnemonic.map((phrase, index) => (
+
                                 <div key={index} className="recovery-phrase-input">
                                     <input
                                         type="text"
