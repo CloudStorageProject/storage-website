@@ -27,6 +27,7 @@ const PageStateProvider = ({ children }) => {
         document.body.className = pageState.theme;
         const handlePageLoad = () => {
             getStoredPageState();
+            localStorage.removeItem("pageState");
         }
 
         const handlePageUnload = () => {
