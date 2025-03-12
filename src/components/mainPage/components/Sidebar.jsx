@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import "./sidebar.css";
 import AddFileOptions from "./AddFileOptions";
 import { ReactComponent as SettingsIcon } from "../../img/Settings.svg";
@@ -7,10 +7,12 @@ import { ReactComponent as OpenedToMyIcon } from "../../img/OpenedToMe.svg";
 import { ReactComponent as TrashIcon } from "../../img/Trash.svg";
 import { ReactComponent as ArrowIcon } from "../../img/Arrow.svg";
 import { ReactComponent as BackIcon } from "../../img/Backarrow.svg";
-import { ThemeContext } from "../../../hooks/ThemeContext";
+import { usePageState } from "../../../hooks/PageContext.jsx";
 import { useAuth } from "../../../hooks/AuthProvider";
 import { createFolder } from "../../../service/FolderService";
 import { uploadFile } from "../../../service/FileService";
+import { useNotify } from "../../../hooks/Notification/NotificationProvider.jsx";
+import { NotificationType } from "../../../hooks/Notification/NotificationTypes.tsx";
 
 const Sidebar = ({ onSelectCategory, activeCategory }) => {
     const auth = useAuth();
@@ -20,8 +22,8 @@ const Sidebar = ({ onSelectCategory, activeCategory }) => {
     const [folderName, setFolderName] = useState("");
     const [isSettingsMode, setIsSettingsMode] = useState(false);
     const [isCollapsed, setIsCollapsed] = useState(false);
-    const { theme, toggleTheme } = useContext(ThemeContext);
-
+    const page = usePageState();
+    const notify = useNotify();
 
     const handleCategoryClick = (category) => {
         setIsAddingFile(false);
@@ -50,9 +52,9 @@ const Sidebar = ({ onSelectCategory, activeCategory }) => {
         input.type = 'file';
         input.onchange = async function () {
             for (const file of input.files) {
-                await uploadFile(file, auth);
+                await uploadFile(file, page, auth, notify);
             }
-            auth.setPageState({ ...auth.pageState, toUpdate: !auth.pageState.toUpdate });
+            page.setPageState({ ...page.pageState, toUpdate: !page.pageState.toUpdate });
         }
         input.click();
     };
@@ -60,27 +62,27 @@ const Sidebar = ({ onSelectCategory, activeCategory }) => {
     const handleFolderSubmit = async (event) => {
         event.preventDefault();
 
-        if (auth.user.fullAccess === false) {
-            return;
-        }
-        createFolder({ id: auth.pageState.currentFolder, name: folderName }).then((response) => {
+        createFolder({ id: page.pageState.currentFolder.id, name: folderName }).then((response) => {
             const { data, error } = response;
             if (error) {
+                notify.postNotification("Failed to create folder", NotificationType.ERROR);
                 return console.log(error);
+            } else {
+                notify.postNotification("Created folder: " + folderName, NotificationType.SUCCESS);
             }
-
             setIsCreatingFolder(false);
             setFolderName("");
-            auth.setPageState({ ...auth.pageState, toUpdate: !auth.pageState.toUpdate });
+            page.setPageState({ ...page.pageState, toUpdate: !page.pageState.toUpdate });
         });
     }
+
     return (
         <div className={`sidebar ${isCollapsed ? "collapsed" : ""} ${isSettingsMode ? "settings-mode" : ""}`}>
             <div className="profile">
                 <div className="avatar"></div>
                 <p className="nickname">{auth.user.username}</p>
                 <button className="settings-btn" onClick={toggleSettingsMode}>
-                    {isSettingsMode ? <BackIcon /> : <SettingsIcon style={{ filter: "invert(0)" }} />}
+                    {isSettingsMode ? <BackIcon /> : <SettingsIcon style={{ filter: "invert(1)" }} />}
                 </button>
             </div>
 
@@ -128,7 +130,7 @@ const Sidebar = ({ onSelectCategory, activeCategory }) => {
                         <li className="menu-item">Support</li>
                         <li className="menu-item">Language</li>
                         <li className="menu-item" onClick={handleLogOut}>Log out</li>
-                        <li className="menu-item" onClick={toggleTheme}>Change Theme</li>
+                        <li className="menu-item" onClick={page.toggleTheme}>Change Theme</li>
                     </ul>
                 </div>
             )}

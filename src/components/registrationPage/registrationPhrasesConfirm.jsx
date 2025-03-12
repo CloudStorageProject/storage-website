@@ -2,6 +2,8 @@ import bgimg from '../img/greenBackroundLoginPage.jpg'
 import { useState } from "react";
 import { useAuth } from "../../hooks/AuthProvider";
 import { useNavigate } from 'react-router-dom';
+import { useNotify } from '../../hooks/Notification/NotificationProvider.jsx';
+import { NotificationType } from '../../hooks/Notification/NotificationTypes.tsx';
 
 const RegistrationPhrasesConfirm = ({ userData, secretPhrases, keyPair, checkIndexes, randomizeIndexes, previousStage }) => {
     let [selectedPhrases, setSelectedPhrases] = useState({});
@@ -10,12 +12,13 @@ const RegistrationPhrasesConfirm = ({ userData, secretPhrases, keyPair, checkInd
         setSelectedPhrases({ ...selectedPhrases, [e.target.name]: e.target.value });
     }
     const navigate = useNavigate();
+    const notify = useNotify();
 
     let handleSubmit = async (e) => {
         e.preventDefault();
         if (selectedPhrases[checkIndexes[0]] !== secretPhrases[checkIndexes[0]] || selectedPhrases[checkIndexes[1]] !== secretPhrases[checkIndexes[1]] || selectedPhrases[checkIndexes[2]] !== secretPhrases[checkIndexes[2]]) {
+            notify.postNotification("Secret phrases mismatch", NotificationType.WARNING)
             return;
-            // TODO: handle phrase mismatch
         }
         const data = {
             email: userData.email,
@@ -29,20 +32,20 @@ const RegistrationPhrasesConfirm = ({ userData, secretPhrases, keyPair, checkInd
                 auth.fullLoginAction(keyPair).then((res) => {
                     if (res) {
                         navigate("/storage");
-                    } else {
-                        // TODO: handle failure
                     }
                 }).catch((error) => {
+                    notify.postNotification("Network error", NotificationType.NETWORK_ERROR);
                     console.log(error);
                 });
             } else {
-                // TODO: handle failure
+                notify.postNotification("Failed to register", NotificationType.ERROR);
             }
         }).catch((error) => {
+            notify.postNotification("Network error", NotificationType.NETWORK_ERROR);
             console.log(error);
-            // TODO: handle error
         });
     }
+
     return (<div className="recovery-phrase-main-container">
         <div className="img-wrap-top-right">
             <img src={bgimg} className="img-confirm-top " alt="bg" />

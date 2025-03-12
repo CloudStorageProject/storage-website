@@ -1,12 +1,37 @@
 import { ReactComponent as MoreIcon } from "../../img/More.svg";
 import "./elements.css";
+import { FileType } from "../../../utils/Structures.tsx";
+import { ReactComponent as Image_svg } from "../../img/FileType Image.svg";
+import { ReactComponent as Video_svg } from "../../img/FileType Video.svg";
+import { ReactComponent as Audio_svg } from "../../img/FileType Audio.svg";
+import { ReactComponent as Document_svg } from "../../img/FileType Document.svg";
 
 const FileList = ({ file }) => {
+    const getImage = (file) => {
+        switch (file.type) {
+            case FileType.AUDIO: {
+                return <Audio_svg />;
+            }
+            case FileType.DOCUMENT:
+            case FileType.TEXT: {
+                return <Document_svg />;
+            }
+            case FileType.IMAGE: {
+                return <Image_svg />;
+            }
+            case FileType.VIDEO: {
+                return <Video_svg />;
+            }
+            default: {
+                return <Document_svg />;
+            }
+        }
+    }
     return (
         <div key={file.file_id} id={`file-` + file.file_id} className="file-list">
-            <img src={file.image} alt={file.name} />
+            {getImage(file)}
             <div className="file-header">
-                <span>{file.name}</span>
+                <p className="file-name">{file.name}</p>
                 <button className="menu-button" id={`menu-button-` + file.file_id} >
                     <MoreIcon style={{ pointerEvents: "none" }} />
                 </button>
