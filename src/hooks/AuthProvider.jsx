@@ -3,11 +3,14 @@ import { useContext, createContext, useState, useEffect } from "react";
 import { exportPrivateKeyFromPem, exportPrivateKeyToBase64, exportPublicKeyFromPem, exportPublicKeyToBase64, signMessage } from "../utils/Cryptography";
 import { loginRequest, registerRequest, requestChallenge, submitChallenge } from "../api/authRequests";
 import { useNavigate } from "react-router-dom";
+import { useNotify } from "./Notification/NotificationProvider";
+import { NotificationType } from "./Notification/NotificationTypes.tsx";
 
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
+    const notify = useNotify();
     const [user, setUser] = useState({ username: null, email: null, fullAccess: false, publicKey: null });
     const [token, setToken] = useState(document.cookie.split("=")[1] || "");
     const [keyPair, setKeyPair] = useState({ privateKey: null, publicKey: null });
@@ -22,8 +25,11 @@ const AuthProvider = ({ children }) => {
             localStorage.removeItem("publicKey");
         }
         const handlePageUnload = () => {
-            setStoredUser();
-            storeKeyPair();
+            // If there is token -> store the user for reload.
+            if (document.cookie.split("=")[1]) {
+                setStoredUser();
+                storeKeyPair();
+            }
         }
 
         window.addEventListener("load", handlePageLoad);
@@ -75,6 +81,7 @@ const AuthProvider = ({ children }) => {
                 return true;
             }
         } catch (err) {
+            notify.postNotification(err.response.data.detail, NotificationType.ERROR);
             console.error(err);
         }
         return false;
@@ -95,6 +102,7 @@ const AuthProvider = ({ children }) => {
                 return true;
             }
         } catch (err) {
+            notify.postNotification(err.response.data.detail, NotificationType.ERROR);
             console.error(err);
         }
         return false;
@@ -121,10 +129,11 @@ const AuthProvider = ({ children }) => {
                 document.cookie = `token=${response.data.access_token}; Secure;`;
                 return true;
             } else if (response.status === 422) {
-                // TODO: show error message
+                notify.postNotification(response.data.detail, NotificationType.ERROR);
                 console.error(response);
             }
         } catch (err) {
+            notify.postNotification(err.response.data.detail, NotificationType.ERROR);
             console.error(err);
         }
         return false;

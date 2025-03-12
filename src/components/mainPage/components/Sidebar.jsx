@@ -11,6 +11,8 @@ import { usePageState } from "../../../hooks/PageContext.jsx";
 import { useAuth } from "../../../hooks/AuthProvider";
 import { createFolder } from "../../../service/FolderService";
 import { uploadFile } from "../../../service/FileService";
+import { useNotify } from "../../../hooks/Notification/NotificationProvider.jsx";
+import { NotificationType } from "../../../hooks/Notification/NotificationTypes.tsx";
 
 const Sidebar = ({ onSelectCategory, activeCategory }) => {
     const auth = useAuth();
@@ -21,7 +23,7 @@ const Sidebar = ({ onSelectCategory, activeCategory }) => {
     const [isSettingsMode, setIsSettingsMode] = useState(false);
     const [isCollapsed, setIsCollapsed] = useState(false);
     const page = usePageState();
-
+    const notify = useNotify();
 
     const handleCategoryClick = (category) => {
         setIsAddingFile(false);
@@ -50,7 +52,7 @@ const Sidebar = ({ onSelectCategory, activeCategory }) => {
         input.type = 'file';
         input.onchange = async function () {
             for (const file of input.files) {
-                await uploadFile(file, page, auth);
+                await uploadFile(file, page, auth, notify);
             }
             page.setPageState({ ...page.pageState, toUpdate: !page.pageState.toUpdate });
         }
@@ -60,20 +62,20 @@ const Sidebar = ({ onSelectCategory, activeCategory }) => {
     const handleFolderSubmit = async (event) => {
         event.preventDefault();
 
-        if (auth.user.fullAccess === false) {
-            return;
-        }
         createFolder({ id: page.pageState.currentFolder.id, name: folderName }).then((response) => {
             const { data, error } = response;
             if (error) {
+                notify.postNotification("Failed to create folder", NotificationType.ERROR);
                 return console.log(error);
+            } else {
+                notify.postNotification("Created folder: " + folderName, NotificationType.SUCCESS);
             }
-
             setIsCreatingFolder(false);
             setFolderName("");
             page.setPageState({ ...page.pageState, toUpdate: !page.pageState.toUpdate });
         });
     }
+
     return (
         <div className={`sidebar ${isCollapsed ? "collapsed" : ""} ${isSettingsMode ? "settings-mode" : ""}`}>
             <div className="profile">
