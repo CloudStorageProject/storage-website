@@ -4,10 +4,13 @@ import { generateKeysFromSecrets } from '../../utils/Cryptography';
 import { useAuth } from '../../hooks/AuthProvider';
 import './fulljoin.css'
 import { useNavigate } from 'react-router-dom';
+import { useNotify } from '../../hooks/Notification/NotificationProvider.jsx';
+import { NotificationType } from '../../hooks/Notification/NotificationTypes.tsx';
 
 
-const RegistrationSecretPhrases = ({ userData, canProceed, setUserData, goToLimitedLogin, }) => {
+const RegistrationSecretPhrases = ({ userData, checkMnemonic, setUserData, goToLimitedLogin, }) => {
     const auth = useAuth();
+    const notify = useNotify();
     const navigate = useNavigate();
 
     // TODO: if private and public keys available show prompt to login
@@ -45,28 +48,18 @@ const RegistrationSecretPhrases = ({ userData, canProceed, setUserData, goToLimi
         auth.fullLoginAction(auth.keyPair).then((res) => {
             if (res) {
                 navigate("/storage");
-            } else {
-                // TODO: handle failure
             }
         }).catch((error) => {
-            console.log(error);
-            // TODO: handle error
+            notify.postNotification("Network error", NotificationType.NETWORK_ERROR);
         });
     }
 
     const handleSubmit = (e) => {
         e.preventDefault();
         if (auth.keyPair.privateKey === null || auth.keyPair.publicKey === null) {
-            let valid_mnemonic = true;
-            for (let i = 0; i < userData.mnemonic.length; i++) {
-                if (!userData.mnemonic[i] || userData.mnemonic[i] === ' ') {
-                    valid_mnemonic = false;
-                    break;
-                }
-            }
-            if (!valid_mnemonic) {
-                // TODO: Display empty mnemonic
-                alert('Please enter the recovery phrases in the correct order.');
+            const mnemonic_check = checkMnemonic(userData.mnemonic)
+            if (mnemonic_check) {
+                notify.postNotification(mnemonic_check, NotificationType.INFO)
             } else {
                 try {
                     generateKeysFromSecrets(userData.mnemonic).then(keys => {
@@ -113,7 +106,7 @@ const RegistrationSecretPhrases = ({ userData, canProceed, setUserData, goToLimi
                 </div>
                 <div className="recovery-phrase-controls">
                     <button type="button" onClick={goToLimitedLogin}>BACK</button>
-                    <button type="submit" disabled={!canProceed} onClick={handleSubmit}>CONTINUE</button>
+                    <button type="submit" onClick={handleSubmit}>CONTINUE</button>
                 </div>
             </div>
             <div className="img-wrap-bottom-right">

@@ -14,11 +14,14 @@ import { FileStructure, FolderStructure } from "../../../utils/Structures.tsx";
 import { uploadFile } from "../../../service/FileService.jsx";
 import { useAuth } from "../../../hooks/AuthProvider.jsx";
 import { usePageState } from "../../../hooks/PageContext.jsx";
+import { useNotify } from "../../../hooks/Notification/NotificationProvider.jsx";
+import { NotificationType } from "../../../hooks/Notification/NotificationTypes.tsx";
 
 
 const MyDisk = ({ }) => {
     const auth = useAuth();
     const page = usePageState();
+    const notify = useNotify();
     const [viewMode, setViewMode] = useState(page.pageState.viewMode); // 'list' or 'gallery'
     const [searchQuery, setSearchQuery] = useState("");
     const [dragActive, setDragActive] = useState(false);
@@ -80,7 +83,7 @@ const MyDisk = ({ }) => {
         setDragActive(false);
         if (event.dataTransfer.files && event.dataTransfer.files.length > 0) {
             for (const file of event.dataTransfer.files) {
-                await uploadFile(file, page, auth);
+                await uploadFile(file, page, auth, notify);
             }
             page.setPageState({ ...page.pageState, toUpdate: !page.pageState.toUpdate });
         }
@@ -90,6 +93,12 @@ const MyDisk = ({ }) => {
     const handleMenuToggle = useCallback((event) => {
         event.stopPropagation();
         event.preventDefault();
+
+        if (!auth.user.fullAccess) {
+            notify.postNotification("You need to log in with secret phrases to modify the files", NotificationType.INFO)
+            return;
+        }
+
         const target = event.target;
         if (target.id.includes('menu-button') && auth.user.fullAccess) {
             const file_id = parseInt(target.id.replace('menu-button-', ''));
