@@ -35,7 +35,7 @@ export default class App extends React.Component {
                                 <Route path="/reset-password" element={<ResetPasswordManager />} />
                                 <Route path="/register" element={<RegistrationPage keyPair={this.keyPair} setKeyPair={this.setKeyPair.bind(this)} />} />
                                 <Route element={<PrivateRoute />}>
-                                    <Route path="/*" element={<MainPage />} />
+                                    <Route path="/main" element={<MainPage keyPair={this.keyPair} setKeyPair={this.setKeyPair.bind(this)} />} />
                                 </Route>
                             </Routes>
                         </ThemeProvider>

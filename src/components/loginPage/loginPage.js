@@ -6,7 +6,7 @@ import { useAuth } from "../../hooks/AuthProvider";
 import bgimg from '../img/greenBackroundLoginPage.jpg'
 import { Link } from "react-router-dom";
 
-const LoginPage = ({ userData, setUserData, goToFullLogin }) => {
+const LoginPage = ({ userData, canProceed, setUserData, goToFullLogin }) => {
     const [formData, setFormData] = useState(userData);
     const auth = useAuth();
 
@@ -20,6 +20,7 @@ const LoginPage = ({ userData, setUserData, goToFullLogin }) => {
         try {
             if (auth.partialLoginAction(formData)) {
                 // TODO: handle success
+                document.location.href = "/main";
             } else {
                 // TODO: handle failure
             }
@@ -48,7 +49,7 @@ const LoginPage = ({ userData, setUserData, goToFullLogin }) => {
                     <Link to="/reset-password" className="forgot-password">
                         Forgot password?
                     </Link>
-                    <button type="submit" className="login-button" onClick={handleSubmit}>
+                    <button type="submit" className="login-button" disabled={!canProceed} onClick={handleSubmit}>
                         Login
                     </button>
                     <button type="submit" className="login-button" onClick={goToFullLogin}>

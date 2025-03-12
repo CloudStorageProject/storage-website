@@ -54,12 +54,19 @@ const AuthProvider = ({ children }) => {
 
     const registerAction = async (data) => {
         try {
+            data.public_key = exportPublicKeyToBase64(data.keyPair.publicKey);
+            delete data.keyPair;
             const response = await registerRequest(data);
-            if (response.status === 201) {
-                setUser(response.data.username);
+            if (response.status === 200) {
+                setUser(response.data);
                 setToken(response.data.access_token);
                 document.cookie = `token=${response.data.access_token}; Secure;`;
+                localStorage.setItem("privateKey", exportPrivateKeyToBase64(data.keyPair.privateKey));
+                localStorage.setItem("publicKey", exportPublicKeyToBase64(data.keyPair.publicKey));
                 return true;
+            } else if (response.status === 422) {
+                // TODO: show error message
+                console.log(response);
             }
         } catch (err) {
             console.error(err);

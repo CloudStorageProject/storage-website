@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, act } from "react";
 import SearchBar from "./SearchBar";
 import { ReactComponent as GalleryIcon } from "../../img/Gallery.svg";
 import { ReactComponent as ListIcon } from "../../img/List.svg";
@@ -10,34 +10,13 @@ import FileControl from "../elements/FileControl.jsx";
 import Folder from "../elements/Folder.jsx";
 
 
+const MyDisk = ({ folders = [], files = [], uploadFile, downloadFile }) => {
 
-const MyDisk = () => {
     const [viewMode, setViewMode] = useState(ViewMode.GALLERY); // 'list' or 'gallery'
     const [searchQuery, setSearchQuery] = useState("");
     const [dragActive, setDragActive] = useState(false);
-    const [activeMenu, setActiveMenu] = useState(null);
-
+    const [selectedFile, setSelectedFile] = useState(null);
     const menuPosition = useRef({ top: 0, left: 0 });
-
-    const folders = [
-        { id: "folder-1", name: "Folder 1" },
-        { id: "folder-2", name: "Folder 2" },
-        { id: "folder-3", name: "Folder 3" },
-    ];
-
-    const files = [
-        {
-            id: "file-1",
-            name: "File 1",
-            image:
-                "https://img.freepik.com/free-photo/digital-art-moon-tree-wallpaper_23-2150918811.jpg",
-        },
-        {
-            id: "file-2",
-            name: "File 2",
-            image: "https://i.ebayimg.com/images/g/n8IAAOSwltRkNCSF/s-l1200.png",
-        },
-    ];
 
     const handleSearch = (query) => {
         setSearchQuery(query);
@@ -54,11 +33,13 @@ const MyDisk = () => {
 
     const handleDragEnter = (event) => {
         event.preventDefault();
+        event.stopPropagation();
         setDragActive(true);
     }
 
     const handleDragLeave = (event) => {
         event.preventDefault();
+        event.stopPropagation();
         const contentContainer = document.getElementById('content-container');
         const { x, y, width, height } = contentContainer.getBoundingClientRect();
         const isWithinBounds =
@@ -66,29 +47,39 @@ const MyDisk = () => {
             event.nativeEvent.clientX < x + width - contentContainer.style.paddingRight &&
             event.nativeEvent.clientY > y - contentContainer.style.paddingTop &&
             event.nativeEvent.clientY < y + height - contentContainer.style.paddingBottom;
-        console.log(x, y, width, height);
+
 
         if (!isWithinBounds) {
             setDragActive(false);
         }
     }
 
+    const handleDragOver = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
     const handleDrop = (event) => {
         event.preventDefault();
+        event.stopPropagation();
         setDragActive(false);
+        if (event.dataTransfer.files && event.dataTransfer.files.length > 0) {
+            uploadFile(event.dataTransfer.files);
+            event.dataTransfer.clearData();
+        }
     };
 
 
     const handleMenuToggle = (id, event) => {
-        if (activeMenu === id) {
-            setActiveMenu(null);
+        if (selectedFile === id) {
+            setSelectedFile(null);
         } else {
             const rect = event.target.getBoundingClientRect();
             menuPosition.current = {
                 top: rect.bottom + window.scrollY,
                 left: rect.left + window.scrollX,
             };
-            setActiveMenu(id);
+            setSelectedFile(files.filter(id));
         }
     };
 
@@ -109,7 +100,7 @@ const MyDisk = () => {
     }, []);
 
     return (
-        <div id="content-container" className="content-container" onDragEnter={handleDragEnter} onDragLeave={handleDragLeave} onDrop={handleDrop}>
+        <div id="content-container" className="content-container" onDragEnter={handleDragEnter} onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}>
             <header>
                 <SearchBar onSearch={handleSearch} />
             </header>
@@ -127,8 +118,8 @@ const MyDisk = () => {
 
             {
                 dragActive ? (
-                    <div className="drag-placeholder" >
-                        <div className="drag-bg">
+                    <div className="drag-placeholder">
+                        <div className="drag-bg" >
                             <DragIcon />
                         </div>
                     </div>
@@ -150,7 +141,7 @@ const MyDisk = () => {
                                         return (<FileList key={file.id} file={file} handleMenuToggle={(e) => handleMenuToggle(file.id, e)} menuPosition={menuPosition} />);
                                     } else { return (<FileGrid key={file.id} file={file} handleMenuToggle={(e) => handleMenuToggle(file.id, e)} menuPosition={menuPosition} />); }
                                 })}
-                                {activeMenu && (<FileControl menuPosition={menuPosition} activeMenu={activeMenu} />)}
+                                {selectedFile && (<FileControl selectedFile={selectedFile} menuPosition={menuPosition} activeMenu={selectedFile} downloadFile={downloadFile} />)}
                             </div>
                         </div>
                     </div>
