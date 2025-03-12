@@ -81,12 +81,14 @@ const performDownload = async (file, privateKey, fileProperties, notify) => {
                 const decryption = new Promise((resolve, reject) => {
                     DataTransferWorker.postMessage({ action: TransferAction.DOWNLOAD, chunk: chunk, key: exportPrivateKeyToBase64(privateKey), AES: { AES_IV: fileProperties.data.encrypted_iv, AES_KEY: fileProperties.data.encrypted_key } });
                     notify.postNotification("Decrypting file", NotificationType.FILE_DECRYPTION);
+                    notify.postNotification("Decrypting file", NotificationType.FILE_DECRYPTION);
                     DataTransferWorker.onmessage = (event) => {
                         if (event.data.state === TransferState.COMPLETE || event.data.state === TransferState.PARTIAL) {
                             resolve(event.data.message);
                         } else if (event.data.state === TransferState.ACCEPTED || event.data.state === TransferState.IN_PROGRESS) {
                             // TODO: Implement Partial progress
                         } else {
+                            notify.postNotification("File decryption failed", NotificationType.FILE_DECRYPTION_FAILURE);
                             notify.postNotification("File decryption failed", NotificationType.FILE_DECRYPTION_FAILURE);
                             reject(event.data.message);
                         }
@@ -135,41 +137,50 @@ const performDownload = async (file, privateKey, fileProperties, notify) => {
         }
         await writableStream.close();
         notify.postNotification("File downloaded", NotificationType.FILE_DOWNLOAD_SUCCESS);
+        notify.postNotification("File downloaded", NotificationType.FILE_DOWNLOAD_SUCCESS);
     };
     const chunkSize = 1 * 1024 * 1024; // 1 MB chunk size
     downloadFileInChunks(chunkSize, file, fileProperties, privateKey, DataTransferWorker).catch(console.error);
 }
 
 const uploadFile = async (file, page, auth, notify) => {
-    return new Promise((resolve, reject) => {
-        DataTransferWorker.postMessage({ action: TransferAction.UPLOAD, file: file, folder_id: page.pageState.currentFolder.id, key: exportPublicKeyToBase64(auth.keyPair.publicKey) });
-        notify.postNotification("Encrypting file...", NotificationType.FILE_ENCRYPTION)
-        DataTransferWorker.onmessage = async (event) => {
-            if (event.data.state === TransferState.COMPLETE || event.data.state === TransferState.PARTIAL) {
-                notify.postNotification("Uploading file...", NotificationType.FILE_UPLOAD);
-                const { data, error } = await uploadFileFull(event.data.message);
-                if (error) {
-                    notify.postNotification("File encryption failed", NotificationType.FILE_ENCRYPTION_FAILURE);
-                    reject(error);
+    const uploadFile = async (file, page, auth, notify) => {
+        return new Promise((resolve, reject) => {
+            DataTransferWorker.postMessage({ action: TransferAction.UPLOAD, file: file, folder_id: page.pageState.currentFolder.id, key: exportPublicKeyToBase64(auth.keyPair.publicKey) });
+            notify.postNotification("Encrypting file...", NotificationType.FILE_ENCRYPTION)
+            notify.postNotification("Encrypting file...", NotificationType.FILE_ENCRYPTION)
+            DataTransferWorker.onmessage = async (event) => {
+                if (event.data.state === TransferState.COMPLETE || event.data.state === TransferState.PARTIAL) {
+                    notify.postNotification("Uploading file...", NotificationType.FILE_UPLOAD);
+                    notify.postNotification("Uploading file...", NotificationType.FILE_UPLOAD);
+                    const { data, error } = await uploadFileFull(event.data.message);
+                    if (error) {
+                        notify.postNotification("File encryption failed", NotificationType.FILE_ENCRYPTION_FAILURE);
+                        notify.postNotification("File encryption failed", NotificationType.FILE_ENCRYPTION_FAILURE);
+                        reject(error);
+                    }
+                    notify.postNotification("File uploaded", NotificationType.FILE_UPLOAD_SUCCESS);
+                    notify.postNotification("File uploaded", NotificationType.FILE_UPLOAD_SUCCESS);
+                    resolve(data);
+                } else if (event.data.state === TransferState.ACCEPTED || event.data.state === TransferState.IN_PROGRESS) {
+                    // TODO: Implement Partial progress
+                } else {
+                    notify.postNotification("File upload failed", NotificationType.FILE_UPLOAD_FAILURE);
+                    notify.postNotification("File upload failed", NotificationType.FILE_UPLOAD_FAILURE);
+                    reject(event.data.message);
                 }
-                notify.postNotification("File uploaded", NotificationType.FILE_UPLOAD_SUCCESS);
-                resolve(data);
-            } else if (event.data.state === TransferState.ACCEPTED || event.data.state === TransferState.IN_PROGRESS) {
-                // TODO: Implement Partial progress
-            } else {
-                notify.postNotification("File upload failed", NotificationType.FILE_UPLOAD_FAILURE);
-                reject(event.data.message);
-            }
+            };
+        });
+    }
+
+    const downloadFile = async (file, privateKey, notify) => {
+        const downloadFile = async (file, privateKey, notify) => {
+            getFileParams(file.file_id).then((response) => {
+                performDownload(file, privateKey, response, notify);
+                performDownload(file, privateKey, response, notify);
+            });
+        }
+
+        export {
+            DataTransferWorker, uploadFile, downloadFile, deleteFile, getFileParams, renameFile, getFileFull, getFilePart
         };
-    });
-}
-
-const downloadFile = async (file, privateKey, notify) => {
-    getFileParams(file.file_id).then((response) => {
-        performDownload(file, privateKey, response, notify);
-    });
-}
-
-export {
-    DataTransferWorker, uploadFile, downloadFile, deleteFile, getFileParams, renameFile, getFileFull, getFilePart
-};
