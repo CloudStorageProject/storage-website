@@ -37,7 +37,7 @@ async function generateKeys(action, data, callback) {
 export async function createKeys() {
     const randomSeed = forge.util.bytesToHex(forge.random.getBytesSync(32));
     let mnemonic = bip39.entropyToMnemonic(randomSeed);
-    return await generateKeys(GenerationType.FROM_HEX, { seedHex: mnemonic.split(" ") }).then((state) => {
+    return await generateKeys(GenerationType.FROM_HEX, { seedHex: mnemonic }).then((state) => {
         return { keyPair: state.keys, mnemonic: mnemonic };
     });
 }
@@ -71,6 +71,11 @@ export function exportPrivateKeyToBase64(privateKey) {
 }
 
 export async function generateKeysFromSecrets(mnemonic) {
+    if (!Array.isArray(mnemonic) && typeof mnemonic !== "string") {
+        return null;
+    } else if (typeof mnemonic !== "string") {
+        mnemonic = mnemonic.join(" ");
+    }
     return await generateKeys(GenerationType.FROM_HEX, { seedHex: mnemonic }).then((state) => {
         return { keyPair: state.keys, mnemonic: mnemonic };
     });
@@ -91,20 +96,30 @@ export function verifyMessage(message, signature, publicKey) {
 export function encryptData(data, publicKey) {
     const AES_KEY = forge.random.getBytesSync(32);
     const AES_IV = forge.random.getBytesSync(16);
+
     var cipher = forge.cipher.createCipher('AES-CBC', AES_KEY);
     cipher.start({ iv: AES_IV });
     cipher.update(forge.util.createBuffer(data));
     cipher.finish();
-    // console.log(encrypted.toHex());
-    return { data: Buffer.from(cipher.output.toHex(), "hex").toString("base64"), iv: Buffer.from(publicKey.encrypt(AES_IV), "utf-8").toString("base64"), key: Buffer.from(publicKey.encrypt(AES_KEY), "utf-8").toString("base64") };
+
+    const encryptedKey = publicKey.encrypt(AES_KEY, 'RSA-OAEP');
+    const encryptedIV = publicKey.encrypt(AES_IV, 'RSA-OAEP');
+
+    return {
+        data: Buffer.from(cipher.output.getBytes(), "binary").toString("base64"),
+        iv: Buffer.from(encryptedIV, "binary").toString("base64"),
+        key: Buffer.from(encryptedKey, "binary").toString("base64")
+    };
 }
 
 export function decryptData(data, privateKey, { iv, key }) {
-    const AES_KEY = privateKey.decrypt(Buffer.from(key, "base64"));
-    const AES_IV = privateKey.decrypt(Buffer.from(iv, "base64"));
-    var cipher = forge.cipher.createDecipher('AES-CBC', AES_KEY);
-    cipher.start({ iv: AES_IV });
-    cipher.update(forge.util.createBuffer(Buffer.from(data, "base64")));
-    cipher.finish();
-    return cipher.output.toUtf8();
+    const AES_KEY = privateKey.decrypt(Buffer.from(key, "base64").toString("binary"), 'RSA-OAEP');
+    const AES_IV = privateKey.decrypt(Buffer.from(iv, "base64").toString("binary"), 'RSA-OAEP');
+
+    var decipher = forge.cipher.createDecipher('AES-CBC', AES_KEY);
+    decipher.start({ iv: AES_IV });
+    decipher.update(forge.util.createBuffer(Buffer.from(data, "base64").toString("binary")));
+    decipher.finish();
+
+    return Buffer.from(decipher.output.getBytes(), "binary");
 }

@@ -15,13 +15,13 @@ export const getFolderRequest = async (id) => {
  * 
  * @param {string} name -> name of the folder
   */
-export const createRootFolderRequest = async (name) => {
+export const createRootFolderRequest = async (id, name) => {
     const res = await axiosInstanceJSON.post("/folders/", name);
     return res;
 };
 
-export const createFolderRequest = async (id, data) => {
-    const res = await axiosInstanceJSON.post("/folders/" + id, data);
+export const createFolderRequest = async (data) => {
+    const res = await axiosInstanceJSON.post("/folders/" + data.id, { name: data.name });
     return res;
 };
 

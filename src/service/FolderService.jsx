@@ -1,26 +1,26 @@
 import { createFolderRequest, createRootFolderRequest, deleteFolderRequest, getFolderRequest, getFoldersRequest, renameFolderRequest } from '../api/FolderRequests';
 
 export const renameFolder = async (id, data) => {
-    renameFolderRequest(id, data).then((response) => {
-        return { response: response.data, error: null };
+    return await renameFolderRequest(id, data).then((response) => {
+        return { data: response.data, error: null };
     }).catch((error) => {
-        return { response: null, error: error };
+        return { data: null, error: error };
     });
 }
 
 export const deleteFolder = async (id) => {
-    deleteFolderRequest(id).then((response) => {
-        return { response: response.data, error: null };
+    return await deleteFolderRequest(id).then((response) => {
+        return { data: response.data, error: null };
     }).catch((error) => {
-        return { response: null, error: error };
+        return { data: null, error: error };
     });
 }
 
 export const createFolder = async (data) => {
-    createFolderRequest(data).then((response) => {
-        return { response: response.data, error: null };
+    return await createFolderRequest({ id: data.id, name: data.name }).then((response) => {
+        return { data: response.data, error: null };
     }).catch((error) => {
-        return { response: null, error: error };
+        return { data: null, error: error };
     });
 }
 
@@ -32,18 +32,18 @@ export const createFolder = async (data) => {
  * 
  */
 export const createRootFolder = async (name) => {
-    createRootFolderRequest(name).then((response) => {
-        return { response: response.data, error: null };
+    return await createRootFolderRequest(name).then((response) => {
+        return { data: response.data, error: null };
     }).catch((error) => {
-        return { response: null, error: error };
+        return { data: null, error: error };
     });
 }
 
 export const getFolder = async (id) => {
-    getFolderRequest(id).then((response) => {
-        return { response: response.data, error: null };
+    return await getFolderRequest(id).then((response) => {
+        return { data: response.data, error: null };
     }).catch((error) => {
-        return { response: null, error: error };
+        return { data: null, error: error };
     });
 }
 
@@ -52,11 +52,11 @@ export const getFolder = async (id) => {
  * 
  * @returns ` { response: response.data, error: null }` or `[null, error]`
  */
-export const getFolders = async () => {
-    getFoldersRequest().then((response) => {
-        return { response: response.data, error: null };
+export const getRootFolder = async () => {
+    return await getFoldersRequest().then((response) => {
+        return { data: response.data, error: null };
     }).catch((error) => {
-        return { response: null, error: error };
+        return { data: null, error: error };
     });
 }
 

@@ -1,14 +1,19 @@
 // src/components/LoginPage.js
-import React from "react";
+import React, { useEffect } from "react";
 import "./loginPage.css"
 import { useState } from "react";
 import { useAuth } from "../../hooks/AuthProvider";
 import bgimg from '../img/greenBackroundLoginPage.jpg'
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useNotify } from "../../hooks/Notification/NotificationProvider";
+import { NotificationType } from "../../hooks/Notification/NotificationTypes.tsx";
 
-const LoginPage = ({ userData, canProceed, setUserData, goToFullLogin }) => {
+const LoginPage = ({ userData, checkUserData, setUserData, goToFullLogin }) => {
     const [formData, setFormData] = useState(userData);
     const auth = useAuth();
+    const navigate = useNavigate();
+    const notify = useNotify();
+
 
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -17,16 +22,19 @@ const LoginPage = ({ userData, canProceed, setUserData, goToFullLogin }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        try {
-            if (auth.partialLoginAction(formData)) {
-                // TODO: handle success
-                document.location.href = "/main";
-            } else {
-                // TODO: handle failure
-            }
-        } catch (error) {
-            console.log(error);
-            // TODO: handle error
+        const check = checkUserData(formData);
+
+        if (check) {
+            notify.postNotification(check, NotificationType.INFO);
+        } else {
+            auth.partialLoginAction(formData).then((res) => {
+                if (res) {
+                    navigate("/storage");
+                }
+            }).catch((error) => {
+                console.log(error);
+                notify.postNotification("Network error", NotificationType.NETWORK_ERROR);
+            });
         }
     };
 
@@ -49,7 +57,7 @@ const LoginPage = ({ userData, canProceed, setUserData, goToFullLogin }) => {
                     <Link to="/reset-password" className="forgot-password">
                         Forgot password?
                     </Link>
-                    <button type="submit" className="login-button" disabled={!canProceed} onClick={handleSubmit}>
+                    <button type="submit" className="login-button" onClick={handleSubmit}>
                         Login
                     </button>
                     <button type="submit" className="login-button" onClick={goToFullLogin}>

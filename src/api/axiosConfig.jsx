@@ -3,7 +3,7 @@ import axios from "axios";
 const AxiosInstance = ({ content_type }) => {
 
     const instance = axios.create({
-        baseURL: "https://backend.dev.cloud-storage.cloud",
+        baseURL: "https://backend.dev.cloud-storage.cloud/",
         headers: {
             "Content-Type": content_type,
         },

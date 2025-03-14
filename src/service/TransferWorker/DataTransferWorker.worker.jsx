@@ -1,36 +1,35 @@
 // DO NOT REMOVE!!!!!
 /* eslint-env worker */
 /* eslint-disable no-restricted-globals */
-import { encryptData, exportPublicKeyFromPem } from '../../utils/Cryptography.jsx'
+import { decryptData, encryptData, exportPrivateKeyFromPem, exportPublicKeyFromPem } from '../../utils/Cryptography.jsx'
 import { TransferAction, TransferState } from './DataTransferEnums.jsx';
-import { deleteFileRequest, getFileParamsRequest, getFileRequest, renameFileRequest, uploadFileRequest } from '../../api/FileRequests.jsx'
+import { determineFileType, determineFileFormat } from '../../utils/Structures.tsx';
 
 if ('function' === typeof importScripts) {
-    const fileReader = new FileReader();
-    // For 2048 byte key = 245
-    const padding = 1024 * 1024 * 10; // 10 MB
+    const padding = 1024 * 1024 * 1; // 1 MB
 
-    function fullUpload(file, key) {
+    function fullUpload(file, folder_id, key) {
+        const fileReader = new FileReader();
+
         fileReader.onload = async function () {
             const bytes = new Uint8Array(this.result);
             const encrypted = encryptData(bytes, key);
             const prepared_to_send = {
-                "folder_id": 0,
+                "folder_id": folder_id,
                 "name": file.name,
-                "type": "FUCK IF I KNOW",
-                "format": "FUCK IF I KNOW",
+                "type": determineFileType(file),
+                "format": determineFileFormat(file),
                 "encrypted_key": encrypted.key,
                 "encrypted_iv": encrypted.iv,
                 "content": encrypted.data
             }
             //  https://github.com/axios/axios/issues/70
             self.postMessage({ state: TransferState.COMPLETE, message: prepared_to_send });
-            self.close();
         };
         fileReader.readAsArrayBuffer(file);
     }
 
-    function partialUpload(file, key) {
+    function partialUpload(file, folder_id, key) {
         let offset = 0;
         while (offset < file.size) {
             const chunk = file.slice(offset, offset + padding);
@@ -39,10 +38,10 @@ if ('function' === typeof importScripts) {
                 const bytes = new Uint8Array(this.result);
                 const encrypted = encryptData(bytes, key);
                 const prepared_to_send = {
-                    "folder_id": 0,
+                    "folder_id": folder_id,
                     "name": file.name,
-                    "type": "FUCK IF I KNOW",
-                    "format": "FUCK IF I KNOW",
+                    "type": determineFileType(file),
+                    "format": determineFileFormat(file),
                     "encrypted_key": encrypted.key,
                     "encrypted_iv": encrypted.iv,
                     "content": encrypted.data
@@ -56,31 +55,40 @@ if ('function' === typeof importScripts) {
         }
     }
 
+    function decrypt(data, key, { AES_IV, AES_KEY }) {
+        self.postMessage({ state: TransferState.ACCEPTED, message: "Processing" });
+        const result = decryptData(data, key, { iv: AES_IV, key: AES_KEY });
+        self.postMessage({ state: TransferState.COMPLETE, message: result });
+    }
+
     self.onmessageerror = (event) => {
         self.postMessage({ state: TransferState.ERROR, message: event.error });
-        self.close();
     }
 
     self.onerror = (event) => {
         self.postMessage({ state: TransferState.ERROR, message: event.error });
-        self.close();
     }
 
     self.onmessage = async (event) => {
         const action = event.data.action;
         const file = event.data.file;
-        const key = exportPublicKeyFromPem(event.data.key);
 
         self.postMessage({ state: TransferState.ACCEPTED, message: "Processing" });
         if (action === TransferAction.UPLOAD) {
-            if (file.size > padding) {
-                console.log(`${file.name} is bigger than ${padding} bytes. [${file.size}]`);
-                // TODO: Implement partial upload
-                partialUpload(file, key);
-            } else {
-                console.log(`${file.name} is smaller than ${padding} bytes. [${file.size}]`);
-                fullUpload(file, key);
-            }
+            const key = exportPublicKeyFromPem(event.data.key);
+            const folder_id = event.data.folder_id;
+            fullUpload(file, folder_id, key);
+            // if (file.size > padding) {
+            //     console.log(`${file.name} is bigger than ${padding} bytes. [${file.size}]`);
+            //     // TODO: Implement partial upload
+            //     partialUpload(file, folder_id, key);
+            // } else {
+            //     console.log(`${file.name} is smaller than ${padding} bytes. [${file.size}]`);
+            //     fullUpload(file, folder_id, key);
+            // }
+        } else if (action === TransferAction.DOWNLOAD) {
+            const key = exportPrivateKeyFromPem(event.data.key);
+            decrypt(event.data.chunk, key, event.data.AES);
         }
     }
 }

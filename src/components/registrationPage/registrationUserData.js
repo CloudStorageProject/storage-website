@@ -3,35 +3,41 @@ import "./registrationUserData.js"
 import { useState } from "react";
 import bgimg from '../img/greenBackroundLoginPage.jpg'
 import { createKeys } from '../../utils/Cryptography.jsx';
+import { useAuth } from "../../hooks/AuthProvider.jsx";
+import { useNotify } from "../../hooks/Notification/NotificationProvider.jsx";
+import { NotificationType } from "../../hooks/Notification/NotificationTypes.tsx";
 
 const RegistrationUserData = ({ userData, setSecrets, setUserData, nextStage }) => {
     let [formData, setFormData] = useState(userData);
-    let [canProceed, setCanProceed] = useState(false);
     const userNameRegex = /^[a-zA-Z0-9]+$/
     const emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/
+    const auth = useAuth();
+    const notify = useNotify();
 
     const checkUserData = (data) => {
         if (!emailRegex.test(data.email)) {
+            notify.postNotification("Please enter a valid email", NotificationType.WARNING);
             return false;
-            // TODO: Handle email error
+        } else if (data.username.length < 4) {
+            notify.postNotification("Username should contain at least 4 characters")
         } else if (!userNameRegex.test(data.username)) {
+            notify.postNotification("Username can only contain letters and numbers", NotificationType.WARNING);
             return false;
-            // TODO: Handle username error
         } else if (data.password.length < 8 || data.password.length > 128) {
+            notify.postNotification("Password should contain at least 8 and at most 128 characters", NotificationType.WARNING);
             return false;
-            // TODO: Handle password error
         } else if (!/[A-Z]/.test(data.password)) {
+            notify.postNotification("Password should contain at least one uppercase letter", NotificationType.WARNING);
             return false;
-            // TODO: Handle password Uppercase error
         } else if (!/[a-z]/.test(data.password)) {
+            notify.postNotification("Password should contain at least one lowercase letter", NotificationType.WARNING);
             return false;
-            // TODO: Handle password Lowercase error
         } else if (!/[0-9]/.test(data.password)) {
+            notify.postNotification("Password should contain at least one number", NotificationType.WARNING);
             return false;
-            // TODO: Handle password Number error
         } else if (data.password !== data.confirmPassword) {
+            notify.postNotification("Passwords do not match", NotificationType.WARNING);
             return false;
-            // TODO: Handle password mismatch
         }
         return true;
     }
@@ -44,19 +50,17 @@ const RegistrationUserData = ({ userData, setSecrets, setUserData, nextStage }) 
 
     useEffect(() => {
         setUserData(formData);
-        setCanProceed(checkUserData(formData));
     }, [formData, setUserData]);
 
     const handleNextStage = (e) => {
         e.preventDefault();
-        console.log("handle next stage");
-
-        createKeys().then((data) => {
-            console.log("created keys");
-
-            setSecrets(data);
-            nextStage();
-        });
+        if (checkUserData(formData)) {
+            createKeys().then((data) => {
+                setSecrets(data);
+                auth.setKeyPair(data.keyPair);
+                nextStage();
+            });
+        }
     }
 
     return (
@@ -71,7 +75,7 @@ const RegistrationUserData = ({ userData, setSecrets, setUserData, nextStage }) 
                     <input type="password" placeholder="Password" className="login-input" name="password" onChange={handleChange} />
                     <input type="password" placeholder="Confirm Password" className="login-input" name="confirmPassword" onChange={handleChange} />
                     {/* TODO: add button state based on user data and readiness of secrets */}
-                    <button type="submit" className="login-button" disabled={!canProceed} onClick={(e) => { handleNextStage(e) }}>
+                    <button type="submit" className="login-button" onClick={(e) => { handleNextStage(e) }}>
                         Create account
                     </button>
                     <p className="signup-link">
