@@ -94,13 +94,13 @@ const MyDisk = ({ }) => {
         event.stopPropagation();
         event.preventDefault();
 
-        if (!auth.user.fullAccess) {
-            notify.postNotification("You need to log in with secret phrases to modify the files", NotificationType.INFO)
-            return;
-        }
 
         const target = event.target;
-        if (target.id.includes('menu-button') && auth.user.fullAccess) {
+        if (target.id.includes('menu-button')) {
+            if (!auth.user.fullAccess) {
+                notify.postNotification("You need to log in with secret phrases to modify the files", NotificationType.INFO);
+                return;
+            }
             const file_id = parseInt(target.id.replace('menu-button-', ''));
             if (selectedFile === file_id) {
                 setSelectedFile(null);
