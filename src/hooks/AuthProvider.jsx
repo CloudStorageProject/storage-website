@@ -57,13 +57,7 @@ const AuthProvider = ({ children }) => {
 
     function getStoredUser() {
         const storedUser = localStorage.getItem("user");
-
-        if ((keyPair.privateKey !== null && keyPair.publicKey !== null) || (storedUser !== null || storedUser !== "null" || storedUser !== "undefined" || storedUser !== undefined)) {
-            setUser(storedUser ? JSON.parse(storedUser) : null);
-            navigate("/storage");
-        } else {
-            navigate("/login");
-        }
+        setUser(storedUser ? JSON.parse(storedUser) : null);
     }
 
     function setStoredUser() {
