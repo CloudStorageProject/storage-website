@@ -9,10 +9,12 @@ import { ReactComponent as ArrowIcon } from "../../img/Arrow.svg";
 import { ReactComponent as BackIcon } from "../../img/Backarrow.svg";
 import { usePageState } from "../../../hooks/PageContext.jsx";
 import { useAuth } from "../../../hooks/AuthProvider";
-import { createFolder } from "../../../service/FolderService";
+import { createFolder, getFolder } from "../../../service/FolderService";
 import { uploadFile } from "../../../service/FileService";
 import { useNotify } from "../../../hooks/Notification/NotificationProvider.jsx";
 import { NotificationType } from "../../../hooks/Notification/NotificationTypes.tsx";
+import { getFolderRequest } from "../../../api/FolderRequests.jsx";
+import { FolderStructure } from "../../../utils/Structures.tsx";
 
 const Sidebar = ({ onSelectCategory, activeCategory }) => {
     const auth = useAuth();
@@ -62,17 +64,33 @@ const Sidebar = ({ onSelectCategory, activeCategory }) => {
     const handleFolderSubmit = async (event) => {
         event.preventDefault();
 
-        createFolder({ id: page.pageState.currentFolder.id, name: folderName }).then((response) => {
+        getFolder(page.pageState.currentFolder.id).then((response) => {
             const { data, error } = response;
             if (error) {
                 notify.postNotification("Failed to create folder", NotificationType.ERROR);
                 return console.log(error);
-            } else {
-                notify.postNotification("Created folder: " + folderName, NotificationType.SUCCESS);
             }
-            setIsCreatingFolder(false);
-            setFolderName("");
-            page.setPageState({ ...page.pageState, toUpdate: !page.pageState.toUpdate });
+            var temp = [];
+            for (var i = 0; i < data.folders.length; i++) {
+                temp.push(new FolderStructure(data.folders[i].name, data.folders[i].id, data.folders[i].folders, data.folders[i].files));
+            }
+            if (temp.find(folder => folder.name.toLowerCase() === folderName.toLowerCase())) {
+                notify.postNotification("Folder already exists", NotificationType.ERROR);
+                return console.log("Folder already exists");
+            } else {
+                createFolder({ id: page.pageState.currentFolder.id, name: folderName }).then((response) => {
+                    const { data, error } = response;
+                    if (error) {
+                        notify.postNotification("Failed to create folder", NotificationType.ERROR);
+                        return console.log(error);
+                    } else {
+                        notify.postNotification("Created folder: " + folderName, NotificationType.SUCCESS);
+                    }
+                    setIsCreatingFolder(false);
+                    setFolderName("");
+                    page.setPageState({ ...page.pageState, toUpdate: !page.pageState.toUpdate });
+                });
+            }
         });
     }
 
