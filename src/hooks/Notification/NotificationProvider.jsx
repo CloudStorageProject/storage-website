@@ -1,13 +1,19 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import NotificationManager from "./NotificationManager";
 import { NotificationType } from "./NotificationTypes.tsx";
 import { ReactComponent as TEMP_IMAGE } from "../../components/img/Warning.svg"
 import "./Notifications.css"
-
+import { useLocation } from "react-router-dom";
 
 const NotificationContext = createContext();
+let static_id = 0;
+
 export const NotificationProvider = ({ children }) => {
     const [notifications, setNotifications] = useState([]);
+    const location = useLocation();
+    useEffect(() => {
+        setNotifications([]);
+    }, [location]);
 
     const getImage = (type) => {
         // TODO: Update the image with corresponding icon
@@ -31,10 +37,8 @@ export const NotificationProvider = ({ children }) => {
         // If notification is of general type -> display and set timer
         // If notification is of file type -> clear all previous file notifications -> display current
         // If notification is of file success or failure type -> clear all previous file notifications -> display current and set timer
-        let id = Math.floor(Math.random() * 1000);
-        while (notifications.some(n => n.id === id)) {
-            id = Math.floor(Math.random() * 1000);
-        }
+        let id = static_id;
+        static_id += 1;
         const type_string = JSON.stringify(type);
         // id, image, element
         let notification = {};
