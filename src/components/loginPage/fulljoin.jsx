@@ -44,9 +44,10 @@ const RegistrationSecretPhrases = ({ userData, checkMnemonic, setUserData, goToL
         };
     }, []);
 
-    const performAuth = () => {
-        auth.fullLoginAction(auth.keyPair).then((res) => {
+    const performAuth = (keys) => {
+        auth.fullLoginAction(keys.keyPair).then((res) => {
             if (res) {
+                auth.setKeyPair(keys.keyPair);
                 navigate("/storage");
             }
         }).catch((error) => {
@@ -56,24 +57,23 @@ const RegistrationSecretPhrases = ({ userData, checkMnemonic, setUserData, goToL
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (auth.keyPair.privateKey === null || auth.keyPair.publicKey === null) {
-            const mnemonic_check = checkMnemonic(userData.mnemonic)
-            if (mnemonic_check) {
-                notify.postNotification(mnemonic_check, NotificationType.INFO)
-            } else {
-                try {
-                    generateKeysFromSecrets(userData.mnemonic).then(keys => {
-                        auth.setKeyPair(keys.keyPair);
-                    });
-                } catch (err) {
-                    // TODO: Handle invalid mnemonic
-                    console.error(err);
-                }
-            }
-        } else {
-            performAuth();
+        const mnemonic_check = checkMnemonic(userData.mnemonic)
+        if (mnemonic_check) {
+            notify.postNotification(mnemonic_check, NotificationType.INFO);
+            return;
         }
-    };
+
+        try {
+            generateKeysFromSecrets(userData.mnemonic).then(keys => {
+                performAuth(keys);
+            });
+        } catch (err) {
+            // TODO: Handle invalid mnemonic
+            console.error(err);
+        }
+    }
+
+
 
     return (
         <div className="recovery-phrase-main-container">

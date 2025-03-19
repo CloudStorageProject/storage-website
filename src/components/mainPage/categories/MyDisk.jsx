@@ -171,7 +171,7 @@ const MyDisk = ({ }) => {
                 setSelectedFolder(root);
                 updateFilesList(root);
                 setFilePath(root.name);
-                page.setPageState({ ...page.pageState, currentPage: "mydisk", currentFolder: data.id, folderTree: [data] });
+                page.setPageState({ ...page.pageState, currentPage: "mydisk", currentFolder: root, folderTree: [root] });
             }).catch((error) => {
                 console.error(error);
             });
