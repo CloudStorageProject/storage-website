@@ -29,27 +29,38 @@ const RegistrationSecretPhrases = ({ secretPhrases, nextStage, previousStage }) 
                 <p className="recovery-phrase-subtitle">You will need this in the next step.</p>
             </div>
             <div className="recovery-phrase-container">
-                <div>
-                    <div className="recovery-phrase-inputs">
-                        {secretPhrases && secretPhrases.map((phrase, index) => {
-                            return (
-                                <div key={index} className="recovery-phrase-input"><span className="recovery-phrase-index">{index + 1}</span> {phrase}</div>
-                            )
-                        })}
-                    </div>
-                    <div className="divider"></div>
-                    <div className="recovery-phrase-controls" >
-                        <button onClick={handleCopy}>Copy</button>
-                        <button onClick={handleDownload}>Download</button>
+                <div className="recovery-phrase-inputs">
+                    {secretPhrases && secretPhrases.map((phrase, index) => {
+                        return (
+                            <div key={index} className="recovery-phrase-input"><span className="recovery-phrase-index">{index + 1}</span> {phrase}</div>
+                        )
+                    })}
+                </div>
+                <div className="divider"></div>
+                <div className="recovery-phrase-controls" >
+                    <button onClick={handleCopy}>Copy</button>
+                    <button onClick={handleDownload}>Download</button>
+                    <div>
+                        <div className="recovery-phrase-inputs">
+                            {secretPhrases && secretPhrases.map((phrase, index) => {
+                                return (
+                                    <div key={index} className="recovery-phrase-input"><span className="recovery-phrase-index">{index + 1}</span> {phrase}</div>
+                                )
+                            })}
+                        </div>
+                        <div className="divider"></div>
+                        <div className="recovery-phrase-controls" >
+                            <button onClick={handleCopy}>Copy</button>
+                            <button onClick={handleDownload}>Download</button>
+                        </div>
                     </div>
                 </div>
+                <div className="recovery-phrase-controls">
+                    <button onClick={previousStage}>BACK</button>
+                    <button onClick={nextStage}>CONTINUE</button>
+                </div>
             </div>
-            <div className="recovery-phrase-controls">
-                <button onClick={previousStage}>BACK</button>
-                <button onClick={nextStage}>CONTINUE</button>
-            </div>
-        </div>
-    </div>);
+        </div>);
 }
 
-export default RegistrationSecretPhrases;
+        export default RegistrationSecretPhrases;
