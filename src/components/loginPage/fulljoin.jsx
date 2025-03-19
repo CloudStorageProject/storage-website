@@ -77,9 +77,6 @@ const RegistrationSecretPhrases = ({ userData, checkMnemonic, setUserData, goToL
 
     return (
         <div className="recovery-phrase-main-container">
-            <div className="img-wrap-top-left">
-                <img src={bgimg} className="img-phrases-top" alt="bg" />
-            </div>
             <div className="recovery-phrase-sub-container">
                 <div className="recovery-phrase-tips">
                     <p className="recovery-phrase-title">Enter Your Recovery Phrases</p>
@@ -89,7 +86,6 @@ const RegistrationSecretPhrases = ({ userData, checkMnemonic, setUserData, goToL
                     <form onSubmit={handleSubmit}>
                         <div className="recovery-phrase-inputs">
                             {userData.mnemonic.map((phrase, index) => (
-
                                 <div key={index} className="recovery-phrase-input">
                                     <input
                                         type="text"
@@ -108,9 +104,6 @@ const RegistrationSecretPhrases = ({ userData, checkMnemonic, setUserData, goToL
                     <button type="button" onClick={goToLimitedLogin}>BACK</button>
                     <button type="submit" onClick={handleSubmit}>CONTINUE</button>
                 </div>
-            </div>
-            <div className="img-wrap-bottom-right">
-                <img src={bgimg} className="img-phrases-bottom" alt="bg" />
             </div>
         </div>
     );
