@@ -23,35 +23,31 @@ const RegistrationSecretPhrases = ({ secretPhrases, nextStage, previousStage }) 
     };
 
     return (<div className="recovery-phrase-main-container">
-        <div className="img-wrap-top-left">
-            <img src={bgimg} className="img-phrases-top " alt="bg" />
-        </div>
         <div className="recovery-phrase-sub-container">
             <div className="recovery-phrase-tips">
                 <p className="recovery-phrase-title">Write down your recovery phrase.</p>
                 <p className="recovery-phrase-subtitle">You will need this in the next step.</p>
             </div>
             <div className="recovery-phrase-container">
-                <div className="recovery-phrase-inputs">
-                    {secretPhrases && secretPhrases.map((phrase, index) => {
-                        return (
-                            <p key={index} className="recovery-phrase-input"><span className="recovery-phrase-index">{index + 1}</span> {phrase}</p>
-                        )
-                    })}
-                </div>
-                <div className="divider"></div>
-                <div className="recovery-phrase-controls" >
-                    <button onClick={handleCopy}>Copy</button>
-                    <button onClick={handleDownload}>Download</button>
+                <div>
+                    <div className="recovery-phrase-inputs">
+                        {secretPhrases && secretPhrases.map((phrase, index) => {
+                            return (
+                                <div key={index} className="recovery-phrase-input"><span className="recovery-phrase-index">{index + 1}</span> {phrase}</div>
+                            )
+                        })}
+                    </div>
+                    <div className="divider"></div>
+                    <div className="recovery-phrase-controls" >
+                        <button onClick={handleCopy}>Copy</button>
+                        <button onClick={handleDownload}>Download</button>
+                    </div>
                 </div>
             </div>
             <div className="recovery-phrase-controls">
                 <button onClick={previousStage}>BACK</button>
                 <button onClick={nextStage}>CONTINUE</button>
             </div>
-        </div>
-        <div className="img-wrap-bottom-right">
-            <img src={bgimg} className="img-phrases-bottom" alt="bg" />
         </div>
     </div>);
 }
