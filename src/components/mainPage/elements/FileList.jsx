@@ -32,7 +32,7 @@ const FileList = ({ file }) => {
             {getImage(file)}
             <div className="file-header">
                 <p className="file-name">{file.name}</p>
-                <button className="menu-button" id={`menu-button-` + file.file_id} >
+                <button className="menu-button" id={`menu-button-file-` + file.file_id} >
                     <MoreIcon style={{ pointerEvents: "none" }} />
                 </button>
             </div>

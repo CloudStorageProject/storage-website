@@ -9,13 +9,14 @@ import FileGrid from "../elements/FileGrid.jsx";
 import FileList from "../elements/FileList.jsx";
 import FileControl from "../elements/FileControl.jsx";
 import Folder from "../elements/Folder.jsx";
-import { getFolder, getRootFolder } from "../../../service/FolderService.jsx";
+import { getFolder, getRootFolder, renameFolder } from "../../../service/FolderService.jsx";
 import { FileStructure, FolderStructure } from "../../../utils/Structures.tsx";
-import { uploadFile } from "../../../service/FileService.jsx";
+import { renameFile, uploadFile } from "../../../service/FileService.jsx";
 import { useAuth } from "../../../hooks/AuthProvider.jsx";
 import { usePageState } from "../../../hooks/PageContext.jsx";
 import { useNotify } from "../../../hooks/Notification/NotificationProvider.jsx";
 import { NotificationType } from "../../../hooks/Notification/NotificationTypes.tsx";
+import FolderControl from "../elements/FolderControl.jsx";
 
 
 const MyDisk = ({ }) => {
@@ -26,11 +27,15 @@ const MyDisk = ({ }) => {
     const [searchQuery, setSearchQuery] = useState("");
     const [dragActive, setDragActive] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
-    const [selectedFolder, setSelectedFolder] = useState(page.pageState.currentFolder || null);
+    const [selectedFolder, setSelectedFolder] = useState(null);
+    const [currentFolder, setCurrentFolder] = useState(page.pageState.currentFolder || null);
     const [files, setFiles] = useState([]);
     const [folders, setFolders] = useState([]);
     const [filePath, setFilePath] = useState("");
-    const menuPosition = useRef({ top: 0, left: 0 });
+    const [selectedRenaming, setSelectedRenaming] = useState(null);
+    const [renamingName, setRenamingName] = useState(null);
+    const fileMenuPosition = useRef({ top: 0, left: 0 });
+    const folderMenuPosition = useRef({ top: 0, left: 0 });
 
     const handleSearch = (query) => {
         setSearchQuery(query);
@@ -94,27 +99,45 @@ const MyDisk = ({ }) => {
         event.stopPropagation();
         event.preventDefault();
 
-
         const target = event.target;
-        if (target.id.includes('menu-button')) {
+        if (target.id.includes('menu-button-file')) {
             if (!auth.user.fullAccess) {
                 notify.postNotification("You need to log in with secret phrases to modify the files", NotificationType.INFO);
                 return;
             }
-            const file_id = parseInt(target.id.replace('menu-button-', ''));
+            const file_id = parseInt(target.id.replace('menu-button-file-', ''));
             if (selectedFile === file_id) {
                 setSelectedFile(null);
             } else {
-                menuPosition.current = {
+                fileMenuPosition.current = {
                     top: event.clientY,
                     left: event.clientX
                 };
+                setSelectedFolder(null);
                 setSelectedFile(filteredFiles.filter((file) => file.file_id === file_id)[0]);
+            }
+        } else if (target.id.includes('menu-button-folder')) {
+            if (!auth.user.fullAccess) {
+                notify.postNotification("You need to log in with secret phrases to modify the folders", NotificationType.INFO);
+                return;
+            }
+            const folder_id = parseInt(target.id.replace('menu-button-folder-', ''));
+            if (selectedFolder === folder_id) {
+                setSelectedFolder(null);
+            } else {
+
+                folderMenuPosition.current = {
+                    top: event.clientY,
+                    left: event.clientX
+                };
+                setSelectedFile(null);
+                setSelectedFolder(filteredFolders.filter((file) => file.id === folder_id)[0]);
             }
         } else {
             setSelectedFile(null);
+            setSelectedFolder(null);
         }
-    }, [files, selectedFile]);
+    }, [files, selectedFile, selectedFolder]);
 
     const updateFilesList = async (selectedFolder) => {
         await getFolder(selectedFolder.id).then((response) => {
@@ -153,11 +176,11 @@ const MyDisk = ({ }) => {
     }, [handleMenuToggle]);
 
     useEffect(() => {
-        if (selectedFolder) {
-            updateFilesList(selectedFolder);
+        if (currentFolder) {
+            updateFilesList(currentFolder);
             const callstack = Array.from(page.pageState.folderTree || []);
-            if (callstack.find((folder) => folder.id === selectedFolder.id) === undefined) {
-                callstack.push(selectedFolder);
+            if (callstack.find((folder) => folder.id === currentFolder.id) === undefined) {
+                callstack.push(currentFolder);
             }
             setFilePath(callstack.map((folder) => folder.name).join("/"));
             page.setPageState({ ...page.pageState, folderTree: callstack });
@@ -168,7 +191,7 @@ const MyDisk = ({ }) => {
                     return console.error(error);
                 }
                 const root = new FolderStructure(data.name, data.id, data.folders, data.files);
-                setSelectedFolder(root);
+                setCurrentFolder(root);
                 updateFilesList(root);
                 setFilePath(root.name);
                 page.setPageState({ ...page.pageState, currentPage: "mydisk", currentFolder: root, folderTree: [root] });
@@ -177,7 +200,7 @@ const MyDisk = ({ }) => {
             });
         }
 
-    }, [selectedFolder, page.pageState.toUpdate]);
+    }, [page.pageState.currentFolder, page.pageState.toUpdate]);
 
 
     const handlePreviousFolder = () => {
@@ -185,7 +208,7 @@ const MyDisk = ({ }) => {
 
         if (callstack.length > 1) {
             callstack.pop();
-            setSelectedFolder(callstack[callstack.length - 1]);
+            setCurrentFolder(callstack[callstack.length - 1]);
             page.setPageState({ ...page.pageState, currentPage: "mydisk", currentFolder: callstack[callstack.length - 1], folderTree: callstack });
         }
     }
@@ -193,6 +216,66 @@ const MyDisk = ({ }) => {
     const updateViewMode = (mode) => {
         page.setPageState({ ...page.pageState, viewMode: mode, toUpdate: !page.pageState.toUpdate });
         setViewMode(mode);
+    }
+
+    const handleRename = async () => {
+
+        if (renamingName === "") {
+            notify.postNotification("Name cannot be empty", NotificationType.ERROR);
+            return;
+        }
+        if (selectedRenaming instanceof FolderStructure) {
+            if (renamingName === selectedRenaming.name) {
+                notify.postNotification("Folder name is the same", NotificationType.ERROR);
+                return;
+            } else if (filteredFolders.filter((folder) => folder.name === renamingName).length > 0) {
+                notify.postNotification("Folder name already exists", NotificationType.ERROR);
+                return;
+            }
+
+            const resp = await renameFolder(selectedRenaming.id, { name: renamingName });
+            if (resp.error) {
+                notify.postNotification("Failed to rename folder", NotificationType.ERROR);
+                return;
+            } else {
+                notify.postNotification("Folder renamed", NotificationType.SUCCESS)
+                page.setPageState({ ...page.pageState, toUpdate: !page.pageState.toUpdate });
+            }
+        } else {
+            if (renamingName === selectedRenaming.name) {
+                notify.postNotification("File name is the same", NotificationType.ERROR);
+                return;
+            } else if (filteredFiles.filter((file) => file.name === renamingName).length > 0) {
+                notify.postNotification("File name already exists", NotificationType.ERROR);
+                return;
+            }
+
+            const resp = await renameFile(selectedRenaming.file_id, { new_name: renamingName });
+            if (resp.error) {
+                notify.postNotification("Failed to rename file", NotificationType.ERROR);
+                return;
+            } else {
+                notify.postNotification("File renamed", NotificationType.SUCCESS)
+                page.setPageState({ ...page.pageState, toUpdate: !page.pageState.toUpdate });
+            }
+        }
+
+        document.getElementById('rename-dialog').classList.add('disappear');
+        setTimeout(() => {
+            setSelectedRenaming(null);
+            setRenamingName("");
+        }, 1_000);
+    }
+    const handleRenameChange = (event) => {
+        setRenamingName(event.target.value);
+    }
+
+    const handleRenameCancel = () => {
+        document.getElementById('rename-dialog').classList.add('disappear');
+        setTimeout(() => {
+            setSelectedRenaming(null);
+            setRenamingName("");
+        }, 1_000);
     }
 
     return (
@@ -224,9 +307,11 @@ const MyDisk = ({ }) => {
                         <div className="section">
                             <h2 className="folder-title">Folders</h2>
                             <div className="items">
-                                {filteredFolders.map((folder) => (
-                                    <Folder key={`folder-` + folder.id} folder={folder} setSelectedFolder={setSelectedFolder} viewMode={viewMode} page={page} />
-                                ))}
+                                {
+                                    filteredFolders.map((folder) => (
+                                        <Folder key={`folder-` + folder.id} folder={folder} setCurrentFolder={setCurrentFolder} viewMode={viewMode} page={page} />
+                                    ))
+                                }
                             </div>
                         </div>
                         <div className="section">
@@ -235,17 +320,35 @@ const MyDisk = ({ }) => {
                                 <h2 className="file-title">{filePath}</h2>
                             </div>
                             <div className="items">
-                                {filteredFiles.map((file) => {
-                                    if (viewMode === ViewMode.LIST) {
-                                        return (<FileList key={`file-list-` + file.file_id} file={file} menuPosition={menuPosition} />);
-                                    } else {
-                                        return (<FileGrid key={`file-grid-` + file.file_id} file={file} menuPosition={menuPosition} />);
-                                    }
-                                })}
-                                {selectedFile && (<FileControl setSelectedFile={setSelectedFile} file={selectedFile} menuPosition={menuPosition} activeMenu={selectedFile} />)}
+                                {
+                                    filteredFiles.map((file) => {
+                                        if (viewMode === ViewMode.LIST) {
+                                            return (<FileList key={`file-list-` + file.file_id} file={file} menuPosition={fileMenuPosition} />);
+                                        } else {
+                                            return (<FileGrid key={`file-grid-` + file.file_id} file={file} menuPosition={fileMenuPosition} />);
+                                        }
+                                    })
+                                }
+                                {selectedFile && (<FileControl setSelectedFile={setSelectedFile} setSelectedRenaming={setSelectedRenaming} file={selectedFile} menuPosition={fileMenuPosition} activeMenu={selectedFile} />)}
+                                {selectedFolder && (<FolderControl setSelectedFolder={setSelectedFolder} setSelectedRenaming={setSelectedRenaming} setCurrentFolder={setCurrentFolder} folder={selectedFolder} menuPosition={folderMenuPosition} activeMenu={selectedFolder} />)}
                             </div>
                         </div>
                     </div>
+                )
+            }
+            {
+                selectedRenaming && (
+                    <dialog id="rename-dialog" className="rename-dialog" open={true}>
+                        <div className="rename-content">
+                            <p>Renaming <span>{selectedRenaming.name}</span></p>
+                            <input type="text" className="rename-input" placeholder="New Name" value={renamingName} onChange={(e) => { handleRenameChange(e); }} name="rename" id="" />
+                            <div className="rename-controls">
+                                <button onClick={() => { handleRenameCancel(); }}>Cancel</button>
+                                <button onClick={() => { handleRename(); }}>Rename</button>
+                            </div>
+
+                        </div>
+                    </dialog>
                 )
             }
         </div >
