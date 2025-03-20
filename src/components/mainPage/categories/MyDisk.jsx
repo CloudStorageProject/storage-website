@@ -369,7 +369,7 @@ const MyDisk = ({ }) => {
                                     })
                                 }
                                 {selectedFile && (<FileControl setSelectedFile={setSelectedFile} setSelectedRenaming={setSelectedRenaming} file={selectedFile} menuPosition={fileMenuPosition} activeMenu={selectedFile} />)}
-                                {selectedFolder && (<FolderControl setSelectedFolder={setSelectedFolder} changeCurrentFolder={changeCurrentFolder} setCurrentFolder={setCurrentFolder} folder={selectedFolder} menuPosition={folderMenuPosition} activeMenu={selectedFolder} />)}
+                                {selectedFolder && (<FolderControl setSelectedFolder={setSelectedFolder} setSelectedRenaming={setSelectedRenaming} changeCurrentFolder={changeCurrentFolder} setCurrentFolder={setCurrentFolder} folder={selectedFolder} menuPosition={folderMenuPosition} activeMenu={selectedFolder} />)}
                                 {selectedFolderTree && (<FolderTreeControl id={selectedFolderTree} changeCurrentFolder={changeFolderTree} menuPosition={folderTreeMenuPosition} activeMenu={selectedFolderTree} />)}
                             </div>
                         </div>
