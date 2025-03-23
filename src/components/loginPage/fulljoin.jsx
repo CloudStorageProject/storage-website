@@ -83,7 +83,7 @@ const RegistrationSecretPhrases = ({ userData, checkMnemonic, setUserData, goToL
                     <p className="recovery-phrase-subtitle">Please enter the recovery phrases in the correct order.</p>
                 </div>
                 <div className="recovery-phrase-container">
-                    <form onSubmit={handleSubmit}>
+                    <form className='phrase-container' onSubmit={handleSubmit}>
                         <div className="recovery-phrase-inputs">
                             {userData.mnemonic.map((phrase, index) => (
                                 <div key={index} className="recovery-phrase-input">

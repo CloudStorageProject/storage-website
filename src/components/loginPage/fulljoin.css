@@ -113,7 +113,6 @@
     font-size: 20px;
     border: none;
     text-align: left;
-    margin: 5px 40px;
 }
 
 .recovery-phrase-index {
@@ -200,6 +199,13 @@ button {
 .img-confirm-bottom {
     clip-path: polygon(0 80%, 20% 85%, 15% 100%, 0% 100%);
 }
+
+.phrase-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
 
 @media (width < 1025px) {
     .recovery-phrase-sub-container {
