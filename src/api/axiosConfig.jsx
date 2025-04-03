@@ -3,7 +3,7 @@ import axios from "axios";
 const AxiosInstance = ({ content_type }) => {
 
     const instance = axios.create({
-        baseURL: process.env.REACT_APP_API_URL,
+        baseURL: window.__ENV__.REACT_APP_API_URL,
         headers: {
             "Content-Type": content_type,
         },
