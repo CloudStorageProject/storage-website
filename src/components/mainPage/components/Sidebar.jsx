@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./sidebar.css";
 import AddFileOptions from "./AddFileOptions";
 import { ReactComponent as SettingsIcon } from "../../img/Settings.svg";
@@ -9,7 +9,7 @@ import { ReactComponent as ArrowIcon } from "../../img/Arrow.svg";
 import { ReactComponent as BackIcon } from "../../img/Backarrow.svg";
 import { usePageState } from "../../../hooks/PageContext.jsx";
 import { useAuth } from "../../../hooks/AuthProvider";
-import { createFolder, getFolder } from "../../../service/FolderService";
+import { createFolder, getAvailableSpace, getFolder } from "../../../service/FolderService";
 import { uploadFile } from "../../../service/FileService";
 import { useNotify } from "../../../hooks/Notification/NotificationProvider.jsx";
 import { NotificationType } from "../../../hooks/Notification/NotificationTypes.tsx";
@@ -26,6 +26,24 @@ const Sidebar = ({ onSelectCategory, activeCategory }) => {
     const [isCollapsed, setIsCollapsed] = useState(false);
     const page = usePageState();
     const notify = useNotify();
+
+    useEffect(() => {
+        const displayAvailableSpace = () => {
+            getAvailableSpace().then((response) => {
+                const { data, error } = response;
+                if (error) {
+                    setProgress(0);
+                } else {
+                    setProgress(data.used_percentage);
+                }
+            }).catch((error) => {
+                console.error(error);
+                setProgress(0);
+            });
+        }
+
+        displayAvailableSpace();
+    }, []);
 
     const handleCategoryClick = (category) => {
         setIsAddingFile(false);

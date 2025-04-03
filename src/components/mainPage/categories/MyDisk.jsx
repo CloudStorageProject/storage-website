@@ -17,6 +17,8 @@ import { usePageState } from "../../../hooks/PageContext.jsx";
 import { useNotify } from "../../../hooks/Notification/NotificationProvider.jsx";
 import { NotificationType } from "../../../hooks/Notification/NotificationTypes.tsx";
 import FolderControl from "../elements/FolderControl.jsx";
+import FolderSelector from "../elements/FolderSelector.jsx";
+import FolderTreeControl from "../elements/FolderTreeControl.jsx";
 
 
 const MyDisk = ({ }) => {
@@ -28,6 +30,7 @@ const MyDisk = ({ }) => {
     const [dragActive, setDragActive] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
     const [selectedFolder, setSelectedFolder] = useState(null);
+    const [selectedFolderTree, setSelectedFolderTree] = useState(null);
     const [currentFolder, setCurrentFolder] = useState(page.pageState.currentFolder || null);
     const [files, setFiles] = useState([]);
     const [folders, setFolders] = useState([]);
@@ -36,6 +39,7 @@ const MyDisk = ({ }) => {
     const [renamingName, setRenamingName] = useState(null);
     const fileMenuPosition = useRef({ top: 0, left: 0 });
     const folderMenuPosition = useRef({ top: 0, left: 0 });
+    const folderTreeMenuPosition = useRef({ top: 0, left: 0 });
 
     const handleSearch = (query) => {
         setSearchQuery(query);
@@ -98,8 +102,8 @@ const MyDisk = ({ }) => {
     const handleMenuToggle = useCallback((event) => {
         event.stopPropagation();
         event.preventDefault();
-
         const target = event.target;
+
         if (target.id.includes('menu-button-file')) {
             if (!auth.user.fullAccess) {
                 notify.postNotification("You need to log in with secret phrases to modify the files", NotificationType.INFO);
@@ -114,6 +118,7 @@ const MyDisk = ({ }) => {
                     left: event.clientX
                 };
                 setSelectedFolder(null);
+                setSelectedFolderTree(null);
                 setSelectedFile(filteredFiles.filter((file) => file.file_id === file_id)[0]);
             }
         } else if (target.id.includes('menu-button-folder')) {
@@ -131,11 +136,26 @@ const MyDisk = ({ }) => {
                     left: event.clientX
                 };
                 setSelectedFile(null);
+                setSelectedFolderTree(null);
                 setSelectedFolder(filteredFolders.filter((file) => file.id === folder_id)[0]);
+            }
+        } else if (target.id.includes('inner-folders-dropdown-button')) {
+            const id = parseInt(target.id.replace('inner-folders-dropdown-button-', ''));
+            if (selectedFolderTree === id) {
+                setSelectedFolderTree(null);
+            } else {
+                folderTreeMenuPosition.current = {
+                    top: event.clientY,
+                    left: event.clientX
+                };
+                setSelectedFile(null);
+                setSelectedFolder(null);
+                setSelectedFolderTree(id);
             }
         } else {
             setSelectedFile(null);
             setSelectedFolder(null);
+            setSelectedFolderTree(null);
         }
     }, [files, selectedFile, selectedFolder]);
 
@@ -202,17 +222,6 @@ const MyDisk = ({ }) => {
 
     }, [page.pageState.currentFolder, page.pageState.toUpdate]);
 
-
-    const handlePreviousFolder = () => {
-        const callstack = Array.from(page.pageState.folderTree || []);
-
-        if (callstack.length > 1) {
-            callstack.pop();
-            setCurrentFolder(callstack[callstack.length - 1]);
-            page.setPageState({ ...page.pageState, currentPage: "mydisk", currentFolder: callstack[callstack.length - 1], folderTree: callstack });
-        }
-    }
-
     const updateViewMode = (mode) => {
         page.setPageState({ ...page.pageState, viewMode: mode, toUpdate: !page.pageState.toUpdate });
         setViewMode(mode);
@@ -266,6 +275,7 @@ const MyDisk = ({ }) => {
             setRenamingName("");
         }, 1_000);
     }
+
     const handleRenameChange = (event) => {
         setRenamingName(event.target.value);
     }
@@ -276,6 +286,28 @@ const MyDisk = ({ }) => {
             setSelectedRenaming(null);
             setRenamingName("");
         }, 1_000);
+    }
+
+    const changeFolderTree = (folder, parentID) => {
+        // If there is parent id -> remove all except parent and set current as folder
+        // If there is no parent id -> remove all except parent
+        let tree = Array.from(page.pageState.folderTree || []);
+        if (parentID) {
+            tree = tree.splice(0, tree.findIndex((f) => f.id === parentID) + 1);
+            tree.push(folder);
+        } else {
+            tree = tree.splice(0, tree.findIndex((f) => f.id === folder.id) + 1);
+        }
+        setCurrentFolder(folder);
+        page.setPageState({ ...page.pageState, currentFolder: folder, toUpdate: !page.pageState.toUpdate, folderTree: tree });
+    }
+
+
+    const changeCurrentFolder = (folder, parentID) => {
+        let tree = Array.from(page.pageState.folderTree || []);
+        tree.push(folder);
+        setCurrentFolder(folder);
+        page.setPageState({ ...page.pageState, currentFolder: folder, toUpdate: !page.pageState.toUpdate, folderTree: tree });
     }
 
     return (
@@ -304,21 +336,28 @@ const MyDisk = ({ }) => {
                     </div>
                 ) : (
                     <div className={`content ${viewMode}`}>
+                        <div className="folder-navigation">
+                            {
+                                page.pageState.folderTree && page.pageState.folderTree.length > 0 && page.pageState.folderTree.map((folder, index) => (
+                                    <>
+                                        <FolderSelector folder={folder} changeCurrentFolder={changeFolderTree} key={`folder-selector-` + folder.id} page={page} />
+                                        <span style={{ color: "var(--text-color)" }}>/</span>
+                                    </>
+                                ))
+                            }
+                        </div>
                         <div className="section">
                             <h2 className="folder-title">Folders</h2>
                             <div className="items">
                                 {
                                     filteredFolders.map((folder) => (
-                                        <Folder key={`folder-` + folder.id} folder={folder} setCurrentFolder={setCurrentFolder} viewMode={viewMode} page={page} />
+                                        <Folder key={`folder-` + folder.id} folder={folder} changeCurrentFolder={changeCurrentFolder} viewMode={viewMode} page={page} />
                                     ))
                                 }
                             </div>
                         </div>
                         <div className="section">
-                            <div className="folder-navigation">
-                                <button className="back-folder-button" onClick={() => { handlePreviousFolder() }}><BackIcon /></button>
-                                <h2 className="file-title">{filePath}</h2>
-                            </div>
+
                             <div className="items">
                                 {
                                     filteredFiles.map((file) => {
@@ -330,7 +369,8 @@ const MyDisk = ({ }) => {
                                     })
                                 }
                                 {selectedFile && (<FileControl setSelectedFile={setSelectedFile} setSelectedRenaming={setSelectedRenaming} file={selectedFile} menuPosition={fileMenuPosition} activeMenu={selectedFile} />)}
-                                {selectedFolder && (<FolderControl setSelectedFolder={setSelectedFolder} setSelectedRenaming={setSelectedRenaming} setCurrentFolder={setCurrentFolder} folder={selectedFolder} menuPosition={folderMenuPosition} activeMenu={selectedFolder} />)}
+                                {selectedFolder && (<FolderControl setSelectedFolder={setSelectedFolder} setSelectedRenaming={setSelectedRenaming} changeCurrentFolder={changeCurrentFolder} setCurrentFolder={setCurrentFolder} folder={selectedFolder} menuPosition={folderMenuPosition} activeMenu={selectedFolder} />)}
+                                {selectedFolderTree && (<FolderTreeControl id={selectedFolderTree} changeCurrentFolder={changeFolderTree} menuPosition={folderTreeMenuPosition} activeMenu={selectedFolderTree} />)}
                             </div>
                         </div>
                     </div>
