@@ -45,6 +45,7 @@ const RegistrationSecretPhrases = ({ userData, checkMnemonic, setUserData, goToL
     }, []);
 
     const performAuth = (keys) => {
+        if (keys.keyPair.privateKey === null || keys.keyPair.publicKey === null) return;
         auth.fullLoginAction(keys.keyPair).then((res) => {
             if (res) {
                 auth.setKeyPair(keys.keyPair);

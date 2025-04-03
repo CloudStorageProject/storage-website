@@ -1,4 +1,4 @@
-import { createFolderRequest, createRootFolderRequest, deleteFolderRequest, getFolderRequest, getFoldersRequest, renameFolderRequest } from '../api/FolderRequests';
+import { createFolderRequest, createRootFolderRequest, deleteFolderRequest, getAvailableUserSpace, getFolderRequest, getFoldersRequest, renameFolderRequest } from '../api/FolderRequests';
 
 export const renameFolder = async (id, data) => {
     return await renameFolderRequest(id, data).then((response) => {
@@ -54,6 +54,14 @@ export const getFolder = async (id) => {
  */
 export const getRootFolder = async () => {
     return await getFoldersRequest().then((response) => {
+        return { data: response.data, error: null };
+    }).catch((error) => {
+        return { data: null, error: error };
+    });
+}
+
+export const getAvailableSpace = async () => {
+    return await getAvailableUserSpace().then((response) => {
         return { data: response.data, error: null };
     }).catch((error) => {
         return { data: null, error: error };
