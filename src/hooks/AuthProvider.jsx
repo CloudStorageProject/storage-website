@@ -57,7 +57,9 @@ const AuthProvider = ({ children }) => {
 
     function getStoredUser() {
         const storedUser = localStorage.getItem("user");
-        setUser(storedUser ? JSON.parse(storedUser) : null);
+        if (storedUser) {
+            setUser(JSON.parse(storedUser));
+        }
     }
 
     function setStoredUser() {
@@ -81,13 +83,13 @@ const AuthProvider = ({ children }) => {
         return false;
     };
 
-    const fullLoginAction = async () => {
+    const fullLoginAction = async (keys) => {
         try {
-            const message = await requestChallenge(keyPair.publicKey);
+            const message = await requestChallenge(keys.publicKey);
 
-            let signedMessage = Buffer.from(signMessage(message.data.challenge, keyPair.privateKey), "binary").toString("base64");
+            let signedMessage = Buffer.from(signMessage(message.data.challenge, keys.privateKey), "binary").toString("base64");
             const data = { challenge: message.data.challenge, sign: signedMessage };
-            const response = await submitChallenge(keyPair.publicKey, data);
+            const response = await submitChallenge(keys.publicKey, data);
             if (response.status === 200) {
                 response.data.user.fullAccess = true;
                 setUser(response.data.user);
@@ -116,7 +118,7 @@ const AuthProvider = ({ children }) => {
         try {
             const prepared_data = data;
             prepared_data.public_key = exportPublicKeyToBase64(data.keyPair.publicKey);
-            const response = await registerRequest(data);
+            const response = await registerRequest(prepared_data);
             if (response.status === 200) {
                 setUser(response.data.user);
                 setToken(response.data.access_token);

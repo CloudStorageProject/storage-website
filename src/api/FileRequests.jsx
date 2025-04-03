@@ -33,7 +33,7 @@ export const getFileParamsRequest = async (id) => {
  * @returns ?
  */
 export const renameFileRequest = async (id, data) => {
-    const res = await axiosInstanceJSON.patch("/files/rename/" + id, data);
+    const res = await axiosInstanceJSON.patch("/files/" + id, data);
     return res;
 }
 

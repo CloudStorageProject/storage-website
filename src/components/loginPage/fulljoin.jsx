@@ -44,9 +44,11 @@ const RegistrationSecretPhrases = ({ userData, checkMnemonic, setUserData, goToL
         };
     }, []);
 
-    const performAuth = () => {
-        auth.fullLoginAction(auth.keyPair).then((res) => {
+    const performAuth = (keys) => {
+        if (keys.keyPair.privateKey === null || keys.keyPair.publicKey === null) return;
+        auth.fullLoginAction(keys.keyPair).then((res) => {
             if (res) {
+                auth.setKeyPair(keys.keyPair);
                 navigate("/storage");
             }
         }).catch((error) => {
@@ -56,40 +58,35 @@ const RegistrationSecretPhrases = ({ userData, checkMnemonic, setUserData, goToL
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (auth.keyPair.privateKey === null || auth.keyPair.publicKey === null) {
-            const mnemonic_check = checkMnemonic(userData.mnemonic)
-            if (mnemonic_check) {
-                notify.postNotification(mnemonic_check, NotificationType.INFO)
-            } else {
-                try {
-                    generateKeysFromSecrets(userData.mnemonic).then(keys => {
-                        auth.setKeyPair(keys.keyPair);
-                    });
-                } catch (err) {
-                    // TODO: Handle invalid mnemonic
-                    console.error(err);
-                }
-            }
-        } else {
-            performAuth();
+        const mnemonic_check = checkMnemonic(userData.mnemonic)
+        if (mnemonic_check) {
+            notify.postNotification(mnemonic_check, NotificationType.INFO);
+            return;
         }
-    };
+
+        try {
+            generateKeysFromSecrets(userData.mnemonic).then(keys => {
+                performAuth(keys);
+            });
+        } catch (err) {
+            // TODO: Handle invalid mnemonic
+            console.error(err);
+        }
+    }
+
+
 
     return (
         <div className="recovery-phrase-main-container">
-            <div className="img-wrap-top-left">
-                <img src={bgimg} className="img-phrases-top" alt="bg" />
-            </div>
             <div className="recovery-phrase-sub-container">
                 <div className="recovery-phrase-tips">
                     <p className="recovery-phrase-title">Enter Your Recovery Phrases</p>
                     <p className="recovery-phrase-subtitle">Please enter the recovery phrases in the correct order.</p>
                 </div>
                 <div className="recovery-phrase-container">
-                    <form onSubmit={handleSubmit}>
+                    <form className='phrase-container' onSubmit={handleSubmit}>
                         <div className="recovery-phrase-inputs">
                             {userData.mnemonic.map((phrase, index) => (
-
                                 <div key={index} className="recovery-phrase-input">
                                     <input
                                         type="text"
@@ -108,9 +105,6 @@ const RegistrationSecretPhrases = ({ userData, checkMnemonic, setUserData, goToL
                     <button type="button" onClick={goToLimitedLogin}>BACK</button>
                     <button type="submit" onClick={handleSubmit}>CONTINUE</button>
                 </div>
-            </div>
-            <div className="img-wrap-bottom-right">
-                <img src={bgimg} className="img-phrases-bottom" alt="bg" />
             </div>
         </div>
     );

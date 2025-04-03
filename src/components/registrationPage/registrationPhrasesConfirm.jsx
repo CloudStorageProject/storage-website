@@ -47,9 +47,6 @@ const RegistrationPhrasesConfirm = ({ userData, secretPhrases, keyPair, checkInd
     }
 
     return (<div className="recovery-phrase-main-container">
-        <div className="img-wrap-top-right">
-            <img src={bgimg} className="img-confirm-top " alt="bg" />
-        </div>
         <div className="recovery-phrase-sub-container">
             <div className="recovery-phrase-confirm">
                 <p className="recovery-phrase-title">Confirm Your Recovery Phrase</p>
@@ -68,9 +65,6 @@ const RegistrationPhrasesConfirm = ({ userData, secretPhrases, keyPair, checkInd
                     previousStage();
                 }}>SHOW THE PHRASE AGAIN</button>
             </div>
-        </div>
-        <div className="img-wrap-bottom-left">
-            <img src={bgimg} className="img-confirm-bottom" alt="bg" />
         </div>
     </div>);
 }
