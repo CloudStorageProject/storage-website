@@ -19,7 +19,6 @@ const AxiosInstance = ({ content_type }) => {
             return Promise.reject(error);
         }
     );
-
     // TODO: configure response interceptor
     instance.interceptors.response.use(
         (response) => {
@@ -30,8 +29,6 @@ const AxiosInstance = ({ content_type }) => {
         }
     );
 
-    instance.defaults.headers.common["Access-Control-Allow-Origin"] = "*";
-    instance.defaults.headers.common["Access-Control-Allow-Credentials"] = "true";
     return instance;
 }
 

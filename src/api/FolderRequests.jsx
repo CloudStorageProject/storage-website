@@ -36,7 +36,7 @@ export const deleteFolderRequest = async (id) => {
 };
 
 export const getAvailableUserSpace = async () => {
-    const res = await axiosInstanceJSON.get("/folders/space/");
+    const res = await axiosInstanceJSON.get("/folders/space");
     return res;
 }
 

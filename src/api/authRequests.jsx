@@ -32,4 +32,10 @@ export const getMe = async () => {
     const res = await axiosInstanceJSON.get("/auth/me");
     return res;
 };
+
+export const getUsersByUsername = async (username, pagesize) => {
+    if (!pagesize) pagesize = 20;
+    const res = await axiosInstanceJSON.get("/users/?username=" + username + "&size=" + pagesize);
+    return res;
+}
 //#endregion Auth
