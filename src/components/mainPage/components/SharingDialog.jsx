@@ -17,6 +17,7 @@ const SharingDialog = ({ selectedSharing, handleSharingCancel }) => {
     const [nickname, setNickname] = useState("");
     const [loaded, setLoaded] = useState(false);//To wait for file params
     const [users, setUsers] = useState([]);
+    const [receivedFull, setReceivedFull] = useState(false);
 
     const notify = useNotify();
     const auth = useAuth();
@@ -63,6 +64,7 @@ const SharingDialog = ({ selectedSharing, handleSharingCancel }) => {
                     temp.push(new UserStructure(data.users[i].id, data.users[i].username));
                 }
                 setUsers(temp);
+                setReceivedFull(temp.length === 20);
             }).catch((error) => {
                 notify.postNotification("Network error", NotificationType.NETWORK_ERROR); console.error(error);
             });
@@ -119,12 +121,23 @@ const SharingDialog = ({ selectedSharing, handleSharingCancel }) => {
         });
     }
 
+    const handleScroll = (e) => {
+        const scrollTop = e.target.scrollTop;
+        const scrollHeight = e.target.scrollHeight;
+        const clientHeight = e.target.clientHeight;
+        const scrollPercent = (scrollTop / (scrollHeight - clientHeight)) * 100;
+        console.log(`Scroll Position: ${scrollPercent.toFixed(2)}%`);
+        if (scrollPercent.toFixed(2) >= 80 && !receivedFull) {
+            // TODO: Implement lazy loading
+        }
+    }
+
     return (
         <dialog id="sharing-dialog" className="sharing-dialog" open={true}>
             <div className="sharing-content">
                 <span>Share with</span>
                 <input disabled={!loaded} type="text" className="sharing-input" placeholder="User Nickname" value={nickname} onChange={(e) => { handleNicknameChange(e); }} id="" />
-                <div className="sharing-users">
+                <div className="sharing-users" onScroll={(e) => { handleScroll(e); }}>
                     {
                         users && users.map((user) => {
                             return (
