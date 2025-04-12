@@ -406,7 +406,7 @@ const MyDisk = ({ }) => {
             }
             {
                 selectedSharing && (
-                    <SharingDialog selectedSharing={selectedSharing} setSelectedSharing={setSelectedSharing} handleSharingCancel={handleSharingCancel} />
+                    <SharingDialog selectedSharing={selectedSharing} handleSharingCancel={handleSharingCancel} />
                 )
             }
         </div >

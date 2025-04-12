@@ -38,4 +38,8 @@ export const getUsersByUsername = async (username, pagesize) => {
     const res = await axiosInstanceJSON.get("/users/?username=" + username + "&size=" + pagesize);
     return res;
 }
+
+export const getUserPublicKey = async (user_id) => {
+    return await axiosInstanceJSON.get("/users/publicKey/" + user_id);
+}
 //#endregion Auth

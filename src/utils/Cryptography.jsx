@@ -112,6 +112,16 @@ export function encryptData(data, publicKey) {
     };
 }
 
+export function reencryptData(privateKey, userPublicKey, { iv, key }) {
+    const AES_KEY = privateKey.decrypt(Buffer.from(key, "base64").toString("binary"), 'RSA-OAEP');
+    const AES_IV = privateKey.decrypt(Buffer.from(iv, "base64").toString("binary"), 'RSA-OAEP');
+    const publicKey = exportPublicKeyFromPem(userPublicKey);
+    return {
+        enc_iv: Buffer.from(publicKey.encrypt(AES_IV, 'RSA-OAEP'), "binary").toString("base64"),
+        enc_key: Buffer.from(publicKey.encrypt(AES_KEY, 'RSA-OAEP'), "binary").toString("base64")
+    };
+}
+
 export function decryptData(data, privateKey, { iv, key }) {
     const AES_KEY = privateKey.decrypt(Buffer.from(key, "base64").toString("binary"), 'RSA-OAEP');
     const AES_IV = privateKey.decrypt(Buffer.from(iv, "base64").toString("binary"), 'RSA-OAEP');

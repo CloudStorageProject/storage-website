@@ -313,6 +313,10 @@
       flex-direction: row;
   }
 
+  .sharing-buttons button:disabled {
+      opacity: 0.5;
+  }
+
   .sharing-buttons button {
       border: 1px solid var(--active-button);
       border-radius: 10px;
