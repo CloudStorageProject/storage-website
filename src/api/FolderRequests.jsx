@@ -40,4 +40,8 @@ export const getAvailableUserSpace = async () => {
     return res;
 }
 
+export const getShared = async () => {
+    return await axiosInstanceJSON.get("/folders/shared");
+}
+
 //#endregion Folders

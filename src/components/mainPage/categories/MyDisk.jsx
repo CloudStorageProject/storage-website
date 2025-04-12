@@ -180,6 +180,8 @@ const MyDisk = ({ }) => {
         });
     };
 
+
+    // Resize effect
     useEffect(() => {
         const handleResize = () => {
 
@@ -197,6 +199,7 @@ const MyDisk = ({ }) => {
         };
     }, [handleMenuToggle]);
 
+    // Load effect
     useEffect(() => {
         if (currentFolder) {
             updateFilesList(currentFolder);
