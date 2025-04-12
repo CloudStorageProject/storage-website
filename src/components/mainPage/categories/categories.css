@@ -202,7 +202,9 @@
       margin: 50px;
   }
 
-  .rename-dialog {
+
+  .rename-dialog,
+  .sharing-dialog {
       width: 100%;
       height: 100%;
       position: absolute;
@@ -243,11 +245,79 @@
       }
   }
 
+  .sharing-content {
+      background: var(--background-color);
+      padding: 5%;
+      border: 1px solid var(--text-color);
+      border-radius: 10px;
+      height: clamp(300px, 50vh, 600px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: stretch;
+      flex-wrap: nowrap;
+  }
+
   .rename-content {
       background: var(--background-color);
       padding: 5%;
       border: 1px solid var(--text-color);
       border-radius: 10px;
+  }
+
+  .sharing-users {
+      height: 100%;
+      overflow-x: hidden;
+      overflow-y: auto;
+      padding: 1%;
+  }
+
+  .user-sharing-selection {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      flex-wrap: wrap;
+      align-content: center;
+      align-items: center;
+      margin: 1% 0% 1% 0%;
+      text-align: center;
+      border: 1px solid var(--text-color);
+      border-radius: 10px;
+  }
+
+  .sharing-username {
+      text-align: center;
+      width: 95%;
+      border-bottom: 1px solid var(--primary-color);
+      margin: 0px;
+      padding: 0px;
+      font-family: "Source Sans 3", sans-serif;
+      font-weight: 700;
+      font-size: 20px;
+      background: var(--background-color);
+      color: var(--text-color);
+  }
+
+  .cancel-button {
+      margin: 5%;
+      border: 1px solid var(--text-color);
+      border-radius: 10px;
+  }
+
+  .sharing-buttons {
+      display: flex;
+      width: 100%;
+      justify-content: space-around;
+      align-content: center;
+      flex-wrap: wrap;
+      flex-direction: row;
+  }
+
+  .sharing-buttons button {
+      border: 1px solid var(--active-button);
+      border-radius: 10px;
+      margin: 1%;
+      padding: 1%;
   }
 
   .rename-controls {
@@ -258,18 +328,21 @@
       justify-content: space-between;
   }
 
-  .rename-controls button {
+  .rename-controls button,
+  .sharing-controls button {
       border: 1px solid var(--active-button);
       border-radius: 10px;
       padding: 10px;
       margin: 5px;
   }
 
-  .rename-controls button:hover {
+  .rename-controls button:hover,
+  .sharing-controls button:hover {
       background-color: var(--button-hover);
   }
 
   .rename-input,
+  .sharing-input,
   .rename-content p {
       width: inherit;
       font-family: "Source Sans 3", sans-serif;
@@ -283,11 +356,13 @@
       color: var(--text-color);
   }
 
-  .rename-input:active {
+  .rename-input:active,
+  .sharing-input:active {
       border: 1px solid var(--active-button);
   }
 
-  .rename-content span {
+  .rename-content span,
+  .sharing-content span {
       font-family: "Source Sans 3", sans-serif;
       font-weight: 400;
       font-size: 20px;

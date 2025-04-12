@@ -55,3 +55,7 @@ code {
     -ms-user-select: none;
     -webkit-user-select: none;
 }
+
+dialog {
+    z-index: 9999;
+}

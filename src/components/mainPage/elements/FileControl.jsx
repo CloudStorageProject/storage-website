@@ -4,7 +4,7 @@ import { deleteFile, downloadFile, } from "../../../service/FileService.jsx";
 import { useNotify } from "../../../hooks/Notification/NotificationProvider.jsx";
 import { NotificationType } from "../../../hooks/Notification/NotificationTypes.tsx";
 
-const FileControl = ({ menuPosition, setSelectedFile, setSelectedRenaming, file }) => {
+const FileControl = ({ menuPosition, handleSharingDialog, setSelectedFile, setSelectedRenaming, file }) => {
     const page = usePageState();
     const auth = useAuth();
     const notify = useNotify();
@@ -29,7 +29,7 @@ const FileControl = ({ menuPosition, setSelectedFile, setSelectedRenaming, file 
         < div id="menu-list" className="menu-list" style={{ top: menuPosition.current.top, left: menuPosition.current.left, position: "absolute", zIndex: 1000, }}>
             <button onClick={() => { handleDelete(file); }}>Delete</button>
             <button onClick={() => { handleRename(file); }}>Rename</button>
-            <button>Share</button>
+            <button onClick={() => { handleSharingDialog(file); }}>Share</button>
             <button onClick={() => { downloadFile(file, auth.keyPair.privateKey, notify); setSelectedFile(null); }}>Download</button>
         </div >
     );

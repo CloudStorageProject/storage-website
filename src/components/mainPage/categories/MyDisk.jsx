@@ -19,6 +19,7 @@ import { NotificationType } from "../../../hooks/Notification/NotificationTypes.
 import FolderControl from "../elements/FolderControl.jsx";
 import FolderSelector from "../elements/FolderSelector.jsx";
 import FolderTreeControl from "../elements/FolderTreeControl.jsx";
+import SharingDialog from "../components/SharingDialog.jsx";
 
 
 const MyDisk = ({ }) => {
@@ -40,6 +41,7 @@ const MyDisk = ({ }) => {
     const fileMenuPosition = useRef({ top: 0, left: 0 });
     const folderMenuPosition = useRef({ top: 0, left: 0 });
     const folderTreeMenuPosition = useRef({ top: 0, left: 0 });
+    const [selectedSharing, setSelectedSharing] = useState(null);
 
     const handleSearch = (query) => {
         setSearchQuery(query);
@@ -227,6 +229,17 @@ const MyDisk = ({ }) => {
         setViewMode(mode);
     }
 
+    const handleSharingDialog = (file) => {
+        setSelectedSharing(file);
+    }
+
+    const handleSharingCancel = () => {
+        document.getElementById('sharing-dialog').classList.add('disappear');
+        setTimeout(() => {
+            setSelectedSharing(null);
+        }, 1_000);
+    }
+
     const handleRename = async () => {
 
         if (renamingName === "") {
@@ -368,7 +381,7 @@ const MyDisk = ({ }) => {
                                         }
                                     })
                                 }
-                                {selectedFile && (<FileControl setSelectedFile={setSelectedFile} setSelectedRenaming={setSelectedRenaming} file={selectedFile} menuPosition={fileMenuPosition} activeMenu={selectedFile} />)}
+                                {selectedFile && (<FileControl handleSharingDialog={handleSharingDialog} setSelectedFile={setSelectedFile} setSelectedRenaming={setSelectedRenaming} file={selectedFile} menuPosition={fileMenuPosition} activeMenu={selectedFile} />)}
                                 {selectedFolder && (<FolderControl setSelectedFolder={setSelectedFolder} setSelectedRenaming={setSelectedRenaming} changeCurrentFolder={changeCurrentFolder} setCurrentFolder={setCurrentFolder} folder={selectedFolder} menuPosition={folderMenuPosition} activeMenu={selectedFolder} />)}
                                 {selectedFolderTree && (<FolderTreeControl id={selectedFolderTree} changeCurrentFolder={changeFolderTree} menuPosition={folderTreeMenuPosition} activeMenu={selectedFolderTree} />)}
                             </div>
@@ -389,6 +402,11 @@ const MyDisk = ({ }) => {
 
                         </div>
                     </dialog>
+                )
+            }
+            {
+                selectedSharing && (
+                    <SharingDialog selectedSharing={selectedSharing} setSelectedSharing={setSelectedSharing} handleSharingCancel={handleSharingCancel} />
                 )
             }
         </div >
