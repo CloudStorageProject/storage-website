@@ -2,14 +2,12 @@
 import { useContext, createContext, useState, useEffect } from "react";
 import { exportPrivateKeyFromPem, exportPrivateKeyToBase64, exportPublicKeyFromPem, exportPublicKeyToBase64, signMessage } from "../utils/Cryptography";
 import { loginRequest, registerRequest, requestChallenge, submitChallenge } from "../api/authRequests";
-import { useNavigate } from "react-router-dom";
 import { useNotify } from "./Notification/NotificationProvider";
 import { NotificationType } from "./Notification/NotificationTypes.tsx";
 
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
-    const navigate = useNavigate();
     const notify = useNotify();
     const [user, setUser] = useState({ username: null, email: null, fullAccess: false, publicKey: null });
     const [token, setToken] = useState(document.cookie.split("=")[1] || "");

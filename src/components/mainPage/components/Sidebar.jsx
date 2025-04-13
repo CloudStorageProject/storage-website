@@ -65,6 +65,7 @@ const Sidebar = ({ onSelectCategory, activeCategory }) => {
     };
 
     const handleLogOut = () => {
+        page.clearData();
         auth.logOut();
     }
 

@@ -28,6 +28,12 @@ const PageStateProvider = ({ children }) => {
         }
     }
 
+    const clearData = () => {
+        setPageState({ currentPage: null, currentFolder: null, theme: 'light', viewMode: null, toUpdate: null, folderTree: [] });
+        localStorage.removeItem("pageState");
+        localStorage.removeItem("path");
+    }
+
     useEffect(() => {
         document.body.className = pageState.theme;
         const handlePageLoad = () => {
@@ -49,7 +55,7 @@ const PageStateProvider = ({ children }) => {
     }, [pageState]);
 
     return (
-        <PageStateContext.Provider value={{ toggleTheme, pageState, setPageState, }}>
+        <PageStateContext.Provider value={{ toggleTheme, pageState, setPageState, clearData }}>
             {children}
         </PageStateContext.Provider>
     );
