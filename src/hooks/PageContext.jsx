@@ -1,23 +1,28 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const PageStateContext = createContext();
 
 const PageStateProvider = ({ children }) => {
     const [pageState, setPageState] = useState({ currentPage: null, currentFolder: null, theme: 'light', viewMode: null, toUpdate: null, folderTree: [] });
+    const loc = useLocation();
+    const navigate = useNavigate();
 
     const toggleTheme = () => {
         const newTheme = pageState.theme === 'light' ? 'dark' : 'light';
         setPageState({ ...pageState, theme: newTheme });
     };
 
-    function setStoredPageState(pageState) {
-        localStorage.setItem("pageState", JSON.stringify(pageState));
+    async function setStoredPageState(pageState) {
+        localStorage.setItem("pageState", await JSON.stringify(pageState));
+        localStorage.setItem("path", loc.pathname);
     }
 
-    function getStoredPageState() {
+    async function getStoredPageState() {
         let state = localStorage.getItem("pageState");
         if (state !== null && state !== "null" && state !== "undefined" && state !== undefined) {
-            setPageState(JSON.parse(state));
+            setPageState(await JSON.parse(state));
+            navigate(localStorage.getItem("path"));
         } else {
             setPageState({ currentPage: null, currentFolder: null, theme: 'light', viewMode: null, toUpdate: null, folderTree: [] });
         }
@@ -28,6 +33,7 @@ const PageStateProvider = ({ children }) => {
         const handlePageLoad = () => {
             getStoredPageState();
             localStorage.removeItem("pageState");
+            localStorage.removeItem("path");
         }
 
         const handlePageUnload = () => {

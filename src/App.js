@@ -23,7 +23,7 @@ export default class App extends React.Component {
                                     <Route path="/login" element={<LoginPageManager />} />
                                     <Route path="/reset-password" element={<ResetPasswordManager />} />
                                     <Route path="/register" element={<RegistrationPage />} />
-                                    <Route path="/" element={<p>Landing Page</p>} />
+                                    <Route path="/" element={<p>Landing Page<button onClick={() => { window.location.href = "/login" }}>Login</button></p>} />
                                     <Route element={<PrivateRoute />}>
                                         <Route path="/storage" element={<MainPage />} />
                                     </Route>

@@ -55,10 +55,10 @@ const AuthProvider = ({ children }) => {
         if (keyPair.publicKey) { localStorage.setItem("publicKey", exportPublicKeyToBase64(keyPair.publicKey)); }
     }
 
-    function getStoredUser() {
+    async function getStoredUser() {
         const storedUser = localStorage.getItem("user");
         if (storedUser) {
-            setUser(JSON.parse(storedUser));
+            setUser(await JSON.parse(storedUser));
         }
     }
 
