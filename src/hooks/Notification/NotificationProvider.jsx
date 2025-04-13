@@ -75,7 +75,7 @@ export const NotificationProvider = ({ children }) => {
                     element: (
                         <>
                             <div className="file-state-notification">
-                                <div class="loader" id={`loader-` + id} >{message}</div>
+                                <div className="loader" id={`loader-` + id} >{message}</div>
                             </div>
                         </>
                     )

@@ -19,7 +19,6 @@ const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const handlePageLoad = () => {
-            console.log("Load", tabId);
 
             getStoredUser();
             getKeyPair();
