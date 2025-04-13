@@ -8,6 +8,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useNotify } from "../../hooks/Notification/NotificationProvider";
 import { NotificationType } from "../../hooks/Notification/NotificationTypes.tsx";
 
+
 const LoginPage = ({ userData, checkUserData, setUserData, goToFullLogin }) => {
     const [formData, setFormData] = useState(userData);
     const auth = useAuth();
@@ -57,10 +58,10 @@ const LoginPage = ({ userData, checkUserData, setUserData, goToFullLogin }) => {
                     <Link to="/reset-password" className="forgot-password">
                         Forgot password?
                     </Link>
-                    <button type="submit" className="login-button" onClick={handleSubmit}>
+                    <button type="submit" className="login-button" onClick={() => { handleSubmit(); }}>
                         Login
                     </button>
-                    <button type="submit" className="login-button" onClick={goToFullLogin}>
+                    <button type="submit" className="login-button" onClick={() => { goToFullLogin(); }}>
                         FULL ACSESS LOGIN
                     </button>
                     <p className="signup-link">

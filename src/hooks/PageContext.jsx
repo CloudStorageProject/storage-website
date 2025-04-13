@@ -1,28 +1,39 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from './AuthProvider';
 
 const PageStateContext = createContext();
 
 const PageStateProvider = ({ children }) => {
     const [pageState, setPageState] = useState({ currentPage: null, currentFolder: null, theme: 'light', viewMode: null, toUpdate: null, folderTree: [] });
-    const loc = useLocation();
     const navigate = useNavigate();
+    const loc = useLocation();
+    const tabId = getTabId();
+
+    function getTabId() {
+        let tabId = sessionStorage.getItem('tabId');
+        if (!tabId) {
+            tabId = crypto.randomUUID();
+            sessionStorage.setItem('tabId', tabId);
+        }
+        return tabId;
+    }
 
     const toggleTheme = () => {
         const newTheme = pageState.theme === 'light' ? 'dark' : 'light';
         setPageState({ ...pageState, theme: newTheme });
     };
 
-    async function setStoredPageState(pageState) {
-        localStorage.setItem("pageState", await JSON.stringify(pageState));
-        localStorage.setItem("path", loc.pathname);
+    function setStoredPageState(pageState) {
+        localStorage.setItem(`pageState-${tabId}`, JSON.stringify(pageState));
+        localStorage.setItem(`path-${tabId}`, loc.pathname);
     }
 
     async function getStoredPageState() {
-        let state = localStorage.getItem("pageState");
+        let state = localStorage.getItem(`pageState-${tabId}`);
         if (state !== null && state !== "null" && state !== "undefined" && state !== undefined) {
             setPageState(await JSON.parse(state));
-            navigate(localStorage.getItem("path"));
+            navigate(localStorage.getItem(`path-${tabId}`));
         } else {
             setPageState({ currentPage: null, currentFolder: null, theme: 'light', viewMode: null, toUpdate: null, folderTree: [] });
         }
@@ -30,16 +41,16 @@ const PageStateProvider = ({ children }) => {
 
     const clearData = () => {
         setPageState({ currentPage: null, currentFolder: null, theme: 'light', viewMode: null, toUpdate: null, folderTree: [] });
-        localStorage.removeItem("pageState");
-        localStorage.removeItem("path");
+        localStorage.removeItem(`pageState-${tabId}`);
+        localStorage.removeItem(`path-${tabId}`);
     }
 
     useEffect(() => {
         document.body.className = pageState.theme;
         const handlePageLoad = () => {
             getStoredPageState();
-            localStorage.removeItem("pageState");
-            localStorage.removeItem("path");
+            localStorage.removeItem(`pageState-${tabId}`);
+            localStorage.removeItem(`path-${tabId}`);
         }
 
         const handlePageUnload = () => {
@@ -55,7 +66,7 @@ const PageStateProvider = ({ children }) => {
     }, [pageState]);
 
     return (
-        <PageStateContext.Provider value={{ toggleTheme, pageState, setPageState, clearData }}>
+        <PageStateContext.Provider value={{ toggleTheme, pageState, setPageState, clearData, getTabId }}>
             {children}
         </PageStateContext.Provider>
     );

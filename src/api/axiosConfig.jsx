@@ -2,6 +2,7 @@ import axios from "axios";
 
 const AxiosInstance = ({ content_type }) => {
 
+
     const instance = axios.create({
         baseURL: window.__ENV__.REACT_APP_API_URL,
         headers: {
@@ -12,7 +13,7 @@ const AxiosInstance = ({ content_type }) => {
 
     instance.interceptors.request.use(
         (config) => {
-            config.headers["Authorization"] = `Bearer ${document.cookie.split("=")[1] || ""}`;
+            config.headers["Authorization"] = `Bearer ${sessionStorage.getItem("token") || ""}`;
             return config;
         },
         (error) => {
