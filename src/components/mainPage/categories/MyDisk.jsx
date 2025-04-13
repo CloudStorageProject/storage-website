@@ -355,10 +355,7 @@ const MyDisk = ({ }) => {
                         <div className="folder-navigation">
                             {
                                 page.pageState.folderTree && page.pageState.folderTree.length > 0 && page.pageState.folderTree.map((folder, index) => (
-                                    <>
-                                        <FolderSelector folder={folder} changeCurrentFolder={changeFolderTree} key={`folder-selector-` + folder.id} page={page} />
-                                        <span style={{ color: "var(--text-color)" }}>/</span>
-                                    </>
+                                    <FolderSelector folder={folder} changeCurrentFolder={changeFolderTree} key={`folder-selector-` + folder.id} page={page} />
                                 ))
                             }
                         </div>
