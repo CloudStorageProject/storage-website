@@ -6,6 +6,7 @@ import { useNotify } from "./Notification/NotificationProvider";
 import { NotificationType } from "./Notification/NotificationTypes.tsx";
 
 const AuthContext = createContext();
+export let reLogin = null; // Placeholder for reLogin function, to be defined later
 
 const AuthProvider = ({ children }) => {
     const notify = useNotify();
@@ -99,6 +100,21 @@ const AuthProvider = ({ children }) => {
         return false;
     };
 
+    const innerReLogin = async () => {
+        if (!keyPair.privateKey || !keyPair.publicKey) {
+            notify.postNotification("No key pair found", NotificationType.ERROR);
+            return false;
+        }
+        if (user.fullAccess) {
+            return fullLoginAction(keyPair);
+        } else {
+            return partialLoginAction({ username: user.username, password: "", keyPair: keyPair });
+        }
+    }
+
+
+    reLogin = innerReLogin;
+
     const fullLoginAction = async (keys) => {
         try {
             const message = await requestChallenge(keys.publicKey);
@@ -157,7 +173,7 @@ const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider value={{
-            token, user, partialLoginAction, fullLoginAction, registerAction, logOut, keyPair, setKeyPair, storeKeyPair, setStoredUser: storeUser
+            token, user, partialLoginAction, fullLoginAction, registerAction, logOut, keyPair, setKeyPair, storeKeyPair, setStoredUser: storeUser, reLogin
         }}>
             {children}
         </AuthContext.Provider>
@@ -165,6 +181,7 @@ const AuthProvider = ({ children }) => {
 };
 
 export default AuthProvider;
+
 
 export const useAuth = () => {
     return useContext(AuthContext);
