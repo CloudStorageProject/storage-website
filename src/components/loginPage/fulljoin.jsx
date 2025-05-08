@@ -42,12 +42,17 @@ const RegistrationSecretPhrases = ({ userData, checkMnemonic, setUserData, goToL
     const performAuth = (keys) => {
         if (keys === null || keys.keyPair === null || keys.keyPair.privateKey === null || keys.keyPair.publicKey === null) return;
         auth.fullLoginAction(keys.keyPair).then((res) => {
+
             if (res) {
                 auth.setKeyPair(keys.keyPair);
+                auth.storeKeyPair();
+                auth.setStoredUser();
                 navigate("/storage");
             }
         }).catch((error) => {
             notify.postNotification("Network error", NotificationType.NETWORK_ERROR);
+            console.log(error);
+
         });
     }
 
@@ -97,8 +102,8 @@ const RegistrationSecretPhrases = ({ userData, checkMnemonic, setUserData, goToL
                     </form>
                 </div>
                 <div className="recovery-phrase-controls">
-                    <button type="button" onClick={goToLimitedLogin}>BACK</button>
-                    <button type="submit" onClick={handleSubmit}>CONTINUE</button>
+                    <button type="button" onClick={() => { goToLimitedLogin(); }}>BACK</button>
+                    <button type="submit" onClick={(e) => { handleSubmit(e); }}>CONTINUE</button>
                 </div>
             </div>
         </div>

@@ -13,7 +13,7 @@ const AxiosInstance = ({ content_type }) => {
 
     instance.interceptors.request.use(
         (config) => {
-            config.headers["Authorization"] = `Bearer ${sessionStorage.getItem("token") || ""}`;
+            config.headers["Authorization"] = `Bearer ${localStorage.getItem("token") || ""}`;
             return config;
         },
         (error) => {
