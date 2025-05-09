@@ -4,12 +4,12 @@ body {
     margin: 0;
     padding: 0;
     background-color: white;
-    overflow: hidden;
 }
 
 .login-container {
     display: flex;
     height: 100vh;
+    overflow-y: hidden;
 }
 
 
