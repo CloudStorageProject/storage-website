@@ -1,5 +1,5 @@
 import axios from "axios";
-import AuthProvider, { reLogin } from "../hooks/AuthProvider";
+import { reLogin } from "../hooks/AuthProvider";
 
 const AxiosInstance = ({ content_type }) => {
 
@@ -20,13 +20,13 @@ const AxiosInstance = ({ content_type }) => {
             return Promise.reject(error);
         }
     );
-    // TODO: configure response interceptor
+
     instance.interceptors.response.use(
         (response) => {
             return response;
         },
         async (error) => {
-            if (error.response.status === 401) {
+            if (error && error.response && error.response.status === 401) {
                 if (await reLogin()) {
                     const originalRequest = error.config;
                     const newRequest = {
