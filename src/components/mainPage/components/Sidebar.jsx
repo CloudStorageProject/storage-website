@@ -143,12 +143,6 @@ const Sidebar = ({ onSelectCategory, activeCategory }) => {
                             </span>
                             <span className="name">Opened to me</span>
                         </li>
-                        <li className={`menu-item ${activeCategory === "Trash" ? "active" : ""}`} onClick={() => handleCategoryClick("Trash")}>
-                            <span>
-                                <TrashIcon />
-                            </span>
-                            <span className="name">Trash</span>
-                        </li>
                         <AddFileOptions isAddingFile={isAddingFile} onAddFileClick={() => handleUploadFile()} isUploadingFile={isUploadingFile} onCreateFolderClick={() => setIsCreatingFolder(true)} isCreatingFolder={isCreatingFolder} folderName={folderName} onFolderNameChange={(e) => setFolderName(e.target.value)} onFolderSubmit={(e) => handleFolderSubmit(e)} />
                     </ul>
                     <div className="storage">

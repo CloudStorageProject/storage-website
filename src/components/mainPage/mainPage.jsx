@@ -3,10 +3,7 @@ import Sidebar from "./components/Sidebar";
 import "./mainpage.css";
 import MyDisk from "./categories/MyDisk";
 import OpenedToMe from "./categories/OpenedToMe";
-import Trash from "./categories/Trash";
-import { DataTransferWorker, performDownload, uploadFileFull } from "../../service/FileService.jsx";
-import { exportPublicKeyToBase64 } from "../../utils/Cryptography.jsx";
-import { TransferAction, TransferState } from "../../service/TransferWorker/DataTransferEnums.jsx";
+import ProfileSettings from "./categories/ProfileSettings.jsx";
 
 export default class MainPage extends React.Component {
     constructor(props) {
@@ -26,13 +23,13 @@ export default class MainPage extends React.Component {
     renderContent() {
         switch (this.state.selectedCategory) {
             case "MyDisk":
-                return <MyDisk error={this.state.error} />;
+                return <MyDisk />;
             case "OpenedToMe":
-                return <OpenedToMe error={this.state.error} />;
-            case "Trash":
-                return <Trash error={this.state.error} />;
+                return <OpenedToMe />;
+            case "Profile settings":
+                return <ProfileSettings />;
             default:
-                return <MyDisk error={this.state.error} />;
+                return <MyDisk />;
         }
     }
 
