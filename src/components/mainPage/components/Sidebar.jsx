@@ -162,7 +162,7 @@ const Sidebar = ({ onSelectCategory, activeCategory }) => {
             ) : (
                 <div className="settings">
                     <ul className="menu">
-                        <li className="menu-item">Profile settings</li>
+                        <li className="menu-item" onClick={() => handleCategoryClick("Profile settings")}>Profile settings</li>
                         <li className="menu-item">Support</li>
                         <li className="menu-item">Language</li>
                         <li className="menu-item" onClick={handleLogOut}>Log out</li>
