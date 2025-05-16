@@ -171,9 +171,16 @@ const AuthProvider = ({ children }) => {
         return false;
     };
 
+    const updateUser = (newUser) => {
+        setUser((prevUser) => ({
+            ...prevUser,
+            ...newUser,
+        }));
+    }
+
     return (
         <AuthContext.Provider value={{
-            token, user, partialLoginAction, fullLoginAction, registerAction, logOut, keyPair, setKeyPair, storeKeyPair, setStoredUser: storeUser, reLogin
+            token, user, partialLoginAction, fullLoginAction, registerAction, logOut, keyPair, setKeyPair, storeKeyPair, setStoredUser: storeUser, reLogin, updateUser
         }}>
             {children}
         </AuthContext.Provider>
