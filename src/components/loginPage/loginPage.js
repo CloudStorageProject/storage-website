@@ -62,7 +62,7 @@ const LoginPage = ({ userData, checkUserData, setUserData, goToFullLogin }) => {
                         Login
                     </button>
                     <button type="submit" className="login-button" onClick={() => { goToFullLogin(); }}>
-                        FULL ACSESS LOGIN
+                        FULL ACCESS LOGIN
                     </button>
                     <p className="signup-link">
                         Don’t have an account? <a href="/register">Sign up</a>
