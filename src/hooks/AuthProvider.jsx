@@ -83,8 +83,6 @@ const AuthProvider = ({ children }) => {
 
     const partialLoginAction = async (data) => {
         try {
-            console.log(data);
-
             const response = await loginRequest(data);
             if (response.status === 200) {
                 response.data.user.fullAccess = false;
@@ -92,9 +90,12 @@ const AuthProvider = ({ children }) => {
                 setToken(response.data.token);
                 localStorage.setItem(`token`, response.data.token);
                 return true;
+            } else {
+                notify.postNotification(response.data.detail, NotificationType.ERROR);
+                console.error(response);
             }
         } catch (err) {
-            notify.postNotification("Network error", NotificationType.ERROR);
+            notify.postNotification(err.response.data.detail, NotificationType.ERROR);
             console.error(err);
         }
         return false;
@@ -130,9 +131,12 @@ const AuthProvider = ({ children }) => {
                 localStorage.setItem(`privateKey`, exportPrivateKeyToBase64(keys.privateKey));
                 localStorage.setItem(`publicKey`, exportPublicKeyToBase64(keys.publicKey));
                 return true;
+            } else {
+                notify.postNotification(response.data.detail, NotificationType.ERROR);
+                console.error(response);
             }
         } catch (err) {
-            notify.postNotification("Network error", NotificationType.ERROR);
+            notify.postNotification(err.response.data.detail, NotificationType.ERROR);
             console.error(err);
         }
         return false;
@@ -165,7 +169,7 @@ const AuthProvider = ({ children }) => {
                 console.error(response);
             }
         } catch (err) {
-            notify.postNotification("Network error", NotificationType.ERROR);
+            notify.postNotification(err.response.data.detail, NotificationType.ERROR);
             console.error(err);
         }
         return false;

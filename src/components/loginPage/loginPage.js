@@ -33,7 +33,7 @@ const LoginPage = ({ userData, setUserData, goToFullLogin }) => {
                 }
             }).catch((error) => {
                 console.log(error);
-                notify.postNotification("Network error", NotificationType.NETWORK_ERROR);
+                notify.postNotification(error, NotificationType.NETWORK_ERROR);
             });
         } catch (error) {
             console.error(error);
