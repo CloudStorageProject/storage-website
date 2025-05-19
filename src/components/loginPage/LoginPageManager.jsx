@@ -46,7 +46,12 @@ export default class ResetPasswordManager extends React.Component {
 
     setUserData(data) {
         this.userData = data;
-        this.canProceed = this.checkUserData(data);
+        try {
+            this.canProceed = this.checkUserData(data);
+
+        } catch (error) {
+            console.error(error);
+        }
         this.forceUpdate();
     }
 

@@ -6,6 +6,7 @@ import { NotificationType } from "../../../hooks/Notification/NotificationTypes.
 import { PlanStructure } from "../../../utils/Structures.tsx";
 import { getMe } from "../../../api/authRequests.jsx";
 import { loadStripe } from '@stripe/stripe-js';
+import { testPassword, testUserName } from "../../../utils/InputValidations.tsx";
 
 
 
@@ -103,40 +104,16 @@ const ProfileSettings = ({ }) => {
         }
     }
 
-    const validateUsername = (username) => {
-        if (username.length < 4) {
-            return "Username should contain at least 4 characters";
-        } else if (!/^[a-zA-Z0-9]+$/.test(username)) {
-            return "Username should contain only letters and numbers";
-        }
-        return null;
-    }
-
-    const validatePassword = (password) => {
-        if (password.length < 8 || password.length > 128) {
-            return "Password should contain at least 8 and at most 128 characters";
-        } else if (!/[A-Z]/.test(password)) {
-            return "Password should contain at least one uppercase letter";
-        } else if (!/[a-z]/.test(password)) {
-            return "Password should contain at least one lowercase letter";
-        } else if (!/[0-9]/.test(password)) {
-            return "Password should contain at least one number";
-        }
-        return null;
-    }
-
     const updateChanges = () => {
-        const old_password_validation = validatePassword(old_password);
-        if (old_password_validation) {
-            notify.postNotification(old_password_validation, NotificationType.ERROR);
+        try {
+            testPassword(old_password);
+        } catch (error) {
+            notify.postNotification(error, NotificationType.ERROR);
             return;
         }
         if (passwordChanged) {
-            const new_password_validation = validatePassword(new_password);
-            if (new_password_validation) {
-                notify.postNotification(new_password_validation, NotificationType.ERROR);
-                return;
-            } else {// NewPassword is valid
+            try {
+                testPassword(new_password);
                 changePassword(old_password, new_password).then((response) => {
                     if (response.error) {
                         notify.postNotification(response.error, NotificationType.ERROR);
@@ -147,13 +124,14 @@ const ProfileSettings = ({ }) => {
                     console.error(error);
                     notify.postNotification("Network error", NotificationType.NETWORK_ERROR);
                 });
-            }
-        } else if (usernameChanged) {
-            const new_username_validation = validateUsername(new_username);
-            if (new_username_validation) {
-                notify.postNotification(new_username_validation, NotificationType.ERROR);
+            } catch (error) {
+                notify.postNotification(error, NotificationType.ERROR);
                 return;
-            } else {// NewUsername is valid
+            }
+        }
+        if (usernameChanged) {
+            try {
+                testUserName(new_username);
                 changeUsername(old_password, new_username).then((response) => {
                     if (response.error) {
                         notify.postNotification(response.error, NotificationType.ERROR);
@@ -166,9 +144,11 @@ const ProfileSettings = ({ }) => {
                     console.error(error);
                     notify.postNotification("Network error", NotificationType.NETWORK_ERROR);
                 });
+            } catch (error) {
+                notify.postNotification(error, NotificationType.ERROR);
+                return;
             }
         }
-
     }
 
 

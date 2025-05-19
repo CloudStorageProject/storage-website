@@ -83,18 +83,18 @@ const AuthProvider = ({ children }) => {
 
     const partialLoginAction = async (data) => {
         try {
+            console.log(data);
+
             const response = await loginRequest(data);
             if (response.status === 200) {
                 response.data.user.fullAccess = false;
                 setUser(response.data.user);
                 setToken(response.data.token);
                 localStorage.setItem(`token`, response.data.token);
-                localStorage.setItem(`privateKey`, exportPrivateKeyToBase64(data.keyPair.privateKey));
-                localStorage.setItem(`publicKey`, exportPublicKeyToBase64(data.keyPair.publicKey));
                 return true;
             }
         } catch (err) {
-            notify.postNotification(err.response.data.detail, NotificationType.ERROR);
+            notify.postNotification("Network error", NotificationType.ERROR);
             console.error(err);
         }
         return false;
@@ -132,7 +132,7 @@ const AuthProvider = ({ children }) => {
                 return true;
             }
         } catch (err) {
-            notify.postNotification(err.response.data.detail, NotificationType.ERROR);
+            notify.postNotification("Network error", NotificationType.ERROR);
             console.error(err);
         }
         return false;
@@ -165,7 +165,7 @@ const AuthProvider = ({ children }) => {
                 console.error(response);
             }
         } catch (err) {
-            notify.postNotification(err.response.data.detail, NotificationType.ERROR);
+            notify.postNotification("Network error", NotificationType.ERROR);
             console.error(err);
         }
         return false;

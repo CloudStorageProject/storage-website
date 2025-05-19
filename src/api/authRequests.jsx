@@ -42,4 +42,16 @@ export const getUsersByUsername = async (username, pagesize) => {
 export const getUserPublicKey = async (user_id) => {
     return await axiosInstanceJSON.get("/users/publicKey/" + user_id);
 }
+
+export const checkUsernameTaken = async (username) => {
+    var data = { username: username };
+    const res = await axiosInstanceJSON.post("/auth/checkUsername", data);
+    return res;
+}
+
+export const checkEmailTaken = async (email) => {
+    var data = { email: email };
+    const res = await axiosInstanceJSON.post("/auth/checkEmail", data);
+    return res;
+}
 //#endregion Auth

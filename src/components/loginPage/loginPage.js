@@ -7,9 +7,10 @@ import bgimg from '../img/greenBackroundLoginPage.jpg'
 import { Link, useNavigate } from "react-router-dom";
 import { useNotify } from "../../hooks/Notification/NotificationProvider";
 import { NotificationType } from "../../hooks/Notification/NotificationTypes.tsx";
+import { testPassword, testUserData, testUserName } from "../../utils/InputValidations.tsx";
 
 
-const LoginPage = ({ userData, checkUserData, setUserData, goToFullLogin }) => {
+const LoginPage = ({ userData, setUserData, goToFullLogin }) => {
     const [formData, setFormData] = useState(userData);
     const auth = useAuth();
     const navigate = useNavigate();
@@ -23,11 +24,9 @@ const LoginPage = ({ userData, checkUserData, setUserData, goToFullLogin }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const check = checkUserData(formData);
-
-        if (check) {
-            notify.postNotification(check, NotificationType.INFO);
-        } else {
+        try {
+            testUserName(formData.username);
+            testPassword(formData.password);
             auth.partialLoginAction(formData).then((res) => {
                 if (res) {
                     navigate("/storage");
@@ -36,6 +35,9 @@ const LoginPage = ({ userData, checkUserData, setUserData, goToFullLogin }) => {
                 console.log(error);
                 notify.postNotification("Network error", NotificationType.NETWORK_ERROR);
             });
+        } catch (error) {
+            console.error(error);
+            notify.postNotification(error.message, NotificationType.ERROR);
         }
     };
 
@@ -58,7 +60,7 @@ const LoginPage = ({ userData, checkUserData, setUserData, goToFullLogin }) => {
                     <Link to="/reset-password" className="forgot-password">
                         Forgot password?
                     </Link>
-                    <button type="submit" className="login-button" onClick={() => { handleSubmit(); }}>
+                    <button type="submit" className="login-button" onClick={(e) => { handleSubmit(e); }}>
                         Login
                     </button>
                     <button type="submit" className="login-button" onClick={() => { goToFullLogin(); }}>
