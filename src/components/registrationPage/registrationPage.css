@@ -11,12 +11,6 @@
     align-items: center;
 }
 
-.divider {
-    align-self: center;
-    height: 0%;
-    width: 80%;
-    border-bottom: 1px solid #386A61;
-}
 
 .divider-confirm {
     width: 20%;
@@ -87,10 +81,22 @@
     display: grid;
     grid-template-columns: repeat(4, auto);
     grid-template-rows: repeat(4, auto);
-    width: 85%;
-    justify-items: center;
+    width: 100%;
+    row-gap: 5px;
+    justify-items: stretch;
     align-content: center;
-    justify-content: center;
+    justify-content: space-evenly;
+    position: relative;
+}
+
+.recovery-phrase-inputs::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 5px;
+    width: 100%;
+    border-bottom: 1px solid #386A61;
 }
 
 .recovery-phrase-input-container {
