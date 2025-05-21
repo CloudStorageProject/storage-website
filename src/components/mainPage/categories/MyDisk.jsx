@@ -19,6 +19,7 @@ import { NotificationType } from "../../../hooks/Notification/NotificationTypes.
 import FolderControl from "../elements/FolderControl.jsx";
 import FolderSelector from "../elements/FolderSelector.jsx";
 import FolderTreeControl from "../elements/FolderTreeControl.jsx";
+import SharingDialog from "../components/SharingDialog.jsx";
 
 
 const MyDisk = ({ }) => {
@@ -40,6 +41,7 @@ const MyDisk = ({ }) => {
     const fileMenuPosition = useRef({ top: 0, left: 0 });
     const folderMenuPosition = useRef({ top: 0, left: 0 });
     const folderTreeMenuPosition = useRef({ top: 0, left: 0 });
+    const [selectedSharing, setSelectedSharing] = useState(null);
 
     const handleSearch = (query) => {
         setSearchQuery(query);
@@ -178,6 +180,8 @@ const MyDisk = ({ }) => {
         });
     };
 
+
+    // Resize effect
     useEffect(() => {
         const handleResize = () => {
 
@@ -195,6 +199,7 @@ const MyDisk = ({ }) => {
         };
     }, [handleMenuToggle]);
 
+    // Load effect
     useEffect(() => {
         if (currentFolder) {
             updateFilesList(currentFolder);
@@ -225,6 +230,17 @@ const MyDisk = ({ }) => {
     const updateViewMode = (mode) => {
         page.setPageState({ ...page.pageState, viewMode: mode, toUpdate: !page.pageState.toUpdate });
         setViewMode(mode);
+    }
+
+    const handleSharingDialog = (file) => {
+        setSelectedSharing(file);
+    }
+
+    const handleSharingCancel = () => {
+        document.getElementById('sharing-dialog').classList.add('disappear');
+        setTimeout(() => {
+            setSelectedSharing(null);
+        }, 1_000);
     }
 
     const handleRename = async () => {
@@ -339,10 +355,7 @@ const MyDisk = ({ }) => {
                         <div className="folder-navigation">
                             {
                                 page.pageState.folderTree && page.pageState.folderTree.length > 0 && page.pageState.folderTree.map((folder, index) => (
-                                    <>
-                                        <FolderSelector folder={folder} changeCurrentFolder={changeFolderTree} key={`folder-selector-` + folder.id} page={page} />
-                                        <span style={{ color: "var(--text-color)" }}>/</span>
-                                    </>
+                                    <FolderSelector folder={folder} changeCurrentFolder={changeFolderTree} key={`folder-selector-` + folder.id} page={page} />
                                 ))
                             }
                         </div>
@@ -368,7 +381,7 @@ const MyDisk = ({ }) => {
                                         }
                                     })
                                 }
-                                {selectedFile && (<FileControl setSelectedFile={setSelectedFile} setSelectedRenaming={setSelectedRenaming} file={selectedFile} menuPosition={fileMenuPosition} activeMenu={selectedFile} />)}
+                                {selectedFile && (<FileControl handleSharingDialog={handleSharingDialog} setSelectedFile={setSelectedFile} setSelectedRenaming={setSelectedRenaming} file={selectedFile} menuPosition={fileMenuPosition} activeMenu={selectedFile} />)}
                                 {selectedFolder && (<FolderControl setSelectedFolder={setSelectedFolder} setSelectedRenaming={setSelectedRenaming} changeCurrentFolder={changeCurrentFolder} setCurrentFolder={setCurrentFolder} folder={selectedFolder} menuPosition={folderMenuPosition} activeMenu={selectedFolder} />)}
                                 {selectedFolderTree && (<FolderTreeControl id={selectedFolderTree} changeCurrentFolder={changeFolderTree} menuPosition={folderTreeMenuPosition} activeMenu={selectedFolderTree} />)}
                             </div>
@@ -389,6 +402,11 @@ const MyDisk = ({ }) => {
 
                         </div>
                     </dialog>
+                )
+            }
+            {
+                selectedSharing && (
+                    <SharingDialog selectedSharing={selectedSharing} handleSharingCancel={handleSharingCancel} />
                 )
             }
         </div >

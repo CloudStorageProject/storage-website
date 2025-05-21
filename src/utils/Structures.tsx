@@ -74,3 +74,17 @@ export  class FolderStructure {
         this.files = files;        
     }
 }
+
+export class UserStructure {
+    id: number;
+    username: string;
+    password: string;
+    public_key: string;
+
+    constructor( id: number, username: string, password: string, public_key: string) {
+        this.username = username;
+        this.password = password;
+        this.id = id;
+        this.public_key = public_key;
+    }
+}

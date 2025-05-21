@@ -41,4 +41,14 @@ export const deleteFileRequest = async (id) => {
     const res = await axiosInstanceJSON.delete("/files/" + id);
     return res;
 }
+
+export const allowFileSharingRequest = async (file_id, user_id, data) => {
+    return await axiosInstanceJSON.post("/files/" + file_id + "/share/" + user_id, data);
+}
+
+export const deleteFileSharingRequest = async (file_id, user_id) => {
+    return await axiosInstanceJSON.delete("/files/" + file_id + "/share/" + user_id);
+}
+
+
 //#endregion Files

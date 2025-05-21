@@ -20,16 +20,19 @@ const FolderTreeControl = ({ id, changeCurrentFolder, menuPosition, page }) => {
             }
 
         });
-    }, []);
+    }, [id]);
 
     return (
-        < div id="menu-list" className="menu-list folder-selector-tree" style={{ top: menuPosition.current.top, left: menuPosition.current.left, position: "absolute", zIndex: 1000, }}>
-            {
-                folders && folders.length > 0 && folders.map((folder) => {
-                    return (<p key={folder.id} className="folder-selector-element" onClick={() => { changeCurrentFolder(folder, id) }}>{folder.name}</p>);
-                })
-            }
-        </div>
+
+        folders && folders.length > 0 ?
+            (< div id="menu-list" className="menu-list folder-selector-tree" style={{ top: menuPosition.current.top, left: menuPosition.current.left, position: "absolute", zIndex: 1000, }}>
+                {
+                    folders && folders.length > 0 && folders.map((folder) => {
+                        return (<p key={folder.id} className="folder-selector-element" onClick={() => { changeCurrentFolder(folder, id) }}>{folder.name}</p>);
+                    })
+                }
+            </div>) : null
+
     );
 }
 

@@ -2,11 +2,11 @@ import './App.css';
 import LoginPageManager from './components/loginPage/LoginPageManager';
 import RegistrationPage from './components/registrationPage/registrationPage';
 import ResetPasswordManager from './components/resetPassword/ResetPasswordManager';
-import PageStateProvider from './hooks/PageContext.jsx';
+import PageStateProvider, { usePageState } from './hooks/PageContext.jsx';
 import MainPage from './components/mainPage/mainPage';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import PrivateRoute from './hooks/PrivateRoute';
-import AuthProvider from './hooks/AuthProvider';
+import AuthProvider, { useAuth } from './hooks/AuthProvider';
 import React from "react";
 import NotificationProvider from './hooks/Notification/NotificationProvider.jsx';
 
@@ -17,19 +17,19 @@ export default class App extends React.Component {
             <div className="App">
                 <BrowserRouter>
                     <NotificationProvider>
-                        <AuthProvider >
-                            <PageStateProvider>
+                        <PageStateProvider>
+                            <AuthProvider >
                                 <Routes>
                                     <Route path="/login" element={<LoginPageManager />} />
                                     <Route path="/reset-password" element={<ResetPasswordManager />} />
                                     <Route path="/register" element={<RegistrationPage />} />
-                                    <Route path="/" element={<p>Landing Page</p>} />
+                                    <Route path="/" element={<p>Landing Page<button onClick={() => { window.location.href = "/login" }}>Login</button></p>} />
                                     <Route element={<PrivateRoute />}>
                                         <Route path="/storage" element={<MainPage />} />
                                     </Route>
                                 </Routes>
-                            </PageStateProvider>
-                        </AuthProvider>
+                            </AuthProvider>
+                        </PageStateProvider>
                     </NotificationProvider>
                 </BrowserRouter>
             </div>

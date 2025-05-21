@@ -34,7 +34,7 @@ const Sidebar = ({ onSelectCategory, activeCategory }) => {
                 if (error) {
                     setProgress(0);
                 } else {
-                    setProgress(data.used_percentage);
+                    setProgress(data.used_percentage.toFixed(2));
                 }
             }).catch((error) => {
                 console.error(error);
@@ -56,10 +56,16 @@ const Sidebar = ({ onSelectCategory, activeCategory }) => {
     };
 
     const toggleCollapse = () => {
+        if (!isCollapsed) {
+            setIsCreatingFolder(false);
+            setIsAddingFile(false);
+            setFolderName("");
+        }
         setIsCollapsed(!isCollapsed);
     };
 
     const handleLogOut = () => {
+        page.clearData();
         auth.logOut();
     }
 
