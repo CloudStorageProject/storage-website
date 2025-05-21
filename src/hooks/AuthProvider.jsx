@@ -89,9 +89,10 @@ const AuthProvider = ({ children }) => {
                 setUser(response.data.user);
                 setToken(response.data.token);
                 localStorage.setItem(`token`, response.data.token);
-                localStorage.setItem(`privateKey`, exportPrivateKeyToBase64(data.keyPair.privateKey));
-                localStorage.setItem(`publicKey`, exportPublicKeyToBase64(data.keyPair.publicKey));
                 return true;
+            } else {
+                notify.postNotification(response.data.detail, NotificationType.ERROR);
+                console.error(response);
             }
         } catch (err) {
             notify.postNotification(err.response.data.detail, NotificationType.ERROR);
@@ -130,6 +131,9 @@ const AuthProvider = ({ children }) => {
                 localStorage.setItem(`privateKey`, exportPrivateKeyToBase64(keys.privateKey));
                 localStorage.setItem(`publicKey`, exportPublicKeyToBase64(keys.publicKey));
                 return true;
+            } else {
+                notify.postNotification(response.data.detail, NotificationType.ERROR);
+                console.error(response);
             }
         } catch (err) {
             notify.postNotification(err.response.data.detail, NotificationType.ERROR);

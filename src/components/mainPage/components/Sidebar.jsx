@@ -13,12 +13,15 @@ import { createFolder, getAvailableSpace, getFolder } from "../../../service/Fol
 import { uploadFile } from "../../../service/FileService";
 import { useNotify } from "../../../hooks/Notification/NotificationProvider.jsx";
 import { NotificationType } from "../../../hooks/Notification/NotificationTypes.tsx";
-import { getFolderRequest } from "../../../api/FolderRequests.jsx";
 import { FolderStructure } from "../../../utils/Structures.tsx";
 
 const Sidebar = ({ onSelectCategory, activeCategory }) => {
     const auth = useAuth();
-    const [progress, setProgress] = useState(90);
+    const [storage, setStorage] = useState({
+        available: 0,
+        used: 0,
+        used_percentage: 0,
+    });
     const [isAddingFile, setIsAddingFile] = useState(false);
     const [isCreatingFolder, setIsCreatingFolder] = useState(false);
     const [folderName, setFolderName] = useState("");
@@ -32,13 +35,26 @@ const Sidebar = ({ onSelectCategory, activeCategory }) => {
             getAvailableSpace().then((response) => {
                 const { data, error } = response;
                 if (error) {
-                    setProgress(0);
+                    console.log(error);
+                    setStorage({
+                        available: 0,
+                        used: 0,
+                        used_percentage: 0,
+                    });
                 } else {
-                    setProgress(data.used_percentage.toFixed(2));
+                    setStorage({
+                        available: data.available.toFixed(2),
+                        used: data.used.toFixed(2),
+                        used_percentage: data.used_percentage.toFixed(2),
+                    });
                 }
             }).catch((error) => {
                 console.error(error);
-                setProgress(0);
+                setStorage({
+                    available: 0,
+                    used: 0,
+                    used_percentage: 0,
+                });
             });
         }
 
@@ -145,16 +161,16 @@ const Sidebar = ({ onSelectCategory, activeCategory }) => {
                         </li>
                         <AddFileOptions isAddingFile={isAddingFile} onAddFileClick={() => handleUploadFile()} isUploadingFile={isUploadingFile} onCreateFolderClick={() => setIsCreatingFolder(true)} isCreatingFolder={isCreatingFolder} folderName={folderName} onFolderNameChange={(e) => setFolderName(e.target.value)} onFolderSubmit={(e) => handleFolderSubmit(e)} />
                     </ul>
-                    <div className="storage">
-                        <p>Storage used</p>
+                    <div className="storage" title={"You have used: " + storage.used + " GB out of " + storage.available + " GB"}>
+                        <p>Storage used: {storage.used} GB</p>
                         {!isCollapsed ? (
                             <div className="progress-bar">
-                                <div className="progress" style={{ width: `${progress}%` }}></div>
+                                <div className="progress" style={{ width: `${storage.used_percentage}%` }}></div>
                             </div>
                         ) : (
-                            <div className="progress-circle" style={{ '--progress': progress }}>
+                            <div className="progress-circle" style={{ '--progress': storage.used_percentage }}>
                                 <div className="circle-overlay"></div>
-                                <span className="progress-text">{progress}%</span>
+                                <span className="progress-text">{storage.used_percentage}%</span>
                             </div>
                         )}
                     </div>

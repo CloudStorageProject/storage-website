@@ -59,11 +59,8 @@ const RegistrationPhrasesConfirm = ({ userData, secretPhrases, keyPair, checkInd
                 <input type="text" className="recovery-confirm-input" placeholder={checkIndexes[2] + 1} name={checkIndexes[2]} onChange={(e) => { handleSetSelectedPhrases(e) }}></input>
             </div>
             <div className="recovery-phrase-controls">
+                <button onClick={() => { randomizeIndexes(); previousStage(); }}>SHOW THE PHRASE AGAIN</button>
                 <button onClick={handleSubmit}>CONFIRM</button>
-                <button onClick={() => {
-                    randomizeIndexes();
-                    previousStage();
-                }}>SHOW THE PHRASE AGAIN</button>
             </div>
         </div>
     </div>);
