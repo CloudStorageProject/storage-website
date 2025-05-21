@@ -42,7 +42,7 @@ const PricingSection = () => {
             Month
           </button>
         </div>
-
+        
       </div>
 
       <div className="plan-cards">

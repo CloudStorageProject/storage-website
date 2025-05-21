@@ -261,6 +261,7 @@
   font-size: 14px;
 }
 
+/* Загальні стилі */
 
 
 /* Секція тарифів */
@@ -284,44 +285,24 @@
 .toggle {
   background: #eee;
   border-radius: 50px;
-  padding: 4px;
+  padding: 5px;
   display: flex;
-  position: relative;
-  width: 120px;
-  height: 40px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-}
-
-.toggle::before {
-  content: "";
-  position: absolute;
-  top: 4px;
-  left: 4px;
-  width: calc(50% - 8px);
-  height: calc(100% - 8px);
-  background: white;
-  border-radius: 50px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
-  transition: left 0.3s ease;
-}
-
-.toggle.right::before {
-  left: calc(50% + 4px);
 }
 
 .toggle-btn {
-  flex: 1;
   border: none;
   background: none;
+  padding: 8px 16px;
   border-radius: 50px;
   cursor: pointer;
   font-size: 14px;
   color: #333;
-  z-index: 1;
 }
 
-
+.toggle-btn.active {
+  background: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
 
 /* Картки тарифів */
 .plan-cards {
@@ -336,7 +317,7 @@
 
 .card {
   background: white;
-  box-shadow: 0px 30px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
   border-radius: 28px;
   padding: 30px 20px;
   width: 220px;
