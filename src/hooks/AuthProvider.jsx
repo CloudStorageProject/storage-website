@@ -89,9 +89,11 @@ const AuthProvider = ({ children }) => {
                 setUser(response.data.user);
                 setToken(response.data.token);
                 localStorage.setItem(`token`, response.data.token);
-                localStorage.setItem(`privateKey`, exportPrivateKeyToBase64(data.keyPair.privateKey));
-                localStorage.setItem(`publicKey`, exportPublicKeyToBase64(data.keyPair.publicKey));
+              
                 return true;
+            } else {
+                notify.postNotification(response.data.detail, NotificationType.ERROR);
+                console.error(response);
             }
         } catch (err) {
             notify.postNotification(err.response.data.detail, NotificationType.ERROR);
@@ -130,6 +132,9 @@ const AuthProvider = ({ children }) => {
                 localStorage.setItem(`privateKey`, exportPrivateKeyToBase64(keys.privateKey));
                 localStorage.setItem(`publicKey`, exportPublicKeyToBase64(keys.publicKey));
                 return true;
+            } else {
+                notify.postNotification(response.data.detail, NotificationType.ERROR);
+                console.error(response);
             }
         } catch (err) {
             notify.postNotification(err.response.data.detail, NotificationType.ERROR);
@@ -171,9 +176,16 @@ const AuthProvider = ({ children }) => {
         return false;
     };
 
+    const updateUser = (newUser) => {
+        setUser((prevUser) => ({
+            ...prevUser,
+            ...newUser,
+        }));
+    }
+
     return (
         <AuthContext.Provider value={{
-            token, user, partialLoginAction, fullLoginAction, registerAction, logOut, keyPair, setKeyPair, storeKeyPair, setStoredUser: storeUser, reLogin
+            token, user, partialLoginAction, fullLoginAction, registerAction, logOut, keyPair, setKeyPair, storeKeyPair, setStoredUser: storeUser, reLogin, updateUser
         }}>
             {children}
         </AuthContext.Provider>
