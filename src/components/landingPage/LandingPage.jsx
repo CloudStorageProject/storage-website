@@ -14,9 +14,9 @@ const LandingPage = () => {
     <div>
 <HeroSection />
 <AboutSection />
+<PricingSection />
 <TeamSection />
 <FAQSection />
-<PricingSection />
 <Footer />
     </div>
   );
