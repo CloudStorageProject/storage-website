@@ -12,7 +12,7 @@ code {
 
 :root {
     --background-image: url(./components//img/white_bg.png);
-    --background-color: #FFFFFF;
+    --background-color: #e3e3e3;
     --dropzone-bg: rgba(255, 255, 255, 0.3);
     --dropzone-border: 2px solid #aaa;
     --dropzone-drop-shadow: inset 0px 0px 20px 20px rgb(0 0 0 / 10%);

@@ -10,7 +10,7 @@ const FolderSelector = ({ folder, changeCurrentFolder }) => {
                     <List style={{ pointerEvents: "none" }} />
                 </button>
             </div>
-            <span style={{ color: "var(--text-color)" }}>/</span>
+            <span className="separator">/</span>
         </>
     );
 }

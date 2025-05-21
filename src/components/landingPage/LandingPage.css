@@ -1,0 +1,461 @@
+
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 10px;
+  background: #FFFFFF;
+  box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.25);
+  border-radius: 22px;
+  font-size: 20px;
+  width: 25%;
+  min-width: 120px;
+}
+
+.container-main {
+  display: flex;
+  width: 100%;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.info-div {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.info-div p {
+  text-align: center;
+}
+
+.btn-free {
+  background: #FFFFFF;
+  margin: 30px;
+  padding: 5px 70px;
+  box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.25);
+  border-radius: 10px;
+}
+
+@media (max-width: 768px) {
+  .container-main {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .info-div:last-child {
+    display: none; 
+  }
+
+  .btn {
+    width: 100%; 
+    font-size: 18px;
+  }
+
+  .btn-free {
+    width: 100%;
+    padding: 10px;
+  }
+}
+
+
+
+
+.about-section {
+  background-color: #112b27;
+  color: white;
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.about-section h2 {
+  font-weight: 300;
+  margin-bottom: 40px;
+}
+
+.about-cards {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+  background-color: #0f221f;
+  padding: 40px;
+  max-width: 1000px;
+  margin: 0 auto;
+  border-radius: 8px;
+}
+
+.about-card {
+  flex: 1 1 200px;
+  background-color: #0f221f;
+  max-width: 250px;
+  color: #ccc;
+}
+
+.icon {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+.team-section {
+  background: white;
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.team-section h2 {
+  font-size: 36px;
+  margin-bottom: 40px;
+  font-weight: 400;
+  letter-spacing: 2px;
+}
+
+.team-container {
+  /* background: #f2f2f2; */
+  padding: 60px 40px;
+  border-radius: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 40px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.team-member {
+  width: 150px;
+  text-align: center;
+}
+
+.team-member img {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  border: 3px solid #2d5951;
+  object-fit: cover;
+}
+
+.team-member h3 {
+  margin: 10px 0 4px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.team-member p {
+  margin: 0;
+  font-size: 14px;
+  color: gray;
+}
+
+.team-member.lead {
+  width: 100%;
+}
+
+.team-member.lead img {
+  width: 150px;
+  height: 150px;
+}
+
+.team-member.lead h3 {
+  font-size: 20px;
+  margin-top: 16px;
+}
+.faq-section {
+  padding: 60px 20px;
+  text-align: center;
+  font-family: sans-serif;
+  background-color: #fff;
+}
+
+.faq-section h2 {
+  font-size: 32px;
+  margin-bottom: 40px;
+}
+
+.faq-container {
+  max-width: 700px;
+  margin: 0 auto;
+  text-align: left;
+  border-top: 1px solid #aaa;
+}
+
+.faq-item {
+  
+  border-bottom: 1px solid #aaa;
+  padding: 15px 0;
+}
+
+.faq-question {
+  background: none;
+  border: none;
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0;
+  outline: none;
+  color: black;
+
+}
+
+.faq-question span {
+  margin-right: 8px;
+  font-size: 14px;
+}
+
+.faq-answer-wrapper {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: max-height 0.5s ease, opacity 0.4s ease, transform 0.4s ease;
+}
+
+.faq-answer-wrapper.open {
+  max-height: 500px;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.faq-answer {
+  color: black;
+  font-size: 16px;
+  padding-left: 22px;
+  margin-top: 10px;
+}
+
+.faq-footer {
+  margin-top: 40px;
+  font-size: 14px;
+  color: black;
+}
+
+.email {
+  display: block;
+  margin-top: 5px;
+  font-weight: bold;
+  color: #007acc;
+}
+
+.faq-footer {
+  margin-top: 60px;
+}
+
+.faq-footer p {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.email {
+  color: #888;
+  font-size: 14px;
+}
+
+/* Загальні стилі */
+
+
+/* Секція тарифів */
+.pricing-section {
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.pricing-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1000px;
+  margin: 0 auto 40px;
+}
+
+.pricing-header h2 {
+  font-size: 28px;
+}
+
+.toggle {
+  background: #eee;
+  border-radius: 50px;
+  padding: 5px;
+  display: flex;
+}
+
+.toggle-btn {
+  border: none;
+  background: none;
+  padding: 8px 16px;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+}
+
+.toggle-btn.active {
+  background: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Картки тарифів */
+.plan-cards {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+  max-width: 1000px;
+  margin: 0 auto;
+  /* overflow-y: auto; */
+}
+
+.card {
+  background: white;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 28px;
+  padding: 30px 20px;
+  width: 220px;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card h3 {
+  font-size: 20px;
+  color: #1f3b36;
+}
+
+.card p {
+  font-size: 14px;
+  color: #666;
+}
+
+.circle {
+  width: 80px;
+  height: 80px;
+  margin: 20px auto;
+  border-radius: 50%;
+  border: 6px solid #1f3b36;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.circle span {
+  font-size: 16px;
+  color: #1f3b36;
+}
+
+.price {
+  font-weight: bold;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.arrow {
+  font-size: 24px;
+  margin-top: 15px;
+}
+
+/* Футер */
+.site-footer {
+  background: #0f2d28;
+  color: white;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.footer-content {
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.footer-content .email {
+  color: #ccc;
+  font-size: 13px;
+  margin-top: 10px;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.footer-links a {
+  color: white;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.footer-links a:hover {
+  text-decoration: underline;
+}
+.why-better-section {
+  padding: 60px 20px;
+  background: white;
+  text-align: center;
+}
+
+.why-better-section h2 {
+  font-size: 32px;
+  margin-bottom: 40px;
+}
+
+.comparison-table {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.features-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #111;
+  text-align: left;
+}
+
+.comparison-column {
+  align-items: center;
+  background: #fff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 30px 20px;
+  border-radius: 20px;
+  width: 240px;
+  text-align: left;
+}
+
+.comparison-column svg,
+.comparison-column img {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 20px;
+}
+
+.comparison-column ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.comparison-column li {
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+

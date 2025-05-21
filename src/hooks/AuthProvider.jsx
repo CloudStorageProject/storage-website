@@ -7,31 +7,27 @@ import { NotificationType } from "./Notification/NotificationTypes.tsx";
 import { usePageState } from "./PageContext.jsx";
 
 const AuthContext = createContext();
+export let reLogin = null; // Placeholder for reLogin function, to be defined later
 
 const AuthProvider = ({ children }) => {
     const notify = useNotify();
-    const [user, setUser] = useState({ username: null, email: null, fullAccess: false, publicKey: null });
-    const [token, setToken] = useState(document.cookie.split("=")[1] || "");
-    const [keyPair, setKeyPair] = useState({ privateKey: null, publicKey: null });
-    const page = usePageState();
-    const tabId = page.getTabId();
+    const [user, setUser] = useState(getStoredUser());
+    const [token, setToken] = useState(getStoredToken());
+    const [keyPair, setKeyPair] = useState(getStoredKeyPair());
 
 
     useEffect(() => {
         const handlePageLoad = () => {
-
+            getStoredKeyPair();
             getStoredUser();
-            getKeyPair();
-
-            localStorage.removeItem(`user-${tabId}`);
-            localStorage.removeItem(`privateKey-${tabId}`);
-            localStorage.removeItem(`publicKey-${tabId}`);
+            getStoredToken();
         }
         const handlePageUnload = () => {
             // If there is token -> store the user for reload.
-            if (sessionStorage.getItem("token") !== null) {
-                setStoredUser();
+            if (localStorage.getItem("token") !== null) {
+                storeUser();
                 storeKeyPair();
+                storeToken();
             }
         }
 
@@ -44,31 +40,45 @@ const AuthProvider = ({ children }) => {
     }, [user, keyPair]);
 
 
-
-    function getKeyPair() {
+    function getStoredKeyPair() {
         let privateKey = null;
         let publicKey = null;
-        if (localStorage.getItem(`privateKey-${tabId}`) !== null && localStorage.getItem(`publicKey-${tabId}`) !== null) {
-            privateKey = exportPrivateKeyFromPem(localStorage.getItem(`privateKey-${tabId}`));
-            publicKey = exportPublicKeyFromPem(localStorage.getItem(`publicKey-${tabId}`));
+        if (localStorage.getItem(`privateKey`) !== null && localStorage.getItem(`publicKey`) !== null) {
+            privateKey = exportPrivateKeyFromPem(localStorage.getItem(`privateKey`));
+            publicKey = exportPublicKeyFromPem(localStorage.getItem(`publicKey`));
         }
-        setKeyPair({ privateKey: privateKey, publicKey: publicKey });
+        return { privateKey: privateKey, publicKey: publicKey };
     }
 
     function storeKeyPair() {
-        if (keyPair.privateKey) { localStorage.setItem(`privateKey-${tabId}`, exportPrivateKeyToBase64(keyPair.privateKey)); }
-        if (keyPair.publicKey) { localStorage.setItem(`publicKey-${tabId}`, exportPublicKeyToBase64(keyPair.publicKey)); }
+        if (keyPair.privateKey) { localStorage.setItem(`privateKey`, exportPrivateKeyToBase64(keyPair.privateKey)); }
+        if (keyPair.publicKey) { localStorage.setItem(`publicKey`, exportPublicKeyToBase64(keyPair.publicKey)); }
     }
 
-    async function getStoredUser() {
-        const storedUser = localStorage.getItem(`user-${tabId}`);
+    function storeToken(toStore) {
+        if (toStore !== null && toStore !== "" && toStore !== undefined) {
+            localStorage.setItem(`token`, toStore);
+            return;
+        } else if (token !== null && token !== undefined && token !== "") {
+            localStorage.setItem(`token`, token);
+        };
+    }
+
+    function getStoredToken() {
+        return localStorage.getItem(`token`);
+    }
+
+    function getStoredUser() {
+        const storedUser = localStorage.getItem(`user`);
         if (storedUser) {
-            setUser(await JSON.parse(storedUser));
+            return JSON.parse(storedUser);
         }
+        return { username: null, email: null, fullAccess: false, publicKey: null };
     }
 
-    function setStoredUser() {
-        localStorage.setItem(`user-${tabId}`, JSON.stringify(user));
+    function storeUser() {
+        if (user === null || user.username === null) return;
+        localStorage.setItem(`user`, JSON.stringify(user));
     }
 
     const partialLoginAction = async (data) => {
@@ -78,8 +88,13 @@ const AuthProvider = ({ children }) => {
                 response.data.user.fullAccess = false;
                 setUser(response.data.user);
                 setToken(response.data.token);
-                sessionStorage.setItem(`token`, response.data.token);
+
+                localStorage.setItem(`token`, response.data.token);
+              
                 return true;
+            } else {
+                notify.postNotification(response.data.detail, NotificationType.ERROR);
+                console.error(response);
             }
         } catch (err) {
             notify.postNotification(err.response.data.detail, NotificationType.ERROR);
@@ -87,6 +102,21 @@ const AuthProvider = ({ children }) => {
         }
         return false;
     };
+
+    const innerReLogin = async () => {
+        if (!keyPair.privateKey || !keyPair.publicKey) {
+            notify.postNotification("No key pair found", NotificationType.ERROR);
+            return false;
+        }
+        if (user.fullAccess) {
+            return fullLoginAction(keyPair);
+        } else {
+            return partialLoginAction({ username: user.username, password: "", keyPair: keyPair });
+        }
+    }
+
+
+    reLogin = innerReLogin;
 
     const fullLoginAction = async (keys) => {
         try {
@@ -99,8 +129,15 @@ const AuthProvider = ({ children }) => {
                 response.data.user.fullAccess = true;
                 setUser(response.data.user);
                 setToken(response.data.token);
-                sessionStorage.setItem(`token`, response.data.token);
+
+                localStorage.setItem(`token`, response.data.token);
+                localStorage.setItem(`privateKey`, exportPrivateKeyToBase64(keys.privateKey));
+                localStorage.setItem(`publicKey`, exportPublicKeyToBase64(keys.publicKey));
+
                 return true;
+            } else {
+                notify.postNotification(response.data.detail, NotificationType.ERROR);
+                console.error(response);
             }
         } catch (err) {
             notify.postNotification(err.response.data.detail, NotificationType.ERROR);
@@ -112,9 +149,11 @@ const AuthProvider = ({ children }) => {
     const logOut = () => {
         setUser(null);
         setToken("");
-        localStorage.removeItem(`privateKey-${tabId}`);
-        localStorage.removeItem(`publicKey-${tabId}`);
-        sessionStorage.removeItem(`token`);
+
+        localStorage.removeItem(`privateKey`);
+        localStorage.removeItem(`publicKey`);
+        localStorage.removeItem(`token`);
+
         setKeyPair({ privateKey: null, publicKey: null });
         return true;
     };
@@ -128,8 +167,10 @@ const AuthProvider = ({ children }) => {
                 setUser(response.data.user);
                 setToken(response.data.access_token);
                 document.cookie = `token=${response.data.access_token}; Secure;`;
-                localStorage.setItem(`privateKey-${tabId}`, exportPrivateKeyToBase64(data.keyPair.privateKey));
-                localStorage.setItem(`publicKey-${tabId}`, exportPublicKeyToBase64(data.keyPair.publicKey));
+
+                localStorage.setItem(`privateKey`, exportPrivateKeyToBase64(data.keyPair.privateKey));
+                localStorage.setItem(`publicKey`, exportPublicKeyToBase64(data.keyPair.publicKey));
+
                 return true;
             } else if (response.status === 422) {
                 notify.postNotification(response.data.detail, NotificationType.ERROR);
@@ -142,9 +183,16 @@ const AuthProvider = ({ children }) => {
         return false;
     };
 
+    const updateUser = (newUser) => {
+        setUser((prevUser) => ({
+            ...prevUser,
+            ...newUser,
+        }));
+    }
+
     return (
         <AuthContext.Provider value={{
-            token, user, partialLoginAction, fullLoginAction, registerAction, logOut, keyPair, setKeyPair
+            token, user, partialLoginAction, fullLoginAction, registerAction, logOut, keyPair, setKeyPair, storeKeyPair, setStoredUser: storeUser, reLogin, updateUser
         }}>
             {children}
         </AuthContext.Provider>
@@ -152,6 +200,7 @@ const AuthProvider = ({ children }) => {
 };
 
 export default AuthProvider;
+
 
 export const useAuth = () => {
     return useContext(AuthContext);

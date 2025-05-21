@@ -88,3 +88,21 @@ export class UserStructure {
         this.public_key = public_key;
     }
 }
+
+export class PlanStructure {
+    name: string;
+    space: number;
+    price: number;
+    description: string;
+    priceMonth: number;
+    priceYear: number;
+
+    constructor(name: string, space: number, price: number, description: string, priceMonth: number, priceYear: number) {
+        this.name = name;
+        this.space = space;
+        this.price = price;
+        this.description = description;
+        this.priceMonth =  priceMonth;
+        this.priceYear =  priceYear;
+    }
+}

@@ -18,7 +18,7 @@ export default class RegistrationPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = { registrationStage: 0, keyPair: this.props.keyPair };
-        this.userData = { name: "", username: "", email: "", password: "", confirmPassword: "" };
+        this.userData = { username: "", email: "", password: "", confirmPassword: "" };
         this.secrets = {
             privateKey: null,
             publicKey: null,

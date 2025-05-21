@@ -37,7 +37,6 @@ const RegistrationSecretPhrases = ({ secretPhrases, nextStage, previousStage }) 
                             )
                         })}
                     </div>
-                    <div className="divider"></div>
                     <div className="recovery-phrase-controls" >
                         <button onClick={handleCopy}>Copy</button>
                         <button onClick={handleDownload}>Download</button>

@@ -149,6 +149,7 @@
 
 .folder-selector {
     width: 10vw;
+    min-width: 100px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -228,4 +229,10 @@
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+.separator {
+    color: var(--text-color);
+    margin: 10px;
+    font-size: xx-large;
 }
