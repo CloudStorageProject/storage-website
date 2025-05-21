@@ -9,6 +9,7 @@ import PrivateRoute from './hooks/PrivateRoute';
 import AuthProvider, { useAuth } from './hooks/AuthProvider';
 import React from "react";
 import NotificationProvider from './hooks/Notification/NotificationProvider.jsx';
+import LandingPage from './components/landingPage/LandingPage.jsx'
 
 export default class App extends React.Component {
 
@@ -23,7 +24,7 @@ export default class App extends React.Component {
                                     <Route path="/login" element={<LoginPageManager />} />
                                     <Route path="/reset-password" element={<ResetPasswordManager />} />
                                     <Route path="/register" element={<RegistrationPage />} />
-                                    <Route path="/" element={<p>Landing Page<button onClick={() => { window.location.href = "/login" }}>Login</button></p>} />
+                                    <Route path="/" element={<LandingPage />} />
                                     <Route element={<PrivateRoute />}>
                                         <Route path="/storage" element={<MainPage />} />
                                     </Route>
