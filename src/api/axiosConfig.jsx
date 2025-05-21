@@ -1,7 +1,7 @@
 import axios from "axios";
+import AuthProvider, { reLogin } from "../hooks/AuthProvider";
 
 const AxiosInstance = ({ content_type }) => {
-
 
     const instance = axios.create({
         baseURL: window.__ENV__.REACT_APP_API_URL,
@@ -13,7 +13,7 @@ const AxiosInstance = ({ content_type }) => {
 
     instance.interceptors.request.use(
         (config) => {
-            config.headers["Authorization"] = `Bearer ${sessionStorage.getItem("token") || ""}`;
+            config.headers["Authorization"] = `Bearer ${localStorage.getItem("token") || ""}`;
             return config;
         },
         (error) => {
@@ -25,7 +25,19 @@ const AxiosInstance = ({ content_type }) => {
         (response) => {
             return response;
         },
-        (error) => {
+        async (error) => {
+            if (error.response.status === 401) {
+                if (await reLogin()) {
+                    const originalRequest = error.config;
+                    const newRequest = {
+                        ...originalRequest, headers: { ...originalRequest.headers, Authorization: `Bearer ${localStorage.getItem("token")}`, },
+                    };
+                    console.log("Retrying request with new token");
+                    return instance(newRequest);
+                } else {
+                    console.error("Re-login failed");
+                }
+            }
             return Promise.reject(error);
         }
     );
@@ -34,5 +46,3 @@ const AxiosInstance = ({ content_type }) => {
 }
 
 export const axiosInstanceJSON = AxiosInstance("application/json");
-
-export const axiosInstanceFORM = AxiosInstance("multipart/form-data");
