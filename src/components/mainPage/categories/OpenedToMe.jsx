@@ -14,7 +14,7 @@ import OpenToMeFileControl from "../elements/OpenToMeFileControl.jsx";
 import { getShared } from "../../../api/FolderRequests.jsx";
 
 
-const MyDisk = ({ }) => {
+const OpenedToMe = ({ }) => {
     const auth = useAuth();
     const page = usePageState();
     const notify = useNotify();
@@ -135,5 +135,5 @@ const MyDisk = ({ }) => {
     );
 };
 
-export default MyDisk;
+export default OpenedToMe;
 

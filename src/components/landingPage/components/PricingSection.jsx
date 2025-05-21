@@ -28,7 +28,7 @@ const PricingSection = () => {
     <section className="pricing-section">
       <div className="pricing-header">
         <h2>Our plans</h2>
-        <div className="toggle">
+        <div className={`toggle ${!isYearly ? 'right' : ''}`}>
           <button
             className={`toggle-btn ${isYearly ? 'active' : ''}`}
             onClick={() => setIsYearly(true)}
@@ -42,6 +42,7 @@ const PricingSection = () => {
             Month
           </button>
         </div>
+        
       </div>
 
       <div className="plan-cards">

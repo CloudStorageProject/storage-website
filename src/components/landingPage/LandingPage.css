@@ -312,6 +312,7 @@
   flex-wrap: wrap;
   max-width: 1000px;
   margin: 0 auto;
+  /* overflow-y: auto; */
 }
 
 .card {
