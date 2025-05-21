@@ -15,6 +15,7 @@ import { getShared } from "../../../api/FolderRequests.jsx";
 
 
 const OpenedToMe = ({ }) => {
+
     const auth = useAuth();
     const page = usePageState();
     const notify = useNotify();
@@ -136,4 +137,3 @@ const OpenedToMe = ({ }) => {
 };
 
 export default OpenedToMe;
-

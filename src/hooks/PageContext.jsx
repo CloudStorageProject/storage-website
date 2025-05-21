@@ -23,6 +23,7 @@ const PageStateProvider = ({ children }) => {
         if (state !== null && state !== "null" && state !== "undefined" && state !== undefined) {
             setPageState(await JSON.parse(state));
             navigate(localStorage.getItem(`path`));
+
         } else {
             setPageState({ currentPage: null, currentFolder: null, theme: 'light', viewMode: null, toUpdate: null, folderTree: [] });
         }
@@ -30,6 +31,7 @@ const PageStateProvider = ({ children }) => {
 
     const clearData = () => {
         setPageState({ currentPage: null, currentFolder: null, theme: 'light', viewMode: null, toUpdate: null, folderTree: [] });
+
         localStorage.removeItem(`pageState`);
         localStorage.removeItem(`path`);
     }
@@ -38,6 +40,7 @@ const PageStateProvider = ({ children }) => {
         document.body.className = pageState.theme;
         const handlePageLoad = () => {
             getStoredPageState();
+
             localStorage.removeItem(`pageState`);
             localStorage.removeItem(`path`);
         }

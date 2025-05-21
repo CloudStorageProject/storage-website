@@ -3,6 +3,7 @@ import { reLogin } from "../hooks/AuthProvider";
 
 const AxiosInstance = ({ content_type }) => {
 
+
     const instance = axios.create({
         baseURL: window.__ENV__.REACT_APP_API_URL,
         headers: {
@@ -14,6 +15,7 @@ const AxiosInstance = ({ content_type }) => {
     instance.interceptors.request.use(
         (config) => {
             config.headers["Authorization"] = `Bearer ${localStorage.getItem("token") || ""}`;
+
             return config;
         },
         (error) => {

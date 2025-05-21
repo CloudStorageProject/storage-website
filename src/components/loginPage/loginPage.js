@@ -60,6 +60,7 @@ const LoginPage = ({ userData, setUserData, goToFullLogin }) => {
                     <Link to="/reset-password" className="forgot-password">
                         Forgot password?
                     </Link>
+
                     <button type="submit" className="login-button" onClick={(e) => { handleSubmit(e); }}>
                         Login
                     </button>

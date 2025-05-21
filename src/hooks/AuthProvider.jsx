@@ -4,6 +4,7 @@ import { exportPrivateKeyFromPem, exportPrivateKeyToBase64, exportPublicKeyFromP
 import { loginRequest, registerRequest, requestChallenge, submitChallenge } from "../api/authRequests";
 import { useNotify } from "./Notification/NotificationProvider";
 import { NotificationType } from "./Notification/NotificationTypes.tsx";
+import { usePageState } from "./PageContext.jsx";
 
 const AuthContext = createContext();
 export let reLogin = null; // Placeholder for reLogin function, to be defined later
@@ -37,7 +38,6 @@ const AuthProvider = ({ children }) => {
             window.removeEventListener("beforeunload", handlePageUnload);
         });
     }, [user, keyPair]);
-
 
 
     function getStoredKeyPair() {
@@ -88,6 +88,7 @@ const AuthProvider = ({ children }) => {
                 response.data.user.fullAccess = false;
                 setUser(response.data.user);
                 setToken(response.data.token);
+
                 localStorage.setItem(`token`, response.data.token);
               
                 return true;
@@ -128,9 +129,11 @@ const AuthProvider = ({ children }) => {
                 response.data.user.fullAccess = true;
                 setUser(response.data.user);
                 setToken(response.data.token);
+
                 localStorage.setItem(`token`, response.data.token);
                 localStorage.setItem(`privateKey`, exportPrivateKeyToBase64(keys.privateKey));
                 localStorage.setItem(`publicKey`, exportPublicKeyToBase64(keys.publicKey));
+
                 return true;
             } else {
                 notify.postNotification(response.data.detail, NotificationType.ERROR);
@@ -146,9 +149,11 @@ const AuthProvider = ({ children }) => {
     const logOut = () => {
         setUser(null);
         setToken("");
+
         localStorage.removeItem(`privateKey`);
         localStorage.removeItem(`publicKey`);
         localStorage.removeItem(`token`);
+
         setKeyPair({ privateKey: null, publicKey: null });
         return true;
     };
@@ -162,8 +167,10 @@ const AuthProvider = ({ children }) => {
                 setUser(response.data.user);
                 setToken(response.data.access_token);
                 document.cookie = `token=${response.data.access_token}; Secure;`;
+
                 localStorage.setItem(`privateKey`, exportPrivateKeyToBase64(data.keyPair.privateKey));
                 localStorage.setItem(`publicKey`, exportPublicKeyToBase64(data.keyPair.publicKey));
+
                 return true;
             } else if (response.status === 422) {
                 notify.postNotification(response.data.detail, NotificationType.ERROR);
