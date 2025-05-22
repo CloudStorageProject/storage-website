@@ -12,7 +12,6 @@ import { testPassword, testUserName } from "../../../utils/InputValidations.tsx"
 
 
 const stripePromise = loadStripe(window.__ENV__.STRIPE_PUBLIC_KEY);
-// 'pk_test_51ROzvy4UieFLLT8QRtjvp3aPaBrPR2PencLDefW95J2OkHzxJZ4Ri7elikJhJCWjcOElUadj8JqPiPGGaGkn1wN000IT5tPDpo'
 const ProfileSettings = ({ }) => {
     const auth = useAuth();
     const notify = useNotify();
