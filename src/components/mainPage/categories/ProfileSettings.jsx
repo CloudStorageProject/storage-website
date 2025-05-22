@@ -109,7 +109,7 @@ const ProfileSettings = () => {
         try {
             testPassword(old_password);
         } catch (error) {
-            notify.postNotification(error, NotificationType.ERROR);
+            notify.postNotification(error.message, NotificationType.ERROR);
             return;
         }
         if (passwordChanged) {
@@ -117,7 +117,7 @@ const ProfileSettings = () => {
                 testPassword(new_password);
                 changePassword(old_password, new_password).then((response) => {
                     if (response.error) {
-                        notify.postNotification(response.error, NotificationType.ERROR);
+                        notify.postNotification(response.error.response.data.detail, NotificationType.ERROR);
                     } else {
                         notify.postNotification("Password changed successfully", NotificationType.SUCCESS);
                     }
@@ -126,7 +126,7 @@ const ProfileSettings = () => {
                     notify.postNotification("Network error", NotificationType.NETWORK_ERROR);
                 });
             } catch (error) {
-                notify.postNotification(error, NotificationType.ERROR);
+                notify.postNotification(error.message, NotificationType.ERROR);
                 return;
             }
         }
@@ -146,7 +146,7 @@ const ProfileSettings = () => {
                 });
             } catch (error) {
                 console.log(error);
-                notify.postNotification(error, NotificationType.ERROR);
+                notify.postNotification(error.message, NotificationType.ERROR);
                 return;
             }
         }
