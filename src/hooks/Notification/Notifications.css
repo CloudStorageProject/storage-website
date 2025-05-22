@@ -3,8 +3,11 @@
     top: 0%;
     left: 60%;
     width: 30vw;
-    height: 100vh;
-    overflow: hidden;
+    max-height: 100vh;
+    overflow-y: hidden;
+    z-index: 1000;
+    pointer-events: none;
+    padding: 0px 10px;
 }
 
 @keyframes fadeIn {

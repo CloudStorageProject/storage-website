@@ -1,5 +1,3 @@
-import React from "react";
-
 const NotificationManager = ({ notifications }) => {
     return (
         <div className="notification-container">
