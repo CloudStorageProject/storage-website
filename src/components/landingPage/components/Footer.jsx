@@ -5,10 +5,10 @@ const Footer = () => (
             <p className="email">CloudStoragetestsupport@gmail.com</p>
         </div>
         <nav className="footer-links">
-            <a href="/404">Privacy policies</a>
-            <a href="/404">Support</a>
-            <a href="/404">FAQ</a>
-            <a href="/404">Terms of use</a>
+            <a href="/privacy-policy">Privacy policies</a>
+            <a href="/support">Support</a>
+            <a href="/faq">FAQ</a>
+            <a href="/terms-of-use">Terms of use</a>
         </nav>
     </footer>
 );

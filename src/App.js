@@ -10,6 +10,7 @@ import AuthProvider from './hooks/AuthProvider';
 import React from "react";
 import NotificationProvider from './hooks/Notification/NotificationProvider.jsx';
 import LandingPage from './components/landingPage/LandingPage.jsx'
+import NotFound from './components/404.jsx';
 
 export default class App extends React.Component {
 
@@ -28,6 +29,7 @@ export default class App extends React.Component {
                                     <Route element={<PrivateRoute />}>
                                         <Route path="/storage" element={<MainPage />} />
                                     </Route>
+                                    <Route path="/*" element={<NotFound />} />
                                 </Routes>
                             </AuthProvider>
                         </PageStateProvider>
