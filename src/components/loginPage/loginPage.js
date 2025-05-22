@@ -34,7 +34,7 @@ const LoginPage = ({ userData, setUserData, goToFullLogin }) => {
                 notify.postNotification(error, NotificationType.NETWORK_ERROR);
             });
         } catch (error) {
-            console.error(error);
+            console.error(error.message);
             notify.postNotification(error.message, NotificationType.ERROR);
         }
     };
