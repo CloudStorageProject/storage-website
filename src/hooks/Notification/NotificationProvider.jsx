@@ -30,6 +30,9 @@ export const NotificationProvider = ({ children }) => {
             case NotificationType.SUCCESS: {
                 return <TEMP_IMAGE />
             }
+            default: {
+                return <TEMP_IMAGE />
+            }
         }
     }
 

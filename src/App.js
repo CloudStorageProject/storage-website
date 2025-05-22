@@ -2,14 +2,15 @@ import './App.css';
 import LoginPageManager from './components/loginPage/LoginPageManager';
 import RegistrationPage from './components/registrationPage/registrationPage';
 import ResetPasswordManager from './components/resetPassword/ResetPasswordManager';
-import PageStateProvider, { usePageState } from './hooks/PageContext.jsx';
+import PageStateProvider from './hooks/PageContext.jsx';
 import MainPage from './components/mainPage/mainPage';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import PrivateRoute from './hooks/PrivateRoute';
-import AuthProvider, { useAuth } from './hooks/AuthProvider';
+import AuthProvider from './hooks/AuthProvider';
 import React from "react";
 import NotificationProvider from './hooks/Notification/NotificationProvider.jsx';
 import LandingPage from './components/landingPage/LandingPage.jsx'
+import NotFound from './components/404.jsx';
 
 export default class App extends React.Component {
 
@@ -28,6 +29,7 @@ export default class App extends React.Component {
                                     <Route element={<PrivateRoute />}>
                                         <Route path="/storage" element={<MainPage />} />
                                     </Route>
+                                    <Route path="/*" element={<NotFound />} />
                                 </Routes>
                             </AuthProvider>
                         </PageStateProvider>

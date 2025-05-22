@@ -3,7 +3,8 @@
     top: 0%;
     left: 60%;
     width: 30vw;
-
+    height: 100vh;
+    overflow: hidden;
 }
 
 @keyframes fadeIn {

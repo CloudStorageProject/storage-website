@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import SearchBar from "./SearchBar";
 import { ReactComponent as GalleryIcon } from "../../img/Gallery.svg";
 import { ReactComponent as ListIcon } from "../../img/List.svg";
@@ -14,7 +14,7 @@ import OpenToMeFileControl from "../elements/OpenToMeFileControl.jsx";
 import { getShared } from "../../../api/FolderRequests.jsx";
 
 
-const OpenedToMe = ({ }) => {
+const OpenedToMe = () => {
 
     const auth = useAuth();
     const page = usePageState();
@@ -32,6 +32,8 @@ const OpenedToMe = ({ }) => {
     const filteredFiles = files.filter((file) => {
         if (file.name) {
             return file.name.toLowerCase().includes(searchQuery.toLowerCase())
+        } else {
+            return false;
         }
     });
 
@@ -57,7 +59,9 @@ const OpenedToMe = ({ }) => {
         } else {
             setSelectedFile(null);
         }
-    }, [files, selectedFile]);
+        // To make compiler stfu
+        // eslint-disable-next-line
+    }, [selectedFile, auth.user.fullAccess, filteredFiles]);
 
 
     // Resize effect
@@ -94,6 +98,8 @@ const OpenedToMe = ({ }) => {
         }).catch((error) => {
             notify.postNotification("Network error", NotificationType.NETWORK_ERROR);
         });
+        // To make compiler stfu
+        // eslint-disable-next-line
     }, []);
 
     const updateViewMode = (mode) => {

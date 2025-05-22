@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./sidebar.css";
 import AddFileOptions from "./AddFileOptions";
 import { ReactComponent as SettingsIcon } from "../../img/Settings.svg";
 import { ReactComponent as MyDiskIcon } from "../../img/MyDisk.svg";
 import { ReactComponent as OpenedToMyIcon } from "../../img/OpenedToMe.svg";
-import { ReactComponent as TrashIcon } from "../../img/Trash.svg";
 import { ReactComponent as ArrowIcon } from "../../img/Arrow.svg";
 import { ReactComponent as BackIcon } from "../../img/Backarrow.svg";
 import { usePageState } from "../../../hooks/PageContext.jsx";
@@ -119,10 +118,9 @@ const Sidebar = ({ onSelectCategory, activeCategory }) => {
                 return console.log("Folder already exists");
             } else {
                 createFolder({ id: page.pageState.currentFolder.id, name: folderName }).then((response) => {
-                    const { data, error } = response;
-                    if (error) {
+                    if (response.error) {
                         notify.postNotification("Failed to create folder", NotificationType.ERROR);
-                        return console.log(error);
+                        return console.log(response.error);
                     } else {
                         notify.postNotification("Created folder: " + folderName, NotificationType.SUCCESS);
                     }

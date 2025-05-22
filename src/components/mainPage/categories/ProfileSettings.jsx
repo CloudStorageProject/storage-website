@@ -12,8 +12,7 @@ import { testPassword, testUserName } from "../../../utils/InputValidations.tsx"
 
 
 const stripePromise = loadStripe(window.__ENV__.STRIPE_PUBLIC_KEY);
-// 'pk_test_51ROzvy4UieFLLT8QRtjvp3aPaBrPR2PencLDefW95J2OkHzxJZ4Ri7elikJhJCWjcOElUadj8JqPiPGGaGkn1wN000IT5tPDpo'
-const ProfileSettings = ({ }) => {
+const ProfileSettings = () => {
     const auth = useAuth();
     const notify = useNotify();
     const [plans, setPlans] = useState([]);
@@ -33,7 +32,7 @@ const ProfileSettings = ({ }) => {
                 var tmp = [];
                 for (let i = 0; i < response.data.length; i++) {
                     const el = response.data[i];
-                    tmp.push(new PlanStructure(el.name, el.space, el.price, el.description, el.priceYear, el.priceMonth));
+                    tmp.push(new PlanStructure(el.name, el.space, el.price, el.description, el.price, el.price * 12));
                 }
                 setPlans(tmp);
             }).catch((error) => {
@@ -48,7 +47,9 @@ const ProfileSettings = ({ }) => {
             });
         };
         fetchPlans();
-    }, []);
+        // To make compiler stfu
+        // eslint-disable-next-line
+    }, [auth.user.username]);
 
     const handlePasswordChange = (e) => {
         setNewPassword(e.target.value);
@@ -108,7 +109,7 @@ const ProfileSettings = ({ }) => {
         try {
             testPassword(old_password);
         } catch (error) {
-            notify.postNotification(error, NotificationType.ERROR);
+            notify.postNotification(error.message, NotificationType.ERROR);
             return;
         }
         if (passwordChanged) {
@@ -116,7 +117,7 @@ const ProfileSettings = ({ }) => {
                 testPassword(new_password);
                 changePassword(old_password, new_password).then((response) => {
                     if (response.error) {
-                        notify.postNotification(response.error, NotificationType.ERROR);
+                        notify.postNotification(response.error.response.data.detail, NotificationType.ERROR);
                     } else {
                         notify.postNotification("Password changed successfully", NotificationType.SUCCESS);
                     }
@@ -125,7 +126,7 @@ const ProfileSettings = ({ }) => {
                     notify.postNotification("Network error", NotificationType.NETWORK_ERROR);
                 });
             } catch (error) {
-                notify.postNotification(error, NotificationType.ERROR);
+                notify.postNotification(error.message, NotificationType.ERROR);
                 return;
             }
         }
@@ -134,10 +135,9 @@ const ProfileSettings = ({ }) => {
                 testUserName(new_username);
                 changeUsername(old_password, new_username).then((response) => {
                     if (response.error) {
-                        notify.postNotification(response.error, NotificationType.ERROR);
+                        notify.postNotification(response.error.response.data.detail, NotificationType.ERROR);
                     } else {
                         notify.postNotification("Username changed successfully", NotificationType.SUCCESS);
-                        auth.updateUser({ ...auth.user, username: new_username });
                         auth.reLogin();
                     }
                 }).catch((error) => {
@@ -145,7 +145,8 @@ const ProfileSettings = ({ }) => {
                     notify.postNotification("Network error", NotificationType.NETWORK_ERROR);
                 });
             } catch (error) {
-                notify.postNotification(error, NotificationType.ERROR);
+                console.log(error);
+                notify.postNotification(error.message, NotificationType.ERROR);
                 return;
             }
         }
@@ -169,8 +170,8 @@ const ProfileSettings = ({ }) => {
                         <div className="pricing-header-title-settings">
                             <h2>Change Your Plan</h2>
                             <div className="toggle-settings">
-                                <button className={`toggle-btn-settings ${isYearly ? 'active' : ''}`} onClick={() => setIsYearly(true)}>Year</button>
                                 <button className={`toggle-btn-settings ${!isYearly ? 'active' : ''}`} onClick={() => setIsYearly(false)}>Month</button>
+                                <button className={`toggle-btn-settings ${isYearly ? 'active' : ''}`} onClick={() => setIsYearly(true)}>Year</button>
                             </div>
                         </div>
 

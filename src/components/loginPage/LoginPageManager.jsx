@@ -1,8 +1,6 @@
 import React from "react";
 import LoginPage from "./loginPage";
 import FullJoin from "./fulljoin";
-import { useNotify } from "../../hooks/Notification/NotificationProvider";
-import { NotificationType } from "../../hooks/Notification/NotificationTypes.tsx";
 
 export default class ResetPasswordManager extends React.Component {
     constructor(props) {

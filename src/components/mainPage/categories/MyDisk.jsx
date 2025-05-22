@@ -1,9 +1,8 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import SearchBar from "./SearchBar";
 import { ReactComponent as GalleryIcon } from "../../img/Gallery.svg";
 import { ReactComponent as ListIcon } from "../../img/List.svg";
 import { ReactComponent as DragIcon } from "../../img/drag.svg";
-import { ReactComponent as BackIcon } from "../../img/Back Arrow.svg";
 import ViewMode from "../ViewModeEnum.js";
 import FileGrid from "../elements/FileGrid.jsx";
 import FileList from "../elements/FileList.jsx";
@@ -22,7 +21,7 @@ import FolderTreeControl from "../elements/FolderTreeControl.jsx";
 import SharingDialog from "../components/SharingDialog.jsx";
 
 
-const MyDisk = ({ }) => {
+const MyDisk = () => {
     const auth = useAuth();
     const page = usePageState();
     const notify = useNotify();
@@ -35,7 +34,6 @@ const MyDisk = ({ }) => {
     const [currentFolder, setCurrentFolder] = useState(page.pageState.currentFolder || null);
     const [files, setFiles] = useState([]);
     const [folders, setFolders] = useState([]);
-    const [filePath, setFilePath] = useState("");
     const [selectedRenaming, setSelectedRenaming] = useState(null);
     const [renamingName, setRenamingName] = useState(null);
     const fileMenuPosition = useRef({ top: 0, left: 0 });
@@ -43,20 +41,17 @@ const MyDisk = ({ }) => {
     const folderTreeMenuPosition = useRef({ top: 0, left: 0 });
     const [selectedSharing, setSelectedSharing] = useState(null);
 
+
     const handleSearch = (query) => {
         setSearchQuery(query);
     };
 
     const filteredFolders = folders.filter((folder) => {
-        if (folder) {
-            return folder.name.toLowerCase().includes(searchQuery.toLowerCase())
-        }
+        return folder.name.toLowerCase().includes(searchQuery.toLowerCase())
     });
 
     const filteredFiles = files.filter((file) => {
-        if (file.name) {
-            return file.name.toLowerCase().includes(searchQuery.toLowerCase())
-        }
+        return file.name.toLowerCase().includes(searchQuery.toLowerCase())
     });
 
 
@@ -105,7 +100,6 @@ const MyDisk = ({ }) => {
         event.stopPropagation();
         event.preventDefault();
         const target = event.target;
-
         if (target.id.includes('menu-button-file')) {
             if (!auth.user.fullAccess) {
                 notify.postNotification("You need to log in with secret phrases to modify the files", NotificationType.INFO);
@@ -132,7 +126,6 @@ const MyDisk = ({ }) => {
             if (selectedFolder === folder_id) {
                 setSelectedFolder(null);
             } else {
-
                 folderMenuPosition.current = {
                     top: event.clientY,
                     left: event.clientX
@@ -159,9 +152,9 @@ const MyDisk = ({ }) => {
             setSelectedFolder(null);
             setSelectedFolderTree(null);
         }
-    }, [files, selectedFile, selectedFolder]);
+    }, [auth.user.fullAccess, filteredFiles, filteredFolders, notify, selectedFile, selectedFolder, selectedFolderTree]);
 
-    const updateFilesList = async (selectedFolder) => {
+    const updateFilesList = useCallback(async (selectedFolder) => {
         await getFolder(selectedFolder.id).then((response) => {
             const { data, error } = response;
             if (error) {
@@ -173,12 +166,12 @@ const MyDisk = ({ }) => {
             }
             setFolders(temp);
             temp = [];
-            for (var i = 0; i < data.files.length; i++) {
+            for (i = 0; i < data.files.length; i++) {
                 temp.push(new FileStructure(selectedFolder.id, data.files[i].id, data.files[i].name, data.files[i].type, data.files[i].format));
             }
             setFiles(temp);
         });
-    };
+    }, []);
 
 
     // Resize effect
@@ -199,16 +192,26 @@ const MyDisk = ({ }) => {
         };
     }, [handleMenuToggle]);
 
-    // Load effect
+    const pageRef = useRef(page);
+    const setPageStateRef = useRef(page.setPageState);
+    const setCurrentFolderRef = useRef(setCurrentFolder);
+    const updateFilesListRef = useRef(updateFilesList);
+
     useEffect(() => {
+        pageRef.current = page;
+        setPageStateRef.current = page.setPageState;
+        setCurrentFolderRef.current = setCurrentFolder;
+        updateFilesListRef.current = updateFilesList;
+    }, [page, page.setPageState, setCurrentFolder, updateFilesList]);
+
+    const loadEffect = useCallback(() => {
         if (currentFolder) {
-            updateFilesList(currentFolder);
-            const callstack = Array.from(page.pageState.folderTree || []);
+            updateFilesListRef.current(currentFolder);
+            const callstack = Array.from(pageRef.current.pageState.folderTree || []);
             if (callstack.find((folder) => folder.id === currentFolder.id) === undefined) {
                 callstack.push(currentFolder);
             }
-            setFilePath(callstack.map((folder) => folder.name).join("/"));
-            page.setPageState({ ...page.pageState, folderTree: callstack });
+            setPageStateRef.current({ ...pageRef.current.pageState, folderTree: callstack });
         } else {
             getRootFolder().then(async (response) => {
                 let { data, error } = response;
@@ -216,16 +219,18 @@ const MyDisk = ({ }) => {
                     return console.error(error);
                 }
                 const root = new FolderStructure(data.name, data.id, data.folders, data.files);
-                setCurrentFolder(root);
-                updateFilesList(root);
-                setFilePath(root.name);
-                page.setPageState({ ...page.pageState, currentPage: "mydisk", currentFolder: root, folderTree: [root] });
+                setCurrentFolderRef.current(root);
+                updateFilesListRef.current(root);
+                setPageStateRef.current({ ...pageRef.current.pageState, currentPage: "mydisk", currentFolder: root, folderTree: [root] });
             }).catch((error) => {
                 console.error(error);
             });
         }
+    }, [currentFolder]);
 
-    }, [page.pageState.currentFolder, page.pageState.toUpdate]);
+    useEffect(() => {
+        loadEffect();
+    }, [loadEffect]);
 
     const updateViewMode = (mode) => {
         page.setPageState({ ...page.pageState, viewMode: mode, toUpdate: !page.pageState.toUpdate });

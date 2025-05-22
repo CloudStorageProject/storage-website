@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react';
-import bgimg from '../img/greenBackroundLoginPage.jpg';
+import { useCallback, useEffect, useRef } from 'react';
 import { generateKeysFromSecrets } from '../../utils/Cryptography';
 import { useAuth } from '../../hooks/AuthProvider';
 import './fulljoin.css'
@@ -13,31 +12,54 @@ const RegistrationSecretPhrases = ({ userData, checkMnemonic, setUserData, goToL
     const notify = useNotify();
     const navigate = useNavigate();
 
-    // TODO: if private and public keys available show prompt to login
     const handleInputChange = (index, value) => {
         const updatedPhrases = [...userData.mnemonic];
         updatedPhrases[index] = value;
         setUserData({ ...userData, mnemonic: updatedPhrases });
     };
 
-
+    const userDataRef = useRef(userData);
+    const setUserDataRef = useRef(setUserData);
 
     useEffect(() => {
-        const handlePaste = (e) => {
-            let split = e.clipboardData.getData("text").split(/\d+\. /);
-            if (split.length === 1) { return; }
-            else if (split.length === 25) {
-                e.preventDefault();
-                split.shift();
-                split = split.map(el => el.replace(/\n/g, ''));
-                setUserData({ ...userData, mnemonic: split });
-            }
+        userDataRef.current = userData;
+        setUserDataRef.current = setUserData;
+    }, [userData, setUserData]);
+
+    const handlePaste = useCallback((e) => {
+        let split = e.clipboardData.getData("text").split(/\d+\. /);
+        if (split.length === 1) { return; }
+        else if (split.length === 25) {
+            e.preventDefault();
+            split.shift();
+            split = split.map(el => el.replace(/\s/g, ''));
+            setUserDataRef.current({ ...userDataRef.current, mnemonic: split });
         }
+    }, []);
+
+    useEffect(() => {
         document.addEventListener("paste", handlePaste);
         return () => {
             document.removeEventListener("paste", handlePaste);
         };
-    }, []);
+    }, [handlePaste]);
+
+    // useEffect(() => {
+    //     const handlePaste = (e) => {
+    //         let split = e.clipboardData.getData("text").split(/\d+\. /);
+    //         if (split.length === 1) { return; }
+    //         else if (split.length === 25) {
+    //             e.preventDefault();
+    //             split.shift();
+    //             split = split.map(el => el.replace(/\s/g, ''));
+    //             setUserData({ ...userData, mnemonic: split });
+    //         }
+    //     }
+    //     document.addEventListener("paste", handlePaste);
+    //     return () => {
+    //         document.removeEventListener("paste", handlePaste);
+    //     };
+    // }, []);
 
     const performAuth = (keys) => {
         if (keys === null || keys.keyPair === null || keys.keyPair.privateKey === null || keys.keyPair.publicKey === null) return;
@@ -69,12 +91,16 @@ const RegistrationSecretPhrases = ({ userData, checkMnemonic, setUserData, goToL
                 performAuth(keys);
             });
         } catch (err) {
-            // TODO: Handle invalid mnemonic
             console.error(err);
+            notify.postNotification("Mnemonic is invalid", NotificationType.ERROR);
         }
     }
 
-
+    const returnToLimitedLogin = () => {
+        // Clear the mnemonic before going back
+        setUserData({ ...userData, mnemonic: Array.from({ length: 24 }, () => "") });
+        goToLimitedLogin();
+    }
 
     return (
         <div className="recovery-phrase-main-container">
@@ -102,7 +128,7 @@ const RegistrationSecretPhrases = ({ userData, checkMnemonic, setUserData, goToL
                     </form>
                 </div>
                 <div className="recovery-phrase-controls">
-                    <button type="button" onClick={() => { goToLimitedLogin(); }}>BACK</button>
+                    <button type="button" onClick={() => { returnToLimitedLogin(); }}>BACK</button>
                     <button type="submit" onClick={(e) => { handleSubmit(e); }}>CONTINUE</button>
                 </div>
             </div>

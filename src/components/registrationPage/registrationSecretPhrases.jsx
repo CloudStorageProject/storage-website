@@ -1,6 +1,3 @@
-import bgimg from '../img/greenBackroundLoginPage.jpg'
-
-
 const RegistrationSecretPhrases = ({ secretPhrases, nextStage, previousStage }) => {
     let processedPhrases = secretPhrases.map((phrase, index) => {
         return `${index + 1}. ${phrase}`

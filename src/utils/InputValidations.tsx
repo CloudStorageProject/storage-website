@@ -89,6 +89,8 @@ export const testUserData = async (username: string, password: string, email: st
     testEmail(email);
 }
 
-export default {
+const InputValidator = {
     testUserData, testUserName, testPassword, testEmail, testUsernameTaken, testEmailTaken
 }
+
+export default InputValidator
