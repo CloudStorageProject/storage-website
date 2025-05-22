@@ -47,7 +47,9 @@ const ProfileSettings = () => {
             });
         };
         fetchPlans();
-    }, [notify]);
+        // To make compiler stfu
+        // eslint-disable-next-line
+    }, [auth.user.username]);
 
     const handlePasswordChange = (e) => {
         setNewPassword(e.target.value);
@@ -133,10 +135,9 @@ const ProfileSettings = () => {
                 testUserName(new_username);
                 changeUsername(old_password, new_username).then((response) => {
                     if (response.error) {
-                        notify.postNotification(response.error, NotificationType.ERROR);
+                        notify.postNotification(response.error.response.data.detail, NotificationType.ERROR);
                     } else {
                         notify.postNotification("Username changed successfully", NotificationType.SUCCESS);
-                        auth.updateUser({ ...auth.user, username: new_username });
                         auth.reLogin();
                     }
                 }).catch((error) => {
@@ -144,6 +145,7 @@ const ProfileSettings = () => {
                     notify.postNotification("Network error", NotificationType.NETWORK_ERROR);
                 });
             } catch (error) {
+                console.log(error);
                 notify.postNotification(error, NotificationType.ERROR);
                 return;
             }

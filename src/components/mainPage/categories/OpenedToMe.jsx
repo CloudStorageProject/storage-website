@@ -59,7 +59,9 @@ const OpenedToMe = () => {
         } else {
             setSelectedFile(null);
         }
-    }, [selectedFile, notify, auth.user.fullAccess, filteredFiles]);
+        // To make compiler stfu
+        // eslint-disable-next-line
+    }, [selectedFile, auth.user.fullAccess, filteredFiles]);
 
 
     // Resize effect
@@ -96,7 +98,9 @@ const OpenedToMe = () => {
         }).catch((error) => {
             notify.postNotification("Network error", NotificationType.NETWORK_ERROR);
         });
-    }, [notify]);
+        // To make compiler stfu
+        // eslint-disable-next-line
+    }, []);
 
     const updateViewMode = (mode) => {
         page.setPageState({ ...page.pageState, viewMode: mode, toUpdate: !page.pageState.toUpdate });
