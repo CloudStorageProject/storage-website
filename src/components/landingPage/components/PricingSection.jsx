@@ -36,7 +36,7 @@ const PricingSection = () => {
                 {plans.map((plan) => (
                     <div className="card" key={plan.name}>
                         <h3>{plan.name}</h3>
-                        <p>Some description of plan bla bla bla bla</p>
+                        <p>{plan.description}</p>
                         <div className="circle"><span>{plan.space}</span></div>
                         <p className="price">
                             {isYearly ? `${plan.priceYear}$ per year` : `${plan.priceMonth}$ per month`}

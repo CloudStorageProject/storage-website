@@ -91,7 +91,6 @@ body {
 }
 
 .login-title {
-    color: var(--text-color);
     font-size: 2rem;
     font-family: "Source Sans 3", sans-serif;
     margin-bottom: -5px;

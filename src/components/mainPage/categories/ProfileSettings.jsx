@@ -85,7 +85,7 @@ const ProfileSettings = () => {
             } else {
                 changePayment(plan.name).then(async (response) => {
                     if (response.error) {
-                        notify.postNotification(response.error, NotificationType.ERROR);
+                        notify.postNotification(response.error.response.data.detail, NotificationType.ERROR);
                     } else {
                         const stripe = await stripePromise;
                         if (!stripe) {

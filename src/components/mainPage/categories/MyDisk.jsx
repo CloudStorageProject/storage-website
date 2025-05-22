@@ -226,7 +226,9 @@ const MyDisk = () => {
                 console.error(error);
             });
         }
-    }, [currentFolder]);
+        // To make compiler stfu
+        // eslint-disable-next-line
+    }, [currentFolder, selectedFile, page.pageState.toUpdate]);
 
     useEffect(() => {
         loadEffect();
