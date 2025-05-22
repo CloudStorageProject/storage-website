@@ -100,7 +100,7 @@ const OpenedToMe = () => {
         });
         // To make compiler stfu
         // eslint-disable-next-line
-    }, []);
+    }, [selectedFile, page.pageState.toUpdate]);
 
     const updateViewMode = (mode) => {
         page.setPageState({ ...page.pageState, viewMode: mode, toUpdate: !page.pageState.toUpdate });
