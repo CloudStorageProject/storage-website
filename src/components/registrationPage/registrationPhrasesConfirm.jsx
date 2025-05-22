@@ -1,4 +1,3 @@
-import bgimg from '../img/greenBackroundLoginPage.jpg'
 import { useState } from "react";
 import { useAuth } from "../../hooks/AuthProvider";
 import { useNavigate } from 'react-router-dom';

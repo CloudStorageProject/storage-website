@@ -22,13 +22,6 @@ const getFileFull = async (id) => {
     });
 }
 
-const getFilePart = async (id, start, end) => {
-    return await getFileRequest({ id: id, start: start, end: end }).then((response) => {
-        return { data: response.data, error: null };
-    }).catch((error) => {
-        return { data: null, error: error };
-    });
-}
 
 const getFileParams = async (id) => {
     return await getFileParamsRequest(id).then((response) => {
@@ -54,16 +47,9 @@ const uploadFileFull = async (data) => {
     });
 }
 
-const uploadFilePart = async (data) => {
-    return await uploadFileRequest(data).then((response) => {
-        return { data: response.data, error: null };
-    }).catch((error) => {
-        return { data: null, error: error };
-    });
-}
 
 const performDownload = async (file, privateKey, fileProperties, notify) => {
-    const downloadFileInChunks = async (chunkSize, file, fileProperties, privateKey) => {
+    const downloadFileInChunks = async (file, fileProperties, privateKey) => {
         const fileHandle = await window.showSaveFilePicker({
             suggestedName: fileProperties.data.name,
             types: [
@@ -85,8 +71,6 @@ const performDownload = async (file, privateKey, fileProperties, notify) => {
                     DataTransferWorker.onmessage = (event) => {
                         if (event.data.state === TransferState.COMPLETE || event.data.state === TransferState.PARTIAL) {
                             resolve(event.data.message);
-                        } else if (event.data.state === TransferState.ACCEPTED || event.data.state === TransferState.IN_PROGRESS) {
-                            // TODO: Implement Partial progress
                         } else {
                             notify.postNotification("File decryption failed", NotificationType.FILE_DECRYPTION_FAILURE);
                             reject(event.data.message);
@@ -99,35 +83,17 @@ const performDownload = async (file, privateKey, fileProperties, notify) => {
         const writer = transformStream.writable.getWriter();
         const reader = transformStream.readable.getReader();
         var downloadChunk = null;
-        if (true) { // if (file.size < 1024 * 1024 * 10) {//Full file download
-            downloadChunk = async () => {
-                notify.postNotification("Downloading file", NotificationType.FILE_DOWNLOAD);
-                const chunk = await getFileFull(file.file_id);
-                const base64String = chunk.data.toString('base64');
-                if (chunk === undefined) {
-                    await new Promise(resolve => setTimeout(resolve, 2000));
-                } else {
-                    await writer.write(base64String);
-                }
-                writer.close();
-            };
-        } else { // chunk file download
-            // let start = 0;
-            // downloadChunk = async () => {
-            //     while (start < size) {
-            //         const end = Math.min(start + chunkSize - 1, size - 1);
-            //         const chunk = await getFilePart(file.file_id, start, end);
-            //         const base64String = chunk.data.toString('base64');
-            //         if (base64String === undefined) {
-            //             await new Promise(resolve => setTimeout(resolve, 2000));
-            //         } else {
-            //             await writer.write(base64String);
-            //             start = end + 1;
-            //         }
-            //     }
-            //     writer.close();
-            // };
-        }
+        downloadChunk = async () => {
+            notify.postNotification("Downloading file", NotificationType.FILE_DOWNLOAD);
+            const chunk = await getFileFull(file.file_id);
+            const base64String = chunk.data.toString('base64');
+            if (chunk === undefined) {
+                await new Promise(resolve => setTimeout(resolve, 2000));
+            } else {
+                await writer.write(base64String);
+            }
+            writer.close();
+        };
         downloadChunk().catch(console.error);
         while (true) {
             const { value, done } = await reader.read();
@@ -137,8 +103,7 @@ const performDownload = async (file, privateKey, fileProperties, notify) => {
         await writableStream.close();
         notify.postNotification("File downloaded", NotificationType.FILE_DOWNLOAD_SUCCESS);
     };
-    const chunkSize = 1 * 1024 * 1024; // 1 MB chunk size
-    downloadFileInChunks(chunkSize, file, fileProperties, privateKey, DataTransferWorker).catch(console.error);
+    downloadFileInChunks(file, fileProperties, privateKey).catch(console.error);
 }
 
 const uploadFile = async (file, page, auth, notify) => {
@@ -170,8 +135,6 @@ const uploadFile = async (file, page, auth, notify) => {
                         }
                         notify.postNotification("File uploaded", NotificationType.FILE_UPLOAD_SUCCESS);
                         resolve(data);
-                    } else if (event.data.state === TransferState.ACCEPTED || event.data.state === TransferState.IN_PROGRESS) {
-                        // TODO: Implement Partial progress
                     } else {
                         notify.postNotification("File upload failed", NotificationType.FILE_UPLOAD_FAILURE);
                         reject(event.data.message);
@@ -192,5 +155,5 @@ const downloadFile = async (file, privateKey, notify) => {
 }
 
 export {
-    DataTransferWorker, uploadFile, downloadFile, deleteFile, getFileParams, renameFile, getFileFull, getFilePart
+    DataTransferWorker, uploadFile, downloadFile, deleteFile, getFileParams, renameFile, getFileFull
 };

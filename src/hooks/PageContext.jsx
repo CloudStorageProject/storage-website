@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import { createContext, useState, useEffect, useContext, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const PageStateContext = createContext();
@@ -7,6 +7,9 @@ const PageStateProvider = ({ children }) => {
     const [pageState, setPageState] = useState({ currentPage: null, currentFolder: null, theme: 'light', viewMode: null, toUpdate: null, folderTree: [] });
     const navigate = useNavigate();
     const loc = useLocation();
+    // Callback to make compiler stfu
+    const getStoredPageStateCallback = useCallback(getStoredPageState, [navigate]);
+    const setStoredPageStateCallback = useCallback(setStoredPageState, [loc.pathname]);
 
     const toggleTheme = () => {
         const newTheme = pageState.theme === 'light' ? 'dark' : 'light';
@@ -39,14 +42,13 @@ const PageStateProvider = ({ children }) => {
     useEffect(() => {
         document.body.className = pageState.theme;
         const handlePageLoad = () => {
-            getStoredPageState();
-
+            getStoredPageStateCallback();
             localStorage.removeItem(`pageState`);
             localStorage.removeItem(`path`);
         }
 
         const handlePageUnload = () => {
-            setStoredPageState(pageState);
+            setStoredPageStateCallback(pageState);
         }
 
         window.addEventListener("load", handlePageLoad);
@@ -55,7 +57,7 @@ const PageStateProvider = ({ children }) => {
             window.removeEventListener("load", handlePageLoad);
             window.removeEventListener("beforeunload", handlePageUnload);
         });
-    }, [pageState]);
+    }, [pageState, getStoredPageStateCallback, setStoredPageStateCallback]);
 
     return (
         <PageStateContext.Provider value={{ toggleTheme, pageState, setPageState, clearData }}>

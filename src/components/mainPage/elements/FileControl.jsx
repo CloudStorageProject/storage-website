@@ -9,6 +9,7 @@ const FileControl = ({ menuPosition, handleSharingDialog, setSelectedFile, setSe
     const auth = useAuth();
     const notify = useNotify();
 
+
     const handleDelete = async () => {
         const resp = await deleteFile(file.file_id);
         if (resp.error) {

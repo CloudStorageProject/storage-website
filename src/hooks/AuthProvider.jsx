@@ -1,10 +1,9 @@
 
-import { useContext, createContext, useState, useEffect } from "react";
+import { useContext, createContext, useState, useEffect, useCallback } from "react";
 import { exportPrivateKeyFromPem, exportPrivateKeyToBase64, exportPublicKeyFromPem, exportPublicKeyToBase64, signMessage } from "../utils/Cryptography";
 import { loginRequest, registerRequest, requestChallenge, submitChallenge } from "../api/authRequests";
 import { useNotify } from "./Notification/NotificationProvider";
 import { NotificationType } from "./Notification/NotificationTypes.tsx";
-import { usePageState } from "./PageContext.jsx";
 
 const AuthContext = createContext();
 export let reLogin = null; // Placeholder for reLogin function, to be defined later
@@ -14,7 +13,10 @@ const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(getStoredUser());
     const [token, setToken] = useState(getStoredToken());
     const [keyPair, setKeyPair] = useState(getStoredKeyPair());
-
+    // Callback to make compiler stfu
+    const storeKeyPairCallback = useCallback(storeKeyPair, [keyPair.privateKey, keyPair.publicKey]);
+    const storeTokenCallback = useCallback(storeToken, [token]);
+    const storeUserCallback = useCallback(storeUser, [user]);
 
     useEffect(() => {
         const handlePageLoad = () => {
@@ -25,9 +27,9 @@ const AuthProvider = ({ children }) => {
         const handlePageUnload = () => {
             // If there is token -> store the user for reload.
             if (localStorage.getItem("token") !== null) {
-                storeUser();
-                storeKeyPair();
-                storeToken();
+                storeUserCallback();
+                storeKeyPairCallback();
+                storeTokenCallback();
             }
         }
 
@@ -37,7 +39,7 @@ const AuthProvider = ({ children }) => {
             window.removeEventListener("load", handlePageLoad);
             window.removeEventListener("beforeunload", handlePageUnload);
         });
-    }, [user, keyPair]);
+    }, [user, keyPair, storeKeyPairCallback, storeTokenCallback, storeUserCallback]);
 
 
     function getStoredKeyPair() {
@@ -90,7 +92,7 @@ const AuthProvider = ({ children }) => {
                 setToken(response.data.token);
 
                 localStorage.setItem(`token`, response.data.token);
-              
+
                 return true;
             } else {
                 notify.postNotification(response.data.detail, NotificationType.ERROR);

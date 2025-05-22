@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { getUsers, grantAccess, revokeAccess } from "../../../service/SharingService.jsx";
 import { useNotify } from "../../../hooks/Notification/NotificationProvider.jsx";
 import { NotificationType } from "../../../hooks/Notification/NotificationTypes.tsx";
-import React from "react";
 import { UserStructure } from "../../../utils/Structures.tsx";
 import UserSharingControl from "./UserSharingControl.jsx";
 import { getFileParams } from "../../../service/FileService.jsx";
@@ -42,7 +41,7 @@ const SharingDialog = ({ selectedSharing, handleSharingCancel }) => {
             notify.postNotification("Network error", NotificationType.NETWORK_ERROR); console.error(error);
             setLoaded(true);
         });
-    }, [selectedSharing]);
+    }, [selectedSharing, notify]);
 
     const handleNicknameChange = (e) => {
         setNickname(e.target.value);
@@ -87,9 +86,8 @@ const SharingDialog = ({ selectedSharing, handleSharingCancel }) => {
             }
             const prepared_data = reencryptData(auth.keyPair.privateKey, data.pub_key, { iv: file_params.encrypted_iv, key: file_params.encrypted_key });
             grantAccess(user, selectedSharing, prepared_data).then((response) => {
-                let { data, error } = response;
-                if (error) {
-                    console.error(error);
+                if (response.error) {
+                    console.error(response.error);
                     notify.postNotification("Failed to grant access", NotificationType.ERROR);
                     return;
                 }
@@ -107,9 +105,9 @@ const SharingDialog = ({ selectedSharing, handleSharingCancel }) => {
 
     const handleRevokeAccess = (user) => {
         revokeAccess(user, selectedSharing).then((response) => {
-            let { data, error } = response;
-            if (error) {
+            if (response.error) {
                 notify.postNotification("Failed to revoke access", NotificationType.ERROR);
+                console.log(response.error);
                 return;
             }
             notify.postNotification("Access revoked", NotificationType.SUCCESS);

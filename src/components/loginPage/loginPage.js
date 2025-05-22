@@ -1,5 +1,3 @@
-// src/components/LoginPage.js
-import React, { useEffect } from "react";
 import "./loginPage.css"
 import { useState } from "react";
 import { useAuth } from "../../hooks/AuthProvider";
@@ -7,7 +5,7 @@ import bgimg from '../img/greenBackroundLoginPage.jpg'
 import { Link, useNavigate } from "react-router-dom";
 import { useNotify } from "../../hooks/Notification/NotificationProvider";
 import { NotificationType } from "../../hooks/Notification/NotificationTypes.tsx";
-import { testPassword, testUserData, testUserName } from "../../utils/InputValidations.tsx";
+import { testPassword, testUserName } from "../../utils/InputValidations.tsx";
 
 
 const LoginPage = ({ userData, setUserData, goToFullLogin }) => {

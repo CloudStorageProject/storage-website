@@ -12,7 +12,7 @@ import { testPassword, testUserName } from "../../../utils/InputValidations.tsx"
 
 
 const stripePromise = loadStripe(window.__ENV__.STRIPE_PUBLIC_KEY);
-const ProfileSettings = ({ }) => {
+const ProfileSettings = () => {
     const auth = useAuth();
     const notify = useNotify();
     const [plans, setPlans] = useState([]);
@@ -47,7 +47,7 @@ const ProfileSettings = ({ }) => {
             });
         };
         fetchPlans();
-    }, []);
+    }, [notify]);
 
     const handlePasswordChange = (e) => {
         setNewPassword(e.target.value);
