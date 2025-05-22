@@ -32,7 +32,7 @@ const ProfileSettings = () => {
                 var tmp = [];
                 for (let i = 0; i < response.data.length; i++) {
                     const el = response.data[i];
-                    tmp.push(new PlanStructure(el.name, el.space, el.price, el.description, el.priceYear, el.priceMonth));
+                    tmp.push(new PlanStructure(el.name, el.space, el.price, el.description, el.price, el.price * 12));
                 }
                 setPlans(tmp);
             }).catch((error) => {
@@ -168,8 +168,8 @@ const ProfileSettings = () => {
                         <div className="pricing-header-title-settings">
                             <h2>Change Your Plan</h2>
                             <div className="toggle-settings">
-                                <button className={`toggle-btn-settings ${isYearly ? 'active' : ''}`} onClick={() => setIsYearly(true)}>Year</button>
                                 <button className={`toggle-btn-settings ${!isYearly ? 'active' : ''}`} onClick={() => setIsYearly(false)}>Month</button>
+                                <button className={`toggle-btn-settings ${isYearly ? 'active' : ''}`} onClick={() => setIsYearly(true)}>Year</button>
                             </div>
                         </div>
 
