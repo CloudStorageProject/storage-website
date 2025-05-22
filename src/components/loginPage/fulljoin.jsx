@@ -29,7 +29,7 @@ const RegistrationSecretPhrases = ({ userData, checkMnemonic, setUserData, goToL
             else if (split.length === 25) {
                 e.preventDefault();
                 split.shift();
-                split = split.map(el => el.replace(/\n/g, ''));
+                split = split.map(el => el.replace(/\s/g, ''));
                 setUserData({ ...userData, mnemonic: split });
             }
         }
@@ -74,7 +74,11 @@ const RegistrationSecretPhrases = ({ userData, checkMnemonic, setUserData, goToL
         }
     }
 
-
+    const returnToLimitedLogin = () => {
+        // Clear the mnemonic before going back
+        setUserData({ ...userData, mnemonic: Array.from({ length: 24 }, () => "") });
+        goToLimitedLogin();
+    }
 
     return (
         <div className="recovery-phrase-main-container">
@@ -102,7 +106,7 @@ const RegistrationSecretPhrases = ({ userData, checkMnemonic, setUserData, goToL
                     </form>
                 </div>
                 <div className="recovery-phrase-controls">
-                    <button type="button" onClick={() => { goToLimitedLogin(); }}>BACK</button>
+                    <button type="button" onClick={() => { returnToLimitedLogin(); }}>BACK</button>
                     <button type="submit" onClick={(e) => { handleSubmit(e); }}>CONTINUE</button>
                 </div>
             </div>
