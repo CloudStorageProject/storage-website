@@ -89,7 +89,7 @@ const MyDisk = () => {
         setDragActive(false);
         if (event.dataTransfer.files && event.dataTransfer.files.length > 0) {
             for (const file of event.dataTransfer.files) {
-                await uploadFile(file, page, auth, notify);
+                await uploadFile(file, page, auth, notify, page.pageState.currentFolder.id);
             }
             page.setPageState({ ...page.pageState, toUpdate: !page.pageState.toUpdate });
         }
