@@ -8,6 +8,9 @@ const TransferState = {
 }
 const TransferAction = {
     DOWNLOAD: "DOWNLOAD",
+    ENCRYPT_PART: "ENCRYPT_PART",
+    DECRYPT_PART: "DECRYPT_PART",
+    UPDATE: "UPDATE",
     UPLOAD: "UPLOAD"
 }
 

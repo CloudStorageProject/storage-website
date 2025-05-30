@@ -31,7 +31,7 @@ const FileControl = ({ menuPosition, handleSharingDialog, setSelectedFile, setSe
             <button onClick={() => { handleDelete(file); }}>Delete</button>
             <button onClick={() => { handleRename(file); }}>Rename</button>
             <button onClick={() => { handleSharingDialog(file); }}>Share</button>
-            <button onClick={() => { downloadFile(file, auth.keyPair.privateKey, notify); setSelectedFile(null); }}>Download</button>
+            <button onClick={() => { downloadFile(file, auth.keyPair.privateKey, notify, auth); setSelectedFile(null); }}>Download</button>
         </div >
     );
 }

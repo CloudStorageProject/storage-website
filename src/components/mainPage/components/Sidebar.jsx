@@ -93,7 +93,7 @@ const Sidebar = ({ onSelectCategory, activeCategory }) => {
         input.type = 'file';
         input.onchange = async function () {
             for (const file of input.files) {
-                await uploadFile(file, page, auth, notify);
+                await uploadFile(file, page, auth, notify, page.pageState.currentFolder.id);
             }
             page.setPageState({ ...page.pageState, toUpdate: !page.pageState.toUpdate });
         }
