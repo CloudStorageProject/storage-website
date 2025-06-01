@@ -151,12 +151,12 @@ const uploadFile = async (file, page, auth, notify, folder_id) => {
                 const xhr = new XMLHttpRequest();
                 xhr.open('POST', window.__ENV__.REACT_APP_API_URL + 'files/');
                 xhr.setRequestHeader('Authorization', `Bearer ${auth.token}`);
-                xhr.upload.onprogress = (event) => {
-                    if (event.lengthComputable) {
-                        // const percent = ((event.loaded / event.total) * 100).toFixed(2);
-                        // console.log(`Upload progress: ${percent}%`);
-                    }
-                };
+                // xhr.upload.onprogress = (event) => {
+                //     if (event.lengthComputable) {
+                //         const percent = ((event.loaded / event.total) * 100).toFixed(2);
+                //         console.log(`Upload progress: ${percent}%`);
+                //     }
+                // };
                 xhr.onload = () => {
                     if (xhr.status >= 200 && xhr.status < 300) {
                         notify.postNotification("File uploaded", NotificationType.FILE_UPLOAD_SUCCESS);
@@ -167,7 +167,7 @@ const uploadFile = async (file, page, auth, notify, folder_id) => {
                     }
                 };
                 xhr.onerror = () => {
-                    notify.postNotification("Network error", NotificationType.NETWORK_ERROR);
+                    notify.postNotification("File upload failed", NotificationType.FILE_UPLOAD_FAILURE);
                 };
                 xhr.send(formData);
             }
@@ -177,9 +177,9 @@ const uploadFile = async (file, page, auth, notify, folder_id) => {
                 reject(error);
             }
             const onProgress = (progress) => {
-                // console.log("Progress: " + progress);
+                console.log("Progress: " + progress);
             }
-            const illness = new WorkerForce(onSuccess, onError, onProgress);
+            const illness = new WorkerForce(onSuccess, onError);
 
             // BUG: This shit will break if user does not have enough RAM
             // if (file.size > 370 * 1024 * 1024) {
