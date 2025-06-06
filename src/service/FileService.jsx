@@ -1,8 +1,9 @@
 import { deleteFileRequest, getFileParamsRequest, getFileRequest, renameFileRequest, uploadFileRequest } from '../api/FileRequests.jsx'
 import { getFolderRequest } from '../api/FolderRequests.jsx';
 import { NotificationType } from '../hooks/Notification/NotificationTypes.tsx';
-import { exportPrivateKeyToBase64, exportPublicKeyToBase64 } from '../utils/Cryptography.jsx';
-import { TransferAction, TransferState } from './TransferWorker/DataTransferEnums.jsx';
+import { DecryptAES, EncryptAES, generateAESData } from '../utils/Cryptography.jsx';
+import { determineFileFormat, determineFileType } from '../utils/Structures.tsx';
+import { WorkerForce } from './TransferWorker/WorkerForce.tsx';
 
 const DataTransferWorker = new Worker(new URL('./TransferWorker/DataTransferWorker.worker.jsx', import.meta.url), { name: "DataTransfer" });
 
@@ -61,23 +62,26 @@ const performDownload = async (file, privateKey, fileProperties, notify) => {
                 },
             ],
         });
-
         const writableStream = await fileHandle.createWritable();
         const transformStream = new TransformStream({
             async transform(chunk, controller) {
-                const decryption = new Promise((resolve, reject) => {
-                    DataTransferWorker.postMessage({ action: TransferAction.DOWNLOAD, chunk: chunk, key: exportPrivateKeyToBase64(privateKey), AES: { AES_IV: fileProperties.data.encrypted_iv, AES_KEY: fileProperties.data.encrypted_key } });
+                await new Promise((resolve, reject) => {
+                    const onSuccess = async (result) => {
+                        controller.enqueue(result);
+                        resolve();
+                    }
+                    const onError = (error) => {
+                        notify.postNotification("File encryption failed", NotificationType.FILE_ENCRYPTION_FAILURE);
+                        reject(error);
+                    }
+                    const onProgress = (progress) => {
+                        // console.log("Progress: " + progress);
+                    }
+                    const illness = new WorkerForce(onSuccess, onError, onProgress);
                     notify.postNotification("Decrypting file", NotificationType.FILE_DECRYPTION);
-                    DataTransferWorker.onmessage = (event) => {
-                        if (event.data.state === TransferState.COMPLETE || event.data.state === TransferState.PARTIAL) {
-                            resolve(event.data.message);
-                        } else {
-                            notify.postNotification("File decryption failed", NotificationType.FILE_DECRYPTION_FAILURE);
-                            reject(event.data.message);
-                        }
-                    };
+                    const AES = DecryptAES({ iv: fileProperties.data.encrypted_iv, key: fileProperties.data.encrypted_key }, privateKey);
+                    illness.decrypt(chunk, AES);
                 });
-                controller.enqueue(await decryption);
             },
         });
         const writer = transformStream.writable.getWriter();
@@ -85,16 +89,19 @@ const performDownload = async (file, privateKey, fileProperties, notify) => {
         var downloadChunk = null;
         downloadChunk = async () => {
             notify.postNotification("Downloading file", NotificationType.FILE_DOWNLOAD);
-            const chunk = await getFileFull(file.file_id);
-            const base64String = chunk.data.toString('base64');
-            if (chunk === undefined) {
+            const response = (await getFileFull(file.file_id));
+            if (response === undefined || response === null || response.error !== null) {
+                notify.postNotification("File download failed", NotificationType.FILE_DOWNLOAD_FAILURE);
                 await new Promise(resolve => setTimeout(resolve, 2000));
             } else {
-                await writer.write(base64String);
+                await writer.write(response.data);
             }
             writer.close();
         };
-        downloadChunk().catch(console.error);
+        downloadChunk().catch((e) => {
+            console.error(e);
+            notify.postNotification("File download failed", NotificationType.FILE_DOWNLOAD_FAILURE);
+        });
         while (true) {
             const { value, done } = await reader.read();
             if (done) break;
@@ -106,41 +113,81 @@ const performDownload = async (file, privateKey, fileProperties, notify) => {
     downloadFileInChunks(file, fileProperties, privateKey).catch(console.error);
 }
 
-const uploadFile = async (file, page, auth, notify) => {
+
+
+const uploadFile = async (file, page, auth, notify, folder_id) => {
     return new Promise((resolve, reject) => {
-        getFolderRequest(page.pageState.currentFolder.id).then((response) => {
+        getFolderRequest(page.pageState.currentFolder.id).then(async (response) => {
             const { data, error } = response;
             if (error) {
                 console.error(error);
             }
-            let found = false;
             for (let i = 0; i < data.files.length; i++) {//Check if file with this name already exists
                 const f = data.files[i];
                 if (f.name === file.name) {
                     notify.postNotification("File already exists", NotificationType.FILE_UPLOAD_FAILURE);
-                    found = true;
-                    break;
+                    return;
                 }
             }
-            if (!found) {
-                DataTransferWorker.postMessage({ action: TransferAction.UPLOAD, file: file, folder_id: page.pageState.currentFolder.id, key: exportPublicKeyToBase64(auth.keyPair.publicKey) });
-                notify.postNotification("Encrypting file...", NotificationType.FILE_ENCRYPTION)
-                DataTransferWorker.onmessage = async (event) => {
-                    if (event.data.state === TransferState.COMPLETE || event.data.state === TransferState.PARTIAL) {
-                        notify.postNotification("Uploading file...", NotificationType.FILE_UPLOAD);
-                        const { data, error } = await uploadFileFull(event.data.message);
-                        if (error) {
-                            notify.postNotification("File encryption failed", NotificationType.FILE_ENCRYPTION_FAILURE);
-                            reject(error);
-                        }
+
+
+            const AES = generateAESData();
+            const AES_DATA = EncryptAES(AES, auth.keyPair.publicKey);
+            const prepared = {
+                "folder_id": folder_id,
+                "name": file.name,
+                "type": determineFileType(file),
+                "format": determineFileFormat(file),
+                "encrypted_key": AES_DATA.key,
+                "encrypted_iv": AES_DATA.iv
+            }
+
+            const onSuccess = async (result) => {
+                // We roll with XMLHttpRequest because fuck it we ball.
+                notify.postNotification("Uploading file", NotificationType.FILE_UPLOAD);
+                const formData = new FormData();
+                formData.append('metadata', JSON.stringify(prepared));
+                formData.append('upload', result);
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', window.__ENV__.REACT_APP_API_URL + 'files/');
+                xhr.setRequestHeader('Authorization', `Bearer ${auth.token}`);
+                // xhr.upload.onprogress = (event) => {
+                //     if (event.lengthComputable) {
+                //         const percent = ((event.loaded / event.total) * 100).toFixed(2);
+                //         console.log(`Upload progress: ${percent}%`);
+                //     }
+                // };
+                xhr.onload = () => {
+                    if (xhr.status >= 200 && xhr.status < 300) {
                         notify.postNotification("File uploaded", NotificationType.FILE_UPLOAD_SUCCESS);
-                        resolve(data);
+                        resolve(xhr.response);
                     } else {
                         notify.postNotification("File upload failed", NotificationType.FILE_UPLOAD_FAILURE);
-                        reject(event.data.message);
+                        reject(xhr.response);
                     }
                 };
+                xhr.onerror = () => {
+                    notify.postNotification("File upload failed", NotificationType.FILE_UPLOAD_FAILURE);
+                };
+                xhr.send(formData);
             }
+
+            const onError = (error) => {
+                notify.postNotification("File encryption failed", NotificationType.FILE_ENCRYPTION_FAILURE);
+                reject(error);
+            }
+            const onProgress = (progress) => {
+                console.log("Progress: " + progress);
+            }
+            const illness = new WorkerForce(onSuccess, onError);
+
+            // BUG: This shit will break if user does not have enough RAM
+            // if (file.size > 370 * 1024 * 1024) {
+            //     notify.postNotification("Max File Size: 375MB", NotificationType.FILE_UPLOAD_FAILURE);
+            // } else {
+            notify.postNotification("Encrypting file", NotificationType.FILE_ENCRYPTION);
+            illness.encrypt(file, AES);
+            // }
         }).catch((error) => {
             console.error(error);
         });
@@ -148,9 +195,9 @@ const uploadFile = async (file, page, auth, notify) => {
     });
 }
 
-const downloadFile = async (file, privateKey, notify) => {
+const downloadFile = async (file, privateKey, notify, folder_id) => {
     getFileParams(file.file_id).then((response) => {
-        performDownload(file, privateKey, response, notify);
+        performDownload(file, privateKey, response, notify, folder_id);
     });
 }
 

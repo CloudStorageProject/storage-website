@@ -93,6 +93,66 @@ export function verifyMessage(message, signature, publicKey) {
     return publicKey.verify(md.digest().bytes(), signature);
 }
 
+export function generateAESData() {
+    const AES_KEY = forge.random.getBytesSync(32);
+    const AES_IV = forge.random.getBytesSync(16);
+    return { AES_IV, AES_KEY };
+}
+export async function processChunk(data, { AES_IV, AES_KEY, }, index) {
+    const ivArray = new Uint8Array(AES_IV.length);
+    for (let i = 0; i < AES_IV.length; i++) {
+        ivArray[i] = AES_IV.charCodeAt(i);
+    }
+    ivArray[ivArray.length - 1] ^= index;
+    const derivedIv = String.fromCharCode(...ivArray);
+
+    const cipher = forge.cipher.createCipher('AES-CTR', AES_KEY);
+    cipher.start({ iv: derivedIv });
+    cipher.update(forge.util.createBuffer(data));
+    cipher.finish();
+
+    return Buffer.from(cipher.output.getBytes(), 'binary');
+}
+
+export async function encryptPart(data, { AES_IV, AES_KEY, }, index) {
+    var cipher = forge.cipher.createCipher('AES-CBC', AES_KEY);
+    cipher.start({ iv: AES_IV });
+    cipher.update(forge.util.createBuffer(data));
+    cipher.finish();
+    const bytes = cipher.output.getBytes();
+    const rawBuffer = new Uint8Array(bytes.length);
+
+    for (let i = 0; i < bytes.length; i++) {
+        rawBuffer[i] = bytes.charCodeAt(i);
+    }
+
+    return rawBuffer;
+}
+export async function decryptPart(data, { AES_IV, AES_KEY, }, index) {
+    var decipher = forge.cipher.createDecipher('AES-CBC', AES_KEY);
+    decipher.start({ iv: AES_IV });
+    decipher.update(forge.util.createBuffer(data));
+    decipher.finish();
+
+    return Buffer.from(decipher.output.getBytes(), 'binary');
+}
+
+export function EncryptAES(AES, publicKey) {
+    const encryptedKey = publicKey.encrypt(AES.AES_KEY, 'RSA-OAEP');
+    const encryptedIV = publicKey.encrypt(AES.AES_IV, 'RSA-OAEP');
+
+    return {
+        iv: Buffer.from(encryptedIV, "binary").toString("base64"),
+        key: Buffer.from(encryptedKey, "binary").toString("base64")
+    }
+}
+export function DecryptAES({ iv, key }, privateKey) {
+    const AES_KEY = privateKey.decrypt(Buffer.from(key, "base64").toString("binary"), 'RSA-OAEP');
+    const AES_IV = privateKey.decrypt(Buffer.from(iv, "base64").toString("binary"), 'RSA-OAEP');
+
+    return { AES_IV, AES_KEY };
+}
+
 export function encryptData(data, publicKey) {
     const AES_KEY = forge.random.getBytesSync(32);
     const AES_IV = forge.random.getBytesSync(16);

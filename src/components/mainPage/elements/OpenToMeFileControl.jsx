@@ -8,7 +8,7 @@ const OpenToMeFileControl = ({ menuPosition, setSelectedFile, file }) => {
 
     return (
         < div id="menu-list" className="menu-list" style={{ top: menuPosition.current.top, left: menuPosition.current.left, position: "absolute", zIndex: 1000, }}>
-            <button onClick={() => { downloadFile(file, auth.keyPair.privateKey, notify); setSelectedFile(null); }}>Download</button>
+            <button onClick={() => { downloadFile(file, auth.keyPair.privateKey, notify, auth); setSelectedFile(null); }}>Download</button>
         </div >
     );
 }

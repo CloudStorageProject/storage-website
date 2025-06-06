@@ -17,7 +17,7 @@ export const uploadFileRequest = async (file_data) => {
  * @returns encoded string
  */
 export const getFileRequest = async (id) => {
-    const res = await axiosInstanceJSON.get("/files/" + id);
+    const res = await axiosInstanceJSON.get("/files/" + id, { responseType: 'arraybuffer' });
     return res;
 }
 
