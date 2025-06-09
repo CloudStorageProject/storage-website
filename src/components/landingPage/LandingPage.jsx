@@ -3,7 +3,7 @@ import './LandingPage.css'
 import PricingSection from './components/PricingSection';
 import HeroSection from './components/HeroSection'
 import AboutSection from './components/AboutSection';
-import TeamSection from './components/TeamSection';
+// import TeamSection from './components/TeamSection';
 import FAQSection from './components/FaqSection';
 import Footer from './components/Footer';
 
@@ -14,9 +14,8 @@ const LandingPage = () => {
     <div>
 <HeroSection />
 <AboutSection />
-<TeamSection />
-<FAQSection />
 <PricingSection />
+<FAQSection />
 <Footer />
     </div>
   );
