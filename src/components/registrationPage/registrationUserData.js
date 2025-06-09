@@ -69,7 +69,6 @@ const RegistrationUserData = ({ userData, setSecrets, setUserData, nextStage }) 
                 </form>
             </div>
             <div className="left-panel left-panel-reg">
-                <h1 className="logo-register">LOGO</h1>
                 <div className="img-wrap">
                     <img src={bgimg} className="img-register-bg" alt="bg" />
                 </div>

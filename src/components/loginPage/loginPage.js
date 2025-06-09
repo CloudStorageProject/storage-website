@@ -42,9 +42,6 @@ const LoginPage = ({ userData, setUserData, goToFullLogin }) => {
     return (
         <div className="login-container">
             <div className="left-panel">
-                <div className="logo-main">
-                    <h1 className="logo-login">LOGO</h1>
-                </div>
 
                 < div className="img-wrap" >
                     < img src={bgimg} className="img-login-bg" alt="bg" />
@@ -55,9 +52,6 @@ const LoginPage = ({ userData, setUserData, goToFullLogin }) => {
                     <h2 className="login-title">Login</h2>
                     <input type="text" placeholder="Username" className="login-input" name="username" value={formData.username} onChange={handleInputChange} />
                     <input type="password" placeholder="Password" className="login-input" name="password" onChange={handleInputChange} />
-                    <Link to="/reset-password" className="forgot-password">
-                        Forgot password?
-                    </Link>
 
                     <button type="submit" className="login-button" onClick={(e) => { handleSubmit(e); }}>
                         Login
