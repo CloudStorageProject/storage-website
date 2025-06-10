@@ -30,6 +30,10 @@ if ('function' === typeof importScripts) {
 
     self.onmessage = async (event) => {
         switch (event.data.action) {
+            case GenerationType.SHUTDOWN: {
+                self.close();
+                break;
+            }
             case GenerationType.FROM_HEX: {
                 const prng = forge.random.createInstance();
                 prng.seedFileSync = () => forge.util.hexToBytes(event.data.data.seedHex);

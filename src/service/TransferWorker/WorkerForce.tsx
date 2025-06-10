@@ -52,7 +52,7 @@ export class WorkerForce {
             const workerCount = Math.min(this.maxWorkers, this.totalParts);
 
             for (let i = 0; i < workerCount; i++) {
-                const worker = new Worker(new URL("./DataTransferWorker.worker.jsx", import.meta.url));
+                const worker = new Worker(new URL("./DataTransferWorker.worker.jsx", import.meta.url), { name: "Enctyptor: " + i });
                 worker.postMessage({ action: TransferAction.UPDATE, AES: this.AES });
                 worker.onmessage = (event) => this.onWorkerDone(event, i);
                 worker.onerror = (event) => this.onWorkerError(event, i);
@@ -91,7 +91,7 @@ export class WorkerForce {
             const workerCount = Math.min(this.maxWorkers, this.totalParts);
             // Create worker pool
             for (let i = 0; i < workerCount; i++) {
-                const worker = new Worker(new URL("./DataTransferWorker.worker.jsx", import.meta.url));
+                const worker = new Worker(new URL("./DataTransferWorker.worker.jsx", import.meta.url), { name: "Decryptor: " + i });
                 worker.postMessage({ action: TransferAction.UPDATE, AES: this.AES });
                 worker.onmessage = (event) => this.onWorkerDone(event, i);
                 worker.onerror = (event) => this.onWorkerError(event, i);
@@ -170,7 +170,7 @@ export class WorkerForce {
                     });
                     this._successCallback?.(finalArray);
                 }
-                // this.workers.forEach(worker => worker.terminate());
+                this.workers.forEach(worker => worker.postMessage({ action: TransferAction.SHUTDOWN }));
             } else if (this.pendingChunks.length > 0) { // Dispatch any queued chunk
                 let { chunk, part } = this.pendingChunks.shift()!;
                 this.dispatchToAvailableWorker(chunk, part);

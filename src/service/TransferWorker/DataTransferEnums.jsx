@@ -7,6 +7,7 @@ const TransferState = {
     ERROR: "ERROR"
 }
 const TransferAction = {
+    SHUTDOWN: "SHUTDOWN",
     DOWNLOAD: "DOWNLOAD",
     ENCRYPT_PART: "ENCRYPT_PART",
     DECRYPT_PART: "DECRYPT_PART",

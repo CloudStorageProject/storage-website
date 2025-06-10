@@ -166,7 +166,6 @@ const MyDisk = () => {
             }
             setFolders(temp);
             temp = [];
-            console.log(data.files);
 
             for (var i = 0; i < data.files.length; i++) {
                 temp.push(new FileStructure(
