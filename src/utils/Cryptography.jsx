@@ -8,10 +8,10 @@ try {
 } catch (error) {
     // console.error("Probably in worker: ", error);
 }
-const worker = new Worker(new URL('./CryptoWorker/KeyGenerator.worker.jsx', import.meta.url), { name: "KeyGenerator" });
 
 
 async function generateKeys(action, data, callback) {
+    const worker = new Worker(new URL('./CryptoWorker/KeyGenerator.worker.jsx', import.meta.url), { name: "KeyGenerator" });
     // https://github.com/digitalbazaar/forge/issues/959
     // let keyPair = forge.pki.rsa.generateKeyPair({ bits: 2048, workers: 10, prng: prng }, async function callback(error, keyPair) {
     //     const privateKeyPem = forge.pki.privateKeyToPem(keyPair.privateKey);
@@ -23,6 +23,7 @@ async function generateKeys(action, data, callback) {
         worker.postMessage({ action: action, data: data });
         worker.onmessage = (event) => {
             if (event.data.state === GenerationState.COMPLETE) {
+                worker.postMessage({ action: GenerationType.SHUTDOWN });
                 resolve({ keys: generateKeysFromPem(event.data.keys.privateKey, event.data.keys.publicKey) });
             } else {
                 console.log(event.data.state);

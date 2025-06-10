@@ -5,7 +5,7 @@ import { DecryptAES, EncryptAES, generateAESData } from '../utils/Cryptography.j
 import { determineFileFormat, determineFileType } from '../utils/Structures.tsx';
 import { WorkerForce } from './TransferWorker/WorkerForce.tsx';
 
-const DataTransferWorker = new Worker(new URL('./TransferWorker/DataTransferWorker.worker.jsx', import.meta.url), { name: "DataTransfer" });
+// const DataTransferWorker = new Worker(new URL('./TransferWorker/DataTransferWorker.worker.jsx', import.meta.url), { name: "DataTransfer" });
 
 const deleteFile = async (id) => {
     return await deleteFileRequest(id).then((response) => {
@@ -202,5 +202,5 @@ const downloadFile = async (file, privateKey, notify, folder_id) => {
 }
 
 export {
-    DataTransferWorker, uploadFile, downloadFile, deleteFile, getFileParams, renameFile, getFileFull
+    uploadFile, downloadFile, deleteFile, getFileParams, renameFile, getFileFull
 };
