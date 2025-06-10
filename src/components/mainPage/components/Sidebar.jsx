@@ -42,9 +42,9 @@ const Sidebar = ({ onSelectCategory, activeCategory }) => {
                     });
                 } else {
                     setStorage({
-                        available: data.available.toFixed(2),
-                        used: data.used.toFixed(2),
-                        used_percentage: data.used_percentage.toFixed(2),
+                        available: data.available.toFixed(0),
+                        used: data.used.toFixed(0),
+                        used_percentage: data.used_percentage.toFixed(0),
                     });
                 }
             }).catch((error) => {

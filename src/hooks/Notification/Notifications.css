@@ -38,6 +38,7 @@
 
 
 .notification {
+    gap: 5px;
     display: flex;
     flex-direction: row;
     justify-content: center;

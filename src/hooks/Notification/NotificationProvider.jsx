@@ -14,6 +14,8 @@ import { useLocation } from "react-router-dom";
 const NotificationContext = createContext();
 let static_id = 0;
 
+const fileRegex = /(SUCCESS|ERROR|INFO|WARNING|NETWORK_ERROR)/;
+
 export const NotificationProvider = ({ children }) => {
     const [notifications, setNotifications] = useState([]);
     const location = useLocation();
@@ -65,8 +67,7 @@ export const NotificationProvider = ({ children }) => {
                     id: id,
                     element: (
                         <>
-                            {/* TODO: Update the image with corresponding icon */}
-                            {getImage(type_string.split("_")[1])}
+                            {getImage(fileRegex.exec(type_string)[0])}
                             <p>{message}</p>
                         </>
                     )
