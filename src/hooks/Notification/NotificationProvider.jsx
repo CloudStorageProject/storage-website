@@ -9,8 +9,6 @@ import { ReactComponent as Success_IMAGE } from "../../components/img/Success.sv
 import "./Notifications.css"
 import { useLocation } from "react-router-dom";
 
-
-
 const NotificationContext = createContext();
 let static_id = 0;
 
@@ -58,12 +56,15 @@ export const NotificationProvider = ({ children }) => {
             return;
         }
         if (type_string.includes("FILE")) {
+            console.log(type_string);
+
             if (type_string.includes("SUCCESS") || type_string.includes("FAILURE")) {
                 notification = {
                     id: id,
                     element: (
                         <>
-                            {getImage(type_string.split("_")[1])}
+                            {/* TODO: Update the image with corresponding icon */}
+                            <TEMP_IMAGE />
                             <p>{message}</p>
                         </>
                     )
