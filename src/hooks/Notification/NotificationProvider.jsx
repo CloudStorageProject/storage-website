@@ -60,8 +60,6 @@ export const NotificationProvider = ({ children }) => {
             return;
         }
         if (type_string.includes("FILE")) {
-            console.log(type_string);
-
             if (type_string.includes("SUCCESS") || type_string.includes("FAILURE")) {
                 notification = {
                     id: id,
