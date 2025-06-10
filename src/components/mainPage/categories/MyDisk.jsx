@@ -9,7 +9,7 @@ import FileList from "../elements/FileList.jsx";
 import FileControl from "../elements/FileControl.jsx";
 import Folder from "../elements/Folder.jsx";
 import { getFolder, getRootFolder, renameFolder } from "../../../service/FolderService.jsx";
-import { FileStructure, FolderStructure } from "../../../utils/Structures.tsx";
+import { determineFileType, FileStructure, FolderStructure } from "../../../utils/Structures.tsx";
 import { renameFile, uploadFile } from "../../../service/FileService.jsx";
 import { useAuth } from "../../../hooks/AuthProvider.jsx";
 import { usePageState } from "../../../hooks/PageContext.jsx";
@@ -35,7 +35,7 @@ const MyDisk = () => {
     const [files, setFiles] = useState([]);
     const [folders, setFolders] = useState([]);
     const [selectedRenaming, setSelectedRenaming] = useState(null);
-    const [renamingName, setRenamingName] = useState(null);
+    const [renamingName, setRenamingName] = useState("");
     const fileMenuPosition = useRef({ top: 0, left: 0 });
     const folderMenuPosition = useRef({ top: 0, left: 0 });
     const folderTreeMenuPosition = useRef({ top: 0, left: 0 });
@@ -166,8 +166,16 @@ const MyDisk = () => {
             }
             setFolders(temp);
             temp = [];
+            console.log(data.files);
+
             for (var i = 0; i < data.files.length; i++) {
-                temp.push(new FileStructure(selectedFolder.id, data.files[i].id, data.files[i].name, data.files[i].type, data.files[i].format));
+                temp.push(new FileStructure(
+                    selectedFolder.id,
+                    data.files[i].id,
+                    data.files[i].name.split('.')[0],
+                    data.files[i].type,
+                    data.files[i].format
+                ));
             }
             setFiles(temp);
         });
@@ -265,7 +273,6 @@ const MyDisk = () => {
                 notify.postNotification("File name already exists", NotificationType.ERROR);
                 return;
             }
-
             const resp = await renameFile(selectedRenaming.file_id, { new_name: renamingName });
             if (resp.error) {
                 notify.postNotification("Failed to rename file", NotificationType.ERROR);

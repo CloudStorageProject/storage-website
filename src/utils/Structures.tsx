@@ -1,9 +1,9 @@
-export  const FileType = {
-    IMAGE:"IMAGE",
-    AUDIO:"AUDIO",
-    TEXT:"TEXT",
-    DOCUMENT:"DOCUMENT",
-    VIDEO:"VIDEO",
+export const FileType = {
+    IMAGE: "IMAGE",
+    AUDIO: "AUDIO",
+    TEXT: "TEXT",
+    DOCUMENT: "DOCUMENT",
+    VIDEO: "VIDEO",
 }
 
 export function determineFileFormat(file: File) {
@@ -17,23 +17,51 @@ export function determineFileType(file: File) {
         case 'jpg':
         case 'jpeg':
         case 'png':
-        case 'gif':{
+        case 'gif': {
             return FileType.IMAGE;
         }
         case 'mp3':
-        case 'wav':{
+        case 'wav': {
             return FileType.AUDIO;
         }
         case 'pdf':
         case 'doc':
-        case 'docx':{
+        case 'docx': {
             return FileType.DOCUMENT;
         }
         case 'mp4':
-        case 'avi':{
+        case 'avi': {
             return FileType.VIDEO;
         }
-        default:{
+        default: {
+            return FileType.TEXT;
+        }
+    }
+}
+
+export function determineFileTypeFromString(name: String) {
+    const extension = name.split('.').pop()?.toLowerCase();
+    switch (extension) {
+        case 'jpg':
+        case 'jpeg':
+        case 'png':
+        case 'gif': {
+            return FileType.IMAGE;
+        }
+        case 'mp3':
+        case 'wav': {
+            return FileType.AUDIO;
+        }
+        case 'pdf':
+        case 'doc':
+        case 'docx': {
+            return FileType.DOCUMENT;
+        }
+        case 'mp4':
+        case 'avi': {
+            return FileType.VIDEO;
+        }
+        default: {
             return FileType.TEXT;
         }
     }
@@ -49,7 +77,7 @@ export class FileStructure {
     encrypted_iv: string;
     content: string;
 
-    constructor( folder_id: number,file_id  : number, name: string, type: typeof FileType, format: string, encrypted_key: string, encrypted_iv: string, content: string) {
+    constructor(folder_id: number, file_id: number, name: string, type: typeof FileType, format: string, encrypted_key: string, encrypted_iv: string, content: string) {
         this.folder_id = folder_id;
         this.file_id = file_id;
         this.name = name;
@@ -61,7 +89,7 @@ export class FileStructure {
     }
 }
 
-export  class FolderStructure {
+export class FolderStructure {
     name: string;
     id: number;
     folders: Array<FolderStructure>;
@@ -71,7 +99,7 @@ export  class FolderStructure {
         this.name = name;
         this.id = id;
         this.folders = folders;
-        this.files = files;        
+        this.files = files;
     }
 }
 
@@ -81,7 +109,7 @@ export class UserStructure {
     password: string;
     public_key: string;
 
-    constructor( id: number, username: string, password: string, public_key: string) {
+    constructor(id: number, username: string, password: string, public_key: string) {
         this.username = username;
         this.password = password;
         this.id = id;
@@ -102,7 +130,7 @@ export class PlanStructure {
         this.space = space;
         this.price = price;
         this.description = description;
-        this.priceMonth =  priceMonth;
-        this.priceYear =  priceYear;
+        this.priceMonth = priceMonth;
+        this.priceYear = priceYear;
     }
 }

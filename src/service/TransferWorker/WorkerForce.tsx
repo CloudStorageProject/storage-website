@@ -161,7 +161,6 @@ export class WorkerForce {
                 if (this._isEncrypting) {
                     const blob = new Blob(this.parts_BIN, { type: 'application/octet-stream' });
                     this._successCallback?.(blob);
-                    this.workers.forEach(worker => worker.terminate());
                 } else {
                     const finalArray = new Uint8Array(this.parts_BIN.reduce((acc, curr) => acc + curr.byteLength, 0));
                     let offset = 0;
@@ -170,8 +169,8 @@ export class WorkerForce {
                         offset += buffer.byteLength;
                     });
                     this._successCallback?.(finalArray);
-                    this.workers.forEach(worker => worker.terminate());
                 }
+                // this.workers.forEach(worker => worker.terminate());
             } else if (this.pendingChunks.length > 0) { // Dispatch any queued chunk
                 let { chunk, part } = this.pendingChunks.shift()!;
                 this.dispatchToAvailableWorker(chunk, part);
