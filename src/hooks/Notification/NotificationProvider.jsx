@@ -14,6 +14,8 @@ import { useLocation } from "react-router-dom";
 const NotificationContext = createContext();
 let static_id = 0;
 
+const fileRegex = /(SUCCESS|ERROR|INFO|WARNING|NETWORK_ERROR)/;
+
 export const NotificationProvider = ({ children }) => {
     const [notifications, setNotifications] = useState([]);
     const location = useLocation();
@@ -22,6 +24,8 @@ export const NotificationProvider = ({ children }) => {
     }, [location]);
 
     const getImage = (type) => {
+        console.log(type);
+
         switch (type) {
             case NotificationType.WARNING: {
                 return <Warning_IMAGE />
@@ -65,22 +69,22 @@ export const NotificationProvider = ({ children }) => {
                     id: id,
                     element: (
                         <>
-                            {getImage(type_string.split("_")[2])}
+                            {getImage(fileRegex.exec(type_string)[0])}
                             <p>{message}</p>
                         </>
                     )
                 }
 
                 setNotifications([notification]);
-                // setTimeout(() => {
-                //     const el = document.querySelector(`.notification[id="${`notification-` + id}"]`);
-                //     if (el) {
-                //         el.classList.add("disappear");
-                //     }
-                //     setTimeout(() => {
-                //         setNotifications([]);
-                //     }, 1000);
-                // }, 5_000);
+                setTimeout(() => {
+                    const el = document.querySelector(`.notification[id="${`notification-` + id}"]`);
+                    if (el) {
+                        el.classList.add("disappear");
+                    }
+                    setTimeout(() => {
+                        setNotifications([]);
+                    }, 1000);
+                }, 5_000);
             } else {
                 notification = {
                     id: id,
@@ -105,15 +109,15 @@ export const NotificationProvider = ({ children }) => {
                 )
             }
             setNotifications(prev => [notification, ...prev]);
-            // setTimeout(() => {
-            //     const el = document.querySelector(`.notification[id="${`notification-` + id}"]`);
-            //     if (el) {
-            //         el.classList.add("disappear");
-            //     }
-            //     setTimeout(() => {
-            //         setNotifications(prev => prev.filter(n => n.id !== id));
-            //     }, 1000);
-            // }, 5_000);
+            setTimeout(() => {
+                const el = document.querySelector(`.notification[id="${`notification-` + id}"]`);
+                if (el) {
+                    el.classList.add("disappear");
+                }
+                setTimeout(() => {
+                    setNotifications(prev => prev.filter(n => n.id !== id));
+                }, 1000);
+            }, 5_000);
         }
     };
 
