@@ -1,9 +1,15 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import NotificationManager from "./NotificationManager";
 import { NotificationType } from "./NotificationTypes.tsx";
-import { ReactComponent as TEMP_IMAGE } from "../../components/img/Warning.svg"
+import { ReactComponent as Warning_IMAGE } from "../../components/img/Warning.svg"
+import { ReactComponent as Error_IMAGE } from "../../components/img/Error.svg"
+import { ReactComponent as NetworkError_IMAGE } from "../../components/img/NetworkError.svg"
+import { ReactComponent as Info_IMAGE } from "../../components/img/Info.svg"
+import { ReactComponent as Success_IMAGE } from "../../components/img/Success.svg"
 import "./Notifications.css"
 import { useLocation } from "react-router-dom";
+
+
 
 const NotificationContext = createContext();
 let static_id = 0;
@@ -16,22 +22,24 @@ export const NotificationProvider = ({ children }) => {
     }, [location]);
 
     const getImage = (type) => {
-        // TODO: Update the image with corresponding icon
         switch (type) {
             case NotificationType.WARNING: {
-                return <TEMP_IMAGE />
+                return <Warning_IMAGE />
             }
             case NotificationType.INFO: {
-                return <TEMP_IMAGE />
+                return <Info_IMAGE />
             }
             case NotificationType.ERROR: {
-                return <TEMP_IMAGE />
+                return <Error_IMAGE />
             }
             case NotificationType.SUCCESS: {
-                return <TEMP_IMAGE />
+                return <Success_IMAGE />
+            }
+            case NotificationType.NETWORK_ERROR: {
+                return <NetworkError_IMAGE />
             }
             default: {
-                return <TEMP_IMAGE />
+                return <Info_IMAGE />
             }
         }
     }
@@ -55,8 +63,7 @@ export const NotificationProvider = ({ children }) => {
                     id: id,
                     element: (
                         <>
-                            {/* TODO: Update the image with corresponding icon */}
-                            <TEMP_IMAGE />
+                            {getImage(type_string.split("_")[1])}
                             <p>{message}</p>
                         </>
                     )
