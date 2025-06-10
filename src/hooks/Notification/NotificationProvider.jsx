@@ -9,6 +9,8 @@ import { ReactComponent as Success_IMAGE } from "../../components/img/Success.sv
 import "./Notifications.css"
 import { useLocation } from "react-router-dom";
 
+
+
 const NotificationContext = createContext();
 let static_id = 0;
 
@@ -63,7 +65,7 @@ export const NotificationProvider = ({ children }) => {
                     id: id,
                     element: (
                         <>
-                            {getImage(type.split("_")[2])}
+                            {getImage(type_string.split("_")[2])}
                             <p>{message}</p>
                         </>
                     )
