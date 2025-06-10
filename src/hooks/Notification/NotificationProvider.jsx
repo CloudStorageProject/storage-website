@@ -24,8 +24,6 @@ export const NotificationProvider = ({ children }) => {
     }, [location]);
 
     const getImage = (type) => {
-        console.log(type);
-
         switch (type) {
             case NotificationType.WARNING: {
                 return <Warning_IMAGE />
