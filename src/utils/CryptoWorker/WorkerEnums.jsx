@@ -6,6 +6,7 @@ const GenerationState = {
 }
 
 const GenerationType = {
+    SHUTDOWN: "SHUTDOWN",
     MNEMONIC: "MNEMONIC",
     FROM_HEX: "FROM_HEX"
 }

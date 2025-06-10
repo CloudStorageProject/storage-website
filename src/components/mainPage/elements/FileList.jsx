@@ -31,7 +31,7 @@ const FileList = ({ file }) => {
         <div key={file.file_id} id={`file-` + file.file_id} className="file-list">
             {getImage(file)}
             <div className="file-header">
-                <p className="file-name">{file.name}</p>
+                <p className="file-name">{file.name + "." + file.format}</p>
                 <button className="menu-button" id={`menu-button-file-` + file.file_id} >
                     <MoreIcon style={{ pointerEvents: "none" }} />
                 </button>

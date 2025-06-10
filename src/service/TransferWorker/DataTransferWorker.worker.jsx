@@ -56,6 +56,10 @@ if ('function' === typeof importScripts) {
         try {
             const action = event.data.action;
             switch (action) {
+                case TransferAction.SHUTDOWN: {
+                    self.close();
+                    break;
+                }
                 case TransferAction.ENCRYPT_PART: {
                     const bytes = event.data.bytes;
                     const part = event.data.part;

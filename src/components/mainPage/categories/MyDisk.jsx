@@ -9,7 +9,7 @@ import FileList from "../elements/FileList.jsx";
 import FileControl from "../elements/FileControl.jsx";
 import Folder from "../elements/Folder.jsx";
 import { getFolder, getRootFolder, renameFolder } from "../../../service/FolderService.jsx";
-import { FileStructure, FolderStructure } from "../../../utils/Structures.tsx";
+import { determineFileType, FileStructure, FolderStructure } from "../../../utils/Structures.tsx";
 import { renameFile, uploadFile } from "../../../service/FileService.jsx";
 import { useAuth } from "../../../hooks/AuthProvider.jsx";
 import { usePageState } from "../../../hooks/PageContext.jsx";
@@ -35,7 +35,7 @@ const MyDisk = () => {
     const [files, setFiles] = useState([]);
     const [folders, setFolders] = useState([]);
     const [selectedRenaming, setSelectedRenaming] = useState(null);
-    const [renamingName, setRenamingName] = useState(null);
+    const [renamingName, setRenamingName] = useState("");
     const fileMenuPosition = useRef({ top: 0, left: 0 });
     const folderMenuPosition = useRef({ top: 0, left: 0 });
     const folderTreeMenuPosition = useRef({ top: 0, left: 0 });
@@ -154,8 +154,8 @@ const MyDisk = () => {
         }
     }, [auth.user.fullAccess, filteredFiles, filteredFolders, notify, selectedFile, selectedFolder, selectedFolderTree]);
 
-    const updateFilesList = useCallback(async (selectedFolder) => {
-        await getFolder(selectedFolder.id).then((response) => {
+    const updateFilesList = (selectedFolder) => {
+        getFolder(selectedFolder.id).then((response) => {
             const { data, error } = response;
             if (error) {
                 return console.error(error);
@@ -166,12 +166,19 @@ const MyDisk = () => {
             }
             setFolders(temp);
             temp = [];
-            for (i = 0; i < data.files.length; i++) {
-                temp.push(new FileStructure(selectedFolder.id, data.files[i].id, data.files[i].name, data.files[i].type, data.files[i].format));
+
+            for (var i = 0; i < data.files.length; i++) {
+                temp.push(new FileStructure(
+                    selectedFolder.id,
+                    data.files[i].id,
+                    data.files[i].name.split('.')[0],
+                    data.files[i].type,
+                    data.files[i].format
+                ));
             }
             setFiles(temp);
         });
-    }, []);
+    };
 
 
     // Resize effect
@@ -192,26 +199,15 @@ const MyDisk = () => {
         };
     }, [handleMenuToggle]);
 
-    const pageRef = useRef(page);
-    const setPageStateRef = useRef(page.setPageState);
-    const setCurrentFolderRef = useRef(setCurrentFolder);
-    const updateFilesListRef = useRef(updateFilesList);
-
+    // Load effect
     useEffect(() => {
-        pageRef.current = page;
-        setPageStateRef.current = page.setPageState;
-        setCurrentFolderRef.current = setCurrentFolder;
-        updateFilesListRef.current = updateFilesList;
-    }, [page, page.setPageState, setCurrentFolder, updateFilesList]);
-
-    const loadEffect = useCallback(() => {
         if (currentFolder) {
-            updateFilesListRef.current(currentFolder);
-            const callstack = Array.from(pageRef.current.pageState.folderTree || []);
+            updateFilesList(currentFolder);
+            const callstack = Array.from(page.pageState.folderTree || []);
             if (callstack.find((folder) => folder.id === currentFolder.id) === undefined) {
                 callstack.push(currentFolder);
             }
-            setPageStateRef.current({ ...pageRef.current.pageState, folderTree: callstack });
+            page.setPageState({ ...page.pageState, folderTree: callstack, currentFolder: currentFolder });
         } else {
             getRootFolder().then(async (response) => {
                 let { data, error } = response;
@@ -219,20 +215,15 @@ const MyDisk = () => {
                     return console.error(error);
                 }
                 const root = new FolderStructure(data.name, data.id, data.folders, data.files);
-                setCurrentFolderRef.current(root);
-                updateFilesListRef.current(root);
-                setPageStateRef.current({ ...pageRef.current.pageState, currentPage: "mydisk", currentFolder: root, folderTree: [root] });
+                setCurrentFolder(root);
+                updateFilesList(root);
+                page.setPageState({ ...page.pageState, currentPage: "mydisk", currentFolder: root, folderTree: [root] });
             }).catch((error) => {
                 console.error(error);
             });
         }
-        // To make compiler stfu
-        // eslint-disable-next-line
-    }, [currentFolder, selectedFile, page.pageState.toUpdate]);
 
-    useEffect(() => {
-        loadEffect();
-    }, [loadEffect]);
+    }, [page.pageState.currentFolder, page.pageState.toUpdate]);
 
     const updateViewMode = (mode) => {
         page.setPageState({ ...page.pageState, viewMode: mode, toUpdate: !page.pageState.toUpdate });
@@ -281,7 +272,6 @@ const MyDisk = () => {
                 notify.postNotification("File name already exists", NotificationType.ERROR);
                 return;
             }
-
             const resp = await renameFile(selectedRenaming.file_id, { new_name: renamingName });
             if (resp.error) {
                 notify.postNotification("Failed to rename file", NotificationType.ERROR);

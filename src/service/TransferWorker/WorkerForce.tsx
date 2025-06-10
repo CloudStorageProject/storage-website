@@ -26,6 +26,9 @@ export class WorkerForce {
 
     constructor(successCallback?: (result: any) => void, errorCallback?: (result: string) => void, progressCallback?: (result: string) => void) {
         try {
+            if (typeof this.chunkSize !== "number" || this.chunkSize === undefined || this.chunkSize === null || this.chunkSize <= 0) {// Safeguard for chunkSize
+                this.chunkSize = 10 * 1024 * 1024
+            }
             this._successCallback = successCallback;
             this._errorCallback = errorCallback;
             this._progressCallback = progressCallback;
@@ -48,16 +51,14 @@ export class WorkerForce {
             this.parts_BIN = new Array(this.totalParts);
             const workerCount = Math.min(this.maxWorkers, this.totalParts);
 
-            // Create worker pool
             for (let i = 0; i < workerCount; i++) {
-                const worker = new Worker(new URL('./DataTransferWorker.worker.jsx', import.meta.url));
+                const worker = new Worker(new URL("./DataTransferWorker.worker.jsx", import.meta.url), { name: "Enctyptor: " + i });
                 worker.postMessage({ action: TransferAction.UPDATE, AES: this.AES });
                 worker.onmessage = (event) => this.onWorkerDone(event, i);
                 worker.onerror = (event) => this.onWorkerError(event, i);
                 this.workers.push(worker);
                 this.workerStatus[i] = false;
             }
-
             const blob = file.slice(this.fileReaderOffset, Math.min((this.fileReaderOffset + this.chunkSize), file.size));
             const reader = new FileReader();
             reader.onload = (evt: any) => {
@@ -72,9 +73,6 @@ export class WorkerForce {
                     this._progressCallback?.(Math.round((this.fileReaderOffset / file.size) * 100) + "%");
                     const blob = file.slice(this.fileReaderOffset, Math.min((this.fileReaderOffset + this.chunkSize), file.size));
                     reader.readAsArrayBuffer(blob);
-                } else {
-                    file = null;
-                    setTimeout(() => globalThis.gc?.(), 1000);
                 }
             }
             reader.readAsArrayBuffer(blob);
@@ -93,7 +91,7 @@ export class WorkerForce {
             const workerCount = Math.min(this.maxWorkers, this.totalParts);
             // Create worker pool
             for (let i = 0; i < workerCount; i++) {
-                const worker = new Worker(new URL('./DataTransferWorker.worker.jsx', import.meta.url));
+                const worker = new Worker(new URL("./DataTransferWorker.worker.jsx", import.meta.url), { name: "Decryptor: " + i });
                 worker.postMessage({ action: TransferAction.UPDATE, AES: this.AES });
                 worker.onmessage = (event) => this.onWorkerDone(event, i);
                 worker.onerror = (event) => this.onWorkerError(event, i);
@@ -109,8 +107,6 @@ export class WorkerForce {
                 this.dispatchToAvailableWorker(blob, partNum);
                 this.fileReaderOffset += offset;
             }
-            buffer = new ArrayBuffer(0);
-            setTimeout(() => globalThis.gc?.(), 1000);
         } catch (error) {
             this.onWorkerError(error as ErrorEvent, 0);
         }
@@ -150,7 +146,7 @@ export class WorkerForce {
     onWorkerDone(event: MessageEvent, workerId: number) {
         try {
             this.finishedParts++;
-            this._progressCallback?.("Worker " + workerId + " finished part " + event.data.message.part + " of " + this.totalParts + " data: " + event.data.message.data.length);
+            this._progressCallback?.("Worker " + workerId + " finished part " + (event.data.message.part + 1) + " of " + this.totalParts + " data: " + event.data.message.data.length);
 
             this.parts_BIN[event.data.message.part] = event.data.message.data;
             this.workerStatus[workerId] = false;
@@ -159,9 +155,9 @@ export class WorkerForce {
             //     console.log(`JS heap used: ` + (performance.memory.usedJSHeapSize / 1024 / 1024) + ` MB`);
             // }
 
+
             if (this.finishedParts === this.totalParts) {
                 // Terminate all workers
-                this.workers.forEach(worker => worker.terminate());
                 if (this._isEncrypting) {
                     const blob = new Blob(this.parts_BIN, { type: 'application/octet-stream' });
                     this._successCallback?.(blob);
@@ -174,16 +170,11 @@ export class WorkerForce {
                     });
                     this._successCallback?.(finalArray);
                 }
-            }
-
-            // Dispatch any queued chunk
-            if (this.pendingChunks.length > 0) {
+                this.workers.forEach(worker => worker.postMessage({ action: TransferAction.SHUTDOWN }));
+            } else if (this.pendingChunks.length > 0) { // Dispatch any queued chunk
                 let { chunk, part } = this.pendingChunks.shift()!;
                 this.dispatchToAvailableWorker(chunk, part);
-                chunk = new ArrayBuffer(0);
-                setTimeout(() => globalThis.gc?.(), 1000);
             }
-
         } catch (error) {
             this.onWorkerError(error as ErrorEvent, workerId);
         }

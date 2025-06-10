@@ -92,7 +92,15 @@ const OpenedToMe = () => {
             }
             let temp = [];
             data.forEach((file) => {
-                temp.push(new FileStructure(0, file.file_id, file.name, file.type, file.format, file.encrypted_key, file.encrypted_iv));
+                temp.push(new FileStructure(
+                    0,
+                    file.file_id,
+                    file.name.split('.')[0],
+                    file.type,
+                    file.format,
+                    file.encrypted_key,
+                    file.encrypted_iv
+                ));
             });
             setFiles(temp);
         }).catch((error) => {
@@ -123,19 +131,22 @@ const OpenedToMe = () => {
                     </button>
                 </div>
             </div>
-            <div className="section">
-                <div className="items">
-                    {
-                        filteredFiles.map((file) => {
-                            if (viewMode === ViewMode.LIST) {
-                                return (<FileList key={`file-list-` + file.file_id} file={file} menuPosition={fileMenuPosition} />);
-                            } else {
-                                return (<FileGrid key={`file-grid-` + file.file_id} file={file} menuPosition={fileMenuPosition} />);
-                            }
-                        })
-                    }
-                    {selectedFile && (<OpenToMeFileControl setSelectedFile={setSelectedFile} file={selectedFile} menuPosition={fileMenuPosition} activeMenu={selectedFile} />)}
+            <div className={`content ${viewMode}`}>
+                <div className="section">
+                    <div className="items">
+                        {
+                            filteredFiles.map((file) => {
+                                if (viewMode === ViewMode.LIST) {
+                                    return (<FileList key={`file-list-` + file.file_id} file={file} menuPosition={fileMenuPosition} />);
+                                } else {
+                                    return (<FileGrid key={`file-grid-` + file.file_id} file={file} menuPosition={fileMenuPosition} />);
+                                }
+                            })
+                        }
+                        {selectedFile && (<OpenToMeFileControl setSelectedFile={setSelectedFile} file={selectedFile} menuPosition={fileMenuPosition} activeMenu={selectedFile} />)}
+                    </div>
                 </div>
+
             </div>
 
         </div >
