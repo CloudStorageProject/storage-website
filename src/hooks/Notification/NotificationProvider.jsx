@@ -24,8 +24,6 @@ export const NotificationProvider = ({ children }) => {
     }, [location]);
 
     const getImage = (type) => {
-        console.log(type);
-
         switch (type) {
             case NotificationType.WARNING: {
                 return <Warning_IMAGE />
@@ -62,8 +60,6 @@ export const NotificationProvider = ({ children }) => {
             return;
         }
         if (type_string.includes("FILE")) {
-            console.log(type_string);
-
             if (type_string.includes("SUCCESS") || type_string.includes("FAILURE")) {
                 notification = {
                     id: id,
