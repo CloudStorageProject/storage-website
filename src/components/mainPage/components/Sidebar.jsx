@@ -135,7 +135,6 @@ const Sidebar = ({ onSelectCategory, activeCategory }) => {
     return (
         <div className={`sidebar ${isCollapsed ? "collapsed" : ""} ${isSettingsMode ? "settings-mode" : ""}`}>
             <div className="profile">
-                <div className="avatar"></div>
                 <p className="nickname">{auth.user.username}</p>
                 <button className="settings-btn" onClick={toggleSettingsMode}>
                     {isSettingsMode ? <BackIcon /> : <SettingsIcon style={{ filter: "invert(1)" }} />}
@@ -177,10 +176,8 @@ const Sidebar = ({ onSelectCategory, activeCategory }) => {
                 <div className="settings">
                     <ul className="menu">
                         <li className="menu-item" onClick={() => handleCategoryClick("Profile settings")}>Profile settings</li>
-                        <li className="menu-item">Support</li>
-                        <li className="menu-item">Language</li>
-                        <li className="menu-item" onClick={handleLogOut}>Log out</li>
                         <li className="menu-item" onClick={page.toggleTheme}>Change Theme</li>
+                        <li className="menu-item" onClick={handleLogOut}>Log out</li>
                     </ul>
                 </div>
             )}

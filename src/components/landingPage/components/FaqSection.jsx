@@ -10,10 +10,6 @@ const faqs = [
     answer: 'Yes, a mobile version is currently under development.',
   },
   {
-    question: 'How can I reset my password?',
-    answer: 'Click "Forgot password" on the login screen and follow the instructions.',
-  },
-  {
     question: 'Can I use the service for free?',
     answer: 'Yes, there is a free plan with limited storage.',
   },

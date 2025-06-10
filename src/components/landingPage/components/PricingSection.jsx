@@ -26,25 +26,31 @@ const PricingSection = () => {
         <section className="pricing-section">
             <div className="pricing-header">
                 <h2>Our plans</h2>
-                <div className={`toggle ${!isYearly ? 'right' : ''}`}>
+                <div className={`toggle ${isYearly ? 'right' : ''}`}>
                     <button className={`toggle-btn ${!isYearly ? 'active' : ''}`} onClick={() => setIsYearly(false)} > Month </button>
                     <button className={`toggle-btn ${isYearly ? 'active' : ''}`} onClick={() => setIsYearly(true)} > Year </button>
                 </div>
             </div>
 
-            <div className="plan-cards">
-                {plans.map((plan) => (
-                    <div className="card" key={plan.name}>
-                        <h3>{plan.name}</h3>
-                        <p>{plan.description}</p>
-                        <div className="circle"><span>{plan.space}</span></div>
-                        <p className="price">
-                            {isYearly ? `${plan.priceYear}$ per year` : `${plan.priceMonth}$ per month`}
-                        </p>
-                        <div className="arrow">→</div>
-                    </div>
-                ))}
-            </div>
+<div className="plan-cards">
+    {plans.map((plan) => (
+        <div
+            className="card"
+            key={plan.name}
+            onClick={() => { window.location.href = "/register" }}
+            style={{ cursor: "pointer" }}
+        >
+            <h3>{plan.name}</h3>
+            <p>{plan.description}</p>
+            <div className="circle"><span>{plan.space}</span></div>
+            <p className="price">
+                {isYearly ? `${plan.priceYear}$ per year` : `${plan.priceMonth}$ per month`}
+            </p>
+            <div className="arrow">→</div>
+        </div>
+    ))}
+</div>
+
         </section>
     );
 };

@@ -15,7 +15,7 @@ const HeroSection = () => (
         <p>
         Store your files securely and share them with friends in one click!
         </p>
-        <button className="btn-free">Try For Free</button>
+        <button className="btn-free" onClick={() => { window.location.href = "/register" }}>Try For Free</button>
       </div>
       <div className="info-div">
         <Ipad />
