@@ -182,7 +182,7 @@ const ProfileSettings = () => {
                                     <h3>{plan.name}</h3>
                                     <p>{plan.description}</p>
                                     <div className="circle-settings"><span>{plan.space}</span></div>
-                                    <p className="price">{isYearly ? `${plan.priceYear}$ per year` : `${plan.priceMonth}$ per month`}</p>
+                                    <p className="price">{isYearly ? `${plan.priceYear.toFixed(2)}$ per year` : `${plan.priceMonth.toFixed(2)}$ per month`}</p>
                                     <div className="arrow">{plan.name === userdata.subscription_name ? "Current" : "→"}</div>
                                 </div>
                             ))}

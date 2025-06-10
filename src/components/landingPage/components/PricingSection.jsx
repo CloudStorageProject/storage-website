@@ -9,8 +9,6 @@ const PricingSection = () => {
 
     useEffect(() => {
         getPayments().then((response) => {
-            console.log(response);
-
             var tmp = [];
             for (let i = 0; i < response.data.length; i++) {
                 const el = response.data[i];
@@ -32,24 +30,24 @@ const PricingSection = () => {
                 </div>
             </div>
 
-<div className="plan-cards">
-    {plans.map((plan) => (
-        <div
-            className="card"
-            key={plan.name}
-            onClick={() => { window.location.href = "/register" }}
-            style={{ cursor: "pointer" }}
-        >
-            <h3>{plan.name}</h3>
-            <p>{plan.description}</p>
-            <div className="circle"><span>{plan.space}</span></div>
-            <p className="price">
-                {isYearly ? `${plan.priceYear}$ per year` : `${plan.priceMonth}$ per month`}
-            </p>
-            <div className="arrow">→</div>
-        </div>
-    ))}
-</div>
+            <div className="plan-cards">
+                {plans.map((plan) => (
+                    <div
+                        className="card"
+                        key={plan.name}
+                        onClick={() => { window.location.href = "/register" }}
+                        style={{ cursor: "pointer" }}
+                    >
+                        <h3>{plan.name}</h3>
+                        <p>{plan.description}</p>
+                        <div className="circle"><span>{plan.space}</span></div>
+                        <p className="price">
+                            {isYearly ? `${plan.priceYear.toFixed(2)}$ per year` : `${plan.priceMonth.toFixed(2)}$ per month`}
+                        </p>
+                        <div className="arrow">→</div>
+                    </div>
+                ))}
+            </div>
 
         </section>
     );
